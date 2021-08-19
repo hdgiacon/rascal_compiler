@@ -3,7 +3,7 @@
     using namespace std;
 
 %}
- 
+
 %x COMENTARIO
 %x COMENTARIO_BLOCO
 
