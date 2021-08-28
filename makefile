@@ -1,8 +1,12 @@
+LEXER = lexer/flex.lex
+PARSER = parser/bison.y
+
 a.out: lex.yy.c
 	g++ lex.yy.c
 
-lex.yy.c: flex.lex
-	lex flex.lex
+lex.yy.c: $(LEXER)
+	lex $(LEXER)
 
-.PHONY clean
-clean: rm a.out lex.yy.c
+.PHONY: clean
+clean: 
+	rm *.out lex.yy.c
