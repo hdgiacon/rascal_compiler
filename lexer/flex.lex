@@ -2,6 +2,8 @@
     #include <iostream>
     using namespace std;
 
+    #include "bison.tab.h"
+
     int numOfLines = 1;
 
 %}
@@ -27,57 +29,54 @@ SPACE [\t ]+
 
 {SPACE} {}
 
-"program" cout << "program\n"; 
-"var" cout << "var\n"; 
-"procedure" cout << "procedure\n";
-"function" cout << "function\n"; 
-"begin" cout << "begin\n";
-"end" cout << "end\n";
-"false" cout << "false\n";
-"true" cout << "true\n";
-"if" cout << "if\n";
-"then" cout << "then\n";
-"else" cout << "else\n";
-"while" cout << "while\n";
-"do" cout << "do\n";
-"read" cout << "read\n";
-"write" cout << "write\n";
-"and" cout << "and\n";
-"or" cout << "or\n";
-"not" cout << "not\n";
-"div" cout << "div\n";
+"program"   return TK_PROGRAM; 
+"var"       return TK_VAR; 
+"procedure" return TK_PROCEDURE;
+"function"  return TK_FUNCTION; 
+"begin"     return TK_BEGIN;
+"end"       return TK_END;
+"false"     return TK_FALSE;
+"true"      return TK_TRUE;
+"if"        return TK_IF;
+"then"      return TK_THEN;
+"else"      return TK_ELSE;
+"while"     return TK_WHILE;
+"do"        return TK_DO;
+"read"      return TK_READ;
+"write"     return TK_WRITE;
+"and"       return TK_AND;
+"or"        return TK_OR;
+"not"       return TK_NOT;
+"div"       return TK_DIV;
 
-"(" cout << "abre paren\n";
-")" cout << "fecha paren\n";
-"." cout << "ponto\n";
-"," cout << "virgula\n";
-";" cout << "pontoVirgula\n";
-"+" cout << "mais\n";
-"-" cout << "menos\n";
-"*" cout << "vezes\n";
-"=" cout << "igual\n";
-"<>" cout << "diferente\n";
-">" cout << "maior\n";
-"<" cout << "menor\n";
-">=" cout << "maiorIgual\n";
-"<=" cout << "menorIgual\n";
-":=" cout << "atribuicao\n";
+"("         return TK_LPAREN;
+")"         return TK_RPAREN;
+"."         return TK_PONTO;
+","         return TK_VIRGULA;
+";"         return TK_PONTVIRG;
+"+"         return TK_MAIS;
+"-"         return TK_MENOS;
+"*"         return TK_MULT;
+"="         return TK_IGUAL;
+"<>"        return TK_DIFERENTE;
+">"         return TK_MAIOR;
+"<"         return TK_MENOR;
+">="        return TK_MAIORIGUAL;
+"<="        return TK_MENORIGUAL;
+":"         return TK_DOISPONTOS;
+":="        return TK_ATRIBUICAO;
 
 {ID} {
-    cout << yytext + std::string(" ser um ID\n");
+    yylval.str = std::string(yytext); 
+    return TK_ID;
 }
 
 {NUM} {
-    //yylval.ival = atoi(yytext);
-    cout << "parabens isso ser um numero\n";
+    yylval.ival = std::stoi(yytext);
+    return TK_NUM;
 }
 
 .     {
     cout << std::string("Error: Token '") + yytext + std::string("' unkwown.\n");
 }
 %%
- 
-int main(){
-    yylex();
-    return 0;
-}
