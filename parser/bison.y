@@ -19,8 +19,27 @@ void yyerror(cont char *s){
    A_Programa programa;
    A_Bloco bloco;
    A_LstDecSub secDecVar;
+   A_DecVar decVar;
    A_LstDecVar secDecSub;
+   A_ListaId listaId;
+   A_DecProc decProc;
+   A_DecParam decParam;
+   A_DecParamList decParamList;
    A_CmdComp cmdComp;
+   A_Cmd cmd;
+   A_CmdList cmdList;
+   A_Atrib atrib;
+   A_ChamProc chamProc;
+   A_Cond cond;
+   A_Loop loop;
+   A_IO IO;
+   A_ListExp listExp;
+   A_Exp exp;
+   A_ListTermo listTermo;
+   A_Termo termo;
+   A_Fator fator;
+   A_Var var;
+   A_ChamFunc chamFunc;
 }
 
 %token TK_PROGRAM
@@ -53,11 +72,31 @@ void yyerror(cont char *s){
 %token <str> TK_IDENT
 
 %type <programa> programa
-%type <secDecVar> secao_declaracao_variaveis
-%type <secDecSub> secao_declaracao_subrotinas
-%type <cmdComp> comando_composto
 %type <bloco> bloco
+%type <secDecVar> secao_declaracao_variaveis secao_declaracao_variaveis_rec
+%type <decVar> declaracao_variaveis
 %type <str> tipo
+%type <secDecSub> secao_declaracao_subrotinas secao_declaracao_subrotinas_rec secao_declaracao_subrotinas_op
+%type <listaId> lista_identificadores lista_identificadores_rec
+%type <decProc> declaracao_procedimento declaracao_funcao
+%type <decParam> declaracao_parametros
+%type <decParamList> parametros_formais declaracao_parametros_rec
+%type <cmdComp> comando_composto
+%type <cmd> comando
+%type <cmdList> comando_rec
+%type <atrib> atribuicao
+%type <chamProc> chamada_procedimento chamada_procedimento_op
+%type <cond> condicional elsee
+%type <loop> repeticao
+%type <IO> leitura escrita
+%type <listExp> lista_expressoes expressao_simples_rec
+%type <exp> expressao expressao_op expressao_simples
+%type <listTermo> termo_rec
+%type <termo> termo
+%type <fator> fator
+%type <var> variavel
+%type <chamFunc> chamada_funcao chamada_funcao_op
+
 
 %define parse.error verbose
 %define parse.lac full
