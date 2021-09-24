@@ -72,7 +72,7 @@ SPACE [\t ]+
 }
 
 {NUM} {
-    yylval.ival = std::stoi(yytext);
+    yylval.num = std::stoi(yytext);
     return TK_NUM;
 }
 

@@ -62,22 +62,26 @@ void yyerror(cont char *s){
 %token TK_NOT
 %token TK_DIV
 
-%token TK_LPAREN
+%token TK_LPAREN 
 %token TK_RPAREN
 %token TK_ATRIBUICAO
 %token TK_MAIS TK_MENOS TK_MULT
 %token TK_IGUAL TK_DIFERENTE TK_MAIOR TK_MENOR TK_MAIORIGUAL TK_MENORIGUAL
 %token TK_VIRGULA TK_PONTVIRG TK_DOISPONTOS TK_PONTO
 
+%token <num> TK_NUM
 %token <str> TK_IDENT
+
+%precedence TK_THEN
+%precedence TK_ELSE
 
 %type <programa> programa
 %type <bloco> bloco
 %type <secDecVar> secao_declaracao_variaveis secao_declaracao_variaveis_rec
 %type <decVar> declaracao_variaveis
-%type <str> tipo
+%type <str> tipo identificador
 %type <secDecSub> secao_declaracao_subrotinas secao_declaracao_subrotinas_rec secao_declaracao_subrotinas_op
-%type <listaId> lista_identificadores lista_identificadores_rec
+%type <listaId> lista_identificadores
 %type <decProc> declaracao_procedimento declaracao_funcao
 %type <decParam> declaracao_parametros
 %type <decParamList> parametros_formais declaracao_parametros_rec
@@ -86,7 +90,7 @@ void yyerror(cont char *s){
 %type <cmdList> comando_rec
 %type <atrib> atribuicao
 %type <chamProc> chamada_procedimento chamada_procedimento_op
-%type <cond> condicional elsee
+%type <cond> condicional
 %type <loop> repeticao
 %type <IO> leitura escrita
 %type <listExp> lista_expressoes expressao_simples_rec
@@ -124,12 +128,10 @@ declaracao_variaveis:	lista_identificadores TK_DOISPONTOS tipo	{}
 ;
 
 
-lista_identificadores:	identificador lista_identificadores_rec		{}
+lista_identificadores:	identificador {}
+					|	identificador TK_VIRGULA lista_identificadores	{}
 ;
 
-lista_identificadores_rec:	TK_VIRGULA identificador lista_identificadores_rec	{}
-						|	TK_VIRGULA identificador	{}	/* pode isso? */
-;
 
 tipo:	identificador
 ;
@@ -146,15 +148,15 @@ secao_declaracao_subrotinas_op:		declaracao_procedimento	{}
 								|	declaracao_funcao		{}
 ;
 
-
-declaracao_procedimento:	TK_PROCEDURE identificador parametros_formais TK_PONTVIRG bloco	{}
+/* essas duas regras estão certas? pela modificação 3 */
+declaracao_procedimento:	TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco	{}
 ;
 
-declaracao_funcao:	TK_FUNCTION identificador parametros_formais TK_DOISPONTOS tipo TK_PONTVIRG bloco	{}
+declaracao_funcao:	TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco	{}
 ;
 
 
-parametros_formais:	TK_LPAREN declaracao_parametros_rec TK_RPAREN	{}
+parametros_formais:	declaracao_parametros_rec	{}
 				|	/* vazio */		{}
 ;
 
@@ -167,11 +169,11 @@ declaracao_parametros:	TK_VAR lista_identificadores TK_DOISPONTOS tipo	{}
 ;
 
 
-comando_composto:	TK_BEGIN comando_rec TK_PONTVIRG TK_END	{}
+comando_composto:	TK_BEGIN comando_rec TK_END	{}
 ;
 
 comando_rec:	comando TK_PONTVIRG comando_rec	{}
-			|	comando							{}
+			|	comando	TK_PONTVIRG				{}
 ;
 
 comando:	atribuicao				{}
@@ -187,19 +189,16 @@ comando:	atribuicao				{}
 atribuicao:	TK_IDENT TK_ATRIBUICAO expressao	{}
 ;
 
-chamada_procedimento:	identificador chamada_procedimento_op	{}
+chamada_procedimento:	identificador TK_LPAREN chamada_procedimento_op	TK_RPAREN	{}
 ;
 
-chamada_procedimento_op:	TK_LPAREN lista_expressoes TK_RPAREN	{}
-					|       /* vazio */		{}
+chamada_procedimento_op:	lista_expressoes 	{}
+					|       /* vazio */			{}
 ;
 
 
-condicional:	TK_IF expressao TK_THEN comando elsee	{}
-;
-
-elsee:					{} 
-	|	TK_ELSE comando	{}	/* comando esta acima desta regra, ta certo? */
+condicional:	TK_IF expressao TK_THEN comando TK_ELSE comando	{}
+			|	TK_IF expressao TK_THEN comando	{}
 ;
 
 repeticao:	TK_WHILE expressao TK_DO comando	{}
@@ -219,8 +218,8 @@ lista_expressoes:	expressao TK_VIRGULA lista_expressoes	{}
 expressao:	expressao_simples expressao_op	{}
 ;
 
-expressao_op:   relacao				{}
-			|	expressao_simples	{}
+expressao_op:   relacao	expressao_simples	{}
+			|		{}
 ;
 
 relacao:	TK_IGUAL
@@ -257,6 +256,7 @@ and_op:		TK_MULT
 ;
 
 fator:      variavel						{}
+		|	TK_NUM							{}
 		|   logico							{}
 		|   chamada_funcao					{}
 		|   TK_LPAREN expressao TK_RPAREN	{}
@@ -272,11 +272,11 @@ logico:     TK_FALSE
 		|   TK_TRUE
 ;
 
-chamada_funcao: 	identificador chamada_funcao_op		{}
+chamada_funcao: 	identificador TK_LPAREN chamada_funcao_op TK_RPAREN	{}
 ;
 
-chamada_funcao_op:	TK_LPAREN lista_expressoes TK_RPAREN	{}
-				|	/* vazio */		{}
+chamada_funcao_op:	/* vazio */			{}	
+				|	lista_expressoes 	{}
 ;
 
 identificador: 		TK_IDENT
