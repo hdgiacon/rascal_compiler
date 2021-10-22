@@ -18,9 +18,9 @@ void yyerror(cont char *s){
    int num;
    A_Programa programa;
    A_Bloco bloco;
-   A_LstDecSub secDecVar;
+   A_LstDecSub secDecSub;
    A_DecVar decVar;
-   A_LstDecVar secDecSub;
+   A_LstDecVar secDecVar;
    A_ListaId listaId;
    A_DecProc decProc;
    A_DecParam decParam;
@@ -148,7 +148,6 @@ secao_declaracao_subrotinas_op:		declaracao_procedimento	{}
 								|	declaracao_funcao		{}
 ;
 
-/* essas duas regras estão certas? pela modificação 3 */
 declaracao_procedimento:	TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco	{}
 ;
 
