@@ -83,10 +83,10 @@ class A_DecVar{
 
 class A_ListaId{
     public:
-        A_Identificador indentificador;
+        A_Identificador identificador;
         // A_listaId lista_identificadores
 
-        a_ListaId(A_Identificador _indentificador){
+        A_ListaId(A_Identificador _identificador){
             identificador = _identificador;
 
         }
