@@ -142,32 +142,110 @@ class A_tipo{
 
 // A_IO
     // leitura escrita
+class A_IO{
 
+};
 
 // A_ListExp
     // lista_expressoes
 
+class A_ListExp{
+    A_Exp expressao;
+    //lista_expressoes
+
+    A_ListExp(A_Exp _expressao){
+        expressao = _expressao;
+    }
+
+};
+
 
 // A_Exp
     // expressao expressao_simples
+class A_Exp{
+
+};
 
 
 // A_ListTermo
     // termo_rec
 
+class A_ListTermo{
+    A_Fator fator;
+    //termo_rec
 
+    A_ListTermo(A_Fator _fator){
+        fator = _fator;
+        //termo rec
+    }
+};
 // A_Termo
     // termo
 
+class A_Termo{
+    A_Fator fator;
+    //termo_rec
+
+    A_Termo(A_Fator _fator){
+        fator = _fator;
+    }
+};
 
 // A_Fator
     // fator
+class A_Fator{
+    public:
+        A_Var variavel;
+        A_ChamFunc chamadaFuncao;
+        A_Exp expressao;
+        //fator
+
+        A_Fator(A_Var _variavel, A_ChamFunc _chamadaFuncao, A_Exp _expressao){
+            variavel = _variavel;
+            chamadaFuncao = _chamadaFuncao;
+            expressao = _expressao;
+            //fator
+        }
+
+};
+
 
 
 // A_Var
     // variavel
+class A_Var{
+    public:
+        A_identificador identificador;
+        A_ChamFunc chamadaFuncao;
+
+
+        A_Var(A_identificador _identificador, A_ChamFunc _chamadaFuncao){
+            identificador = _identificador;
+            chamadaFuncao = _chamadaFuncao;
+        }
+
+};
 
 
 // A_ChamFunc
     // chamada_funcao
+class A_ChamFunc{
+    public:
+        A_identificador identificador;
 
+        A_ChamFunc(A_identificador _identificador){
+            identificador = _identificador;
+        }
+
+};
+
+
+class A_identificador{
+    public:
+        string identificador;
+
+        A_identificador(string _identificador){
+            identificador = _identificador;
+        }
+
+};
