@@ -66,12 +66,12 @@ class A_CmdComp{
 // A_DecVar
     // declaracao_variaveis
 
-class A_decVar{
+class A_DecVar{
     public:
         A_listaId listaIdentificadores;
         A_tipo tipo;
 
-        A_decVar(A_listaId _listaIdentificadores, A_tipo _tipo){
+        A_DecVar(A_listaId _listaIdentificadores, A_tipo _tipo){
             listaIdentificadores = _listaIdentificadores;
             tipo = _tipo;
         }
@@ -81,12 +81,12 @@ class A_decVar{
 // A_ListaId
     // lista_identificadores
 
-class A_listaId{
+class A_ListaId{
     public:
-        A_identificador indentificador;
+        A_Identificador indentificador;
         // A_listaId lista_identificadores
 
-        a_listaId(A_identificador _indentificador){
+        a_ListaId(A_Identificador _indentificador){
             identificador = _identificador;
 
         }
@@ -96,11 +96,11 @@ class A_listaId{
 // A_tipo
     // tipo
 
-class A_tipo{
+class A_Tipo{
     public:
         A_identificador identificador;
 
-        A_tipo(A_identificador _identificador){
+        A_Tipo(A_Identificador _identificador){
             identificador = _identificador;
         }
 };
@@ -108,36 +108,90 @@ class A_tipo{
 // A_DecProc
     // declaracao_procedimento declaracao_funcao
 
+class A_DecProc{
+    public:
+        A_Indetificador identificador;
+        A_DecParamList parametros_formais;
+        A_Bloco bloco;
+
+        A_Tipo tipo;
+
+        // construtor de procedimento
+        A_DecProc(A_Identicador _identificador, A_DecParamList _parametros_formais, A_Bloco _bloco){
+            identificador = _identificador;
+            parametros_formais = _parametros_formais;
+            bloco = _bloco;
+        }
+        // construtor de função
+};
+
 // A_DecParam
     // declaracao_parametros
+
+class A_DecParam{
+    public:
+        A_ListaId lista_identificadores;
+        A_Tipo tipo;
+
+        A_DecParam(A_ListaId _lista_identificadores, A_Tipo tipo){
+            lista_identificadores = _lista_identificadores;
+            tipo = _tipo;
+        }
+};
     
 
-// A_DecParamList
+// A_DecParamList   //isso ta chegando em declaração de parametros, que ja esta feito
     // parametros_formais
 
 
-// A_Cmd
+// A_Cmd        //aqui chama outras classes implementadas
     // comando
 
 
-// A_CmdList
+// A_CmdList    // mesma coisa aqui
     // comando_rec
 
 
-// A_Atrib
+// A_Atrib      // chama atribuição
     // atribuicao
 
 
-// A_ChamProc
+// A_ChamProc       // chamada de procedimento op precisa ser criada uma classe?
     // chamada_procedimento
 
 
 // A_Cond
     // condicional
 
+class A_Cond{
+    public:
+        A_Exp expressao;
+        A_Cmd comando_1;
+        A_Cmd comando_2;
+
+        A_Cond(A_Exp _expressao, A_Cmd _comando_1, A_Cmd _comando_2){
+            expressao = _expressao;
+            comando_1 = _comando_1;
+            comando_2 = _comando_2;
+        }
+
+        // segundo construtor
+};
+
 
 // A_Loop
     // repeticao
+
+class A_Loop{
+    public:
+        A_Exp expressao;
+        A_Cmd comando;
+
+        A_Loop(A_Exp _expressao, A_Cmd _comando){
+            expressao = _expressao;
+            comando = _comando;
+        }
+};
 
 
 // A_IO
