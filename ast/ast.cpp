@@ -60,14 +60,50 @@ class A_CmdComp{
         A_CmdComp(A_Cmd _cmd){
             cmd = _cmd;
         }
-}
+};
 
 
 // A_DecVar
     // declaracao_variaveis
 
+class A_decVar{
+    public:
+        A_listaId listaIdentificadores;
+        A_tipo tipo;
+
+        A_decVar(A_listaId _listaIdentificadores, A_tipo _tipo){
+            listaIdentificadores = _listaIdentificadores;
+            tipo = _tipo;
+        }
+
+};
+
 // A_ListaId
     // lista_identificadores
+
+class A_listaId{
+    public:
+        A_identificador indentificador;
+        // A_listaId lista_identificadores
+
+        a_listaId(A_identificador _indentificador){
+            identificador = _identificador;
+
+        }
+
+};
+
+// A_tipo
+    // tipo
+
+class A_tipo{
+    public:
+        A_identificador identificador;
+
+        A_tipo(A_identificador _identificador){
+            identificador = _identificador;
+        }
+};
 
 // A_DecProc
     // declaracao_procedimento declaracao_funcao
