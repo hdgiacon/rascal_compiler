@@ -18,6 +18,7 @@ void yyerror(cont char *s){
    int num;
    A_Programa programa;
    A_Bloco bloco;
+   A_BlocoSub bloco_sub;
    A_LstDecSub secDecSub;
    A_DecVar decVar;
    A_LstDecVar secDecVar;
@@ -76,7 +77,8 @@ void yyerror(cont char *s){
 %precedence TK_ELSE
 
 %type <programa> programa
-%type <bloco> bloco
+%type <bloco> bloco 
+%type <bloco_sub> bloco_subrotinas
 %type <secDecVar> secao_declaracao_variaveis secao_declaracao_variaveis_rec
 %type <decVar> declaracao_variaveis
 %type <str> tipo identificador
@@ -148,12 +150,13 @@ secao_declaracao_subrotinas_op:		declaracao_procedimento	{}
 								|	declaracao_funcao		{}
 ;
 
-declaracao_procedimento:	TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco	{}
+declaracao_procedimento:	TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas	{}
 ;
 
-declaracao_funcao:	TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco	{}
+declaracao_funcao:	TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas	{}
 ;
 
+bloco_subrotinas:	secao_declaracao_variaveis comando_composto {} 
 
 parametros_formais:	declaracao_parametros_rec	{}
 				|	/* vazio */		{}
