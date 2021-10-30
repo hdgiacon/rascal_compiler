@@ -15,16 +15,6 @@ A_ListaId::A_ListaId(A_Identificador* _identificador){
     this->identificador = _identificador;
 };
 
-/*
-int main(){
-    A_Identificador teste1("a");
-    cout << teste1.identificador;
-
-    A_ListaId teste2(teste1("b"));
-    cout << teste2.identificador.id;
-}
-*/
-
 
 // A_tipo
     // tipo
@@ -48,8 +38,13 @@ A_LstDecVar::A_LstDecVar(A_DecVar* _decVar){
 
 // A_Cmd        //aqui chama outras classes implementadas
     // comando
-A_Cmd::A_Cmd(){
-
+A_Cmd::A_Cmd(A_Atrib* _atribuicao, A_ChamProc* _chamada_procedimento, A_Cond* _condicional, A_Loop* _repeticao, A_IO* _io, A_CmdComp* _comando_composto){
+    this->atribuicao = _atribuicao;
+    this->chamada_procedimento = _chamada_procedimento;
+    this->condicional = _condicional;
+    this->repeticao = _repeticao;
+    this->io = _io;
+    this->comando_composto = _comando_composto;
 };
 
 
@@ -121,29 +116,29 @@ A_DecParam::A_DecParam(A_ListaId* _lista_identificadores, A_Tipo* _tipo){
 
 // A_CmdList    // mesma coisa aqui
     // comando_rec
-A_CmdList::A_CmdList(){
+// A_CmdList::A_CmdList(){
 
-};
-
-
-// A_Atrib      // chama atribuição
-    // atribuicao
-A_Atrib::A_Atrib(){
-
-};
-
-
-// A_ChamProc       // chamada de procedimento op precisa ser criada uma classe?
-    // chamada_procedimento
-A_ChamProc::A_ChamProc(){
-
-};
+// };
 
 
 // A_Exp
     // expressao expressao_simples
 A_Exp::A_Exp(){
 
+};
+
+// A_Atrib      // chama atribuição
+    // atribuicao
+A_Atrib::A_Atrib(A_Exp* _expressao){
+    this->expressao = _expressao;
+};
+
+
+// A_ChamProc       // chamada de procedimento op precisa ser criada uma classe?
+    // chamada_procedimento
+A_ChamProc::A_ChamProc(A_Identificador* _identificador){
+    this->identificador = _identificador;
+    // lista de expressões
 };
 
 
@@ -221,3 +216,13 @@ A_ListTermo::A_ListTermo(A_Fator* _fator){
 A_Termo::A_Termo(A_Fator* _fator){
     this->fator = _fator;
 };
+
+/*
+int main(){
+    A_Identificador teste1 = A_Identificador("a");
+    cout << teste1.id;
+
+    A_ListaId teste2 = A_ListaId(&teste1);
+    cout << teste2.identificador->id;
+}
+*/

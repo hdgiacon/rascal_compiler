@@ -44,7 +44,14 @@ class A_LstDecVar{
 
 class A_Cmd{
     public:
-        A_Cmd();
+        A_Atrib* atribuicao;
+        A_ChamProc* chamada_procedimento;
+        A_Cond* condicional;
+        A_Loop* repeticao;
+        A_IO* io;
+        A_CmdComp* comando_composto;
+
+        A_Cmd(A_Atrib* _atribuicao, A_ChamProc* _chamada_procedimento, A_Cond* _condicional, A_Loop* _repeticao, A_IO* _io, A_CmdComp* _comando_composto);
 };
 
 class A_CmdComp{
@@ -64,6 +71,8 @@ class A_BlocoSub{
 
 class A_DecParamList{
     public:
+        // precisa de lista
+
         A_DecParamList();
 };
 
@@ -115,23 +124,30 @@ class A_DecParam{
         A_DecParam(A_ListaId* _lista_identificadores, A_Tipo* _tipo);
 };
 
-class A_CmdList{
-    public:
-        A_CmdList();
-};
+//class A_CmdList{
+//    public:
+//        A_CmdList();
+//};
 
 class A_Atrib{
     public:
-        A_Atrib();
+        A_Exp* expressao;
+
+        A_Atrib(A_Exp* _expressao);
 };
 
 class A_ChamProc{
     public:
-        A_ChamProc();
+        A_Identificador* identificador;
+        // lista expressões
+
+        A_ChamProc(A_Identificador* _identificador);
 };
 
 class A_Exp{
     public:
+        // precisa de lista
+
         A_Exp();
 };
 
@@ -158,6 +174,9 @@ class A_Loop{
 
 class A_IO{
     public:
+        // lista de identificações
+        // lista de expressoes
+
         A_IO();
 };
 
@@ -189,21 +208,20 @@ class A_Fator{
         A_Var* variavel;
         A_ChamFunc* chamadaFuncao;
         A_Exp* expressao;
-        //fator
 
         A_Fator(A_Var* _variavel, A_ChamFunc* _chamadaFuncao, A_Exp* _expressao);
 };
 
 class A_ListTermo{
     A_Fator* fator;
-    //termo_rec
+    //precisa de lista
 
     A_ListTermo(A_Fator* _fator);
 };
 
 class A_Termo{
     A_Fator* fator;
-    //termo_rec
+    //precisa de lista
 
     A_Termo(A_Fator* _fator);
 };
