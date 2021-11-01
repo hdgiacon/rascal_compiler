@@ -36,7 +36,7 @@ void yyerror(cont char *s){
    A_IO IO;
    A_ListExp listExp;
    A_Exp exp;
-   A_ListTermo listTermo;
+   //A_ListTermo listTermo;
    A_Termo termo;
    A_Fator fator;
    A_Var var;
@@ -139,7 +139,7 @@ declaracao_variaveis:	lista_identificadores TK_DOISPONTOS tipo	{}
 ;
 
 
-lista_identificadores:	identificador {}
+lista_identificadores:	identificador 									{}
 					|	identificador TK_VIRGULA lista_identificadores	{}
 ;
 
@@ -150,10 +150,10 @@ tipo:	identificador
 // ver como juntar isso aqui
 // ----------------
 secao_declaracao_subrotinas:	secao_declaracao_subrotinas_rec		{}
-							|	/* vazio */		{}
+							|	/* vazio */							{}
 
 secao_declaracao_subrotinas_rec:	secao_declaracao_subrotinas_op TK_PONTVIRG secao_declaracao_subrotinas_rec	{}
-								|	secao_declaracao_subrotinas_op TK_PONTVIRG	{}
+								|	secao_declaracao_subrotinas_op TK_PONTVIRG									{}
 ;
 
 secao_declaracao_subrotinas_op:		declaracao_procedimento	{}
@@ -209,7 +209,7 @@ atribuicao:	TK_IDENT TK_ATRIBUICAO expressao	{}
 ;
 
 chamada_procedimento:	identificador TK_LPAREN lista_expressoes	TK_RPAREN	{}
-				|		identificador TK_LPAREN TK_RPAREN	{}
+				|		identificador TK_LPAREN TK_RPAREN						{}
 ;
 
 //chamada_procedimento_op:	lista_expressoes 	{}
@@ -218,7 +218,7 @@ chamada_procedimento:	identificador TK_LPAREN lista_expressoes	TK_RPAREN	{}
 
 
 condicional:	TK_IF expressao TK_THEN comando TK_ELSE comando	{}
-			|	TK_IF expressao TK_THEN comando	{}
+			|	TK_IF expressao TK_THEN comando					{}
 ;
 
 repeticao:	TK_WHILE expressao TK_DO comando	{}
@@ -231,13 +231,19 @@ escrita:	TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN	{}
 ;
 
 
-lista_expressoes:	expressao TK_VIRGULA lista_expressoes	{}
-				|	expressao		{}
-;
+//lista_expressoes:	expressao TK_VIRGULA lista_expressoes	{}
+//				|	expressao		{}
+//;
 
-expressao:	expressao_simples relacao expressao_simples	{}
-		|	expressao_simples	{}
-;
+lista_expressoes:	lista_expressoes TK_VIRGULA expressao	{}
+				|	expressao								{}
+
+//expressao:	expressao_simples relacao expressao_simples	{}
+//		|	expressao_simples	{}
+//;
+
+expressao:	expressao_simples							{}
+		|	expressao_simples relacao expressao_simples	{}
 
 //expressao_op:   relacao	expressao_simples	{}
 //			|		{}

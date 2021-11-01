@@ -2,8 +2,15 @@
 
 #include <string>
 #include <iostream>
+#include <list>
 using namespace std;
 
+// ver se essas classes estao feitas da maneira correta (recursoes -> listas)
+class A_Cmd;
+class A_ListaId;
+class A_Exp;
+class A_ListExp;
+class A_Termo;
 
 class A_Identificador{
     public:
@@ -15,9 +22,11 @@ class A_Identificador{
 class A_ListaId{
     public:
         A_Identificador* identificador;
-        // A_listaId lista_identificadores
 
-        A_ListaId(A_Identificador* _identificador);
+        // talvez essa lista precise ser A_ListId*
+        list<A_Identificador*> lista_identificadores;
+
+        A_ListaId(A_Identificador* _identificador, A_Identificador* _id_add);
 };
 
 class A_Tipo{
@@ -42,6 +51,74 @@ class A_LstDecVar{
         A_LstDecVar(A_DecVar* _decVar);
 };
 
+class A_Exp{        // como faz esse? expressao e expressao simples
+    public:
+        // - expressao
+        //lista de expressao simples
+        //list<A_Exp> lista_expressoes
+
+        // - expressao simples
+        //lista de termo
+
+        A_Exp();
+};
+
+class A_Atrib{
+    public:
+        A_Exp* expressao;
+
+        A_Atrib(A_Exp* _expressao);
+};
+
+class A_ChamProc{
+    public:
+        A_Identificador* identificador;
+        // lista expressões
+
+        A_ChamProc(A_Identificador* _identificador);
+};
+
+class A_Cond{
+    public:
+        A_Exp* expressao;
+        A_Cmd* comando_1;
+        A_Cmd* comando_2;
+
+        // com else
+        A_Cond(A_Exp* _expressao, A_Cmd* _comando_1, A_Cmd* _comando_2);
+
+        // sem else
+        A_Cond(A_Exp* _expressao, A_Cmd* _comando_1);
+};
+
+class A_Loop{
+    public:
+        A_Exp* expressao;
+        A_Cmd* comando;
+
+        A_Loop(A_Exp* _expressao, A_Cmd* _comando);
+};
+
+class A_IO{
+    public:
+        // lista de identificações (constr leitura)
+        A_ListaId* lista_identificadores;
+        
+        A_IO(A_ListaId* _lista_identificadores);
+
+        // lista de expressoes (constr escrita)
+        //
+
+        A_IO();
+};
+
+class A_CmdComp{
+    public:
+        A_Cmd* cmd;
+
+        A_CmdComp(A_Cmd* _cmd);
+};
+
 class A_Cmd{
     public:
         A_Atrib* atribuicao;
@@ -54,12 +131,7 @@ class A_Cmd{
         A_Cmd(A_Atrib* _atribuicao, A_ChamProc* _chamada_procedimento, A_Cond* _condicional, A_Loop* _repeticao, A_IO* _io, A_CmdComp* _comando_composto);
 };
 
-class A_CmdComp{
-    public:
-        A_Cmd* cmd;
 
-        A_CmdComp(A_Cmd* _cmd);
-};
 
 class A_BlocoSub{
     public:
@@ -69,11 +141,23 @@ class A_BlocoSub{
         A_BlocoSub(A_LstDecVar* _secDecVar, A_CmdComp* _cmdComp);
 };
 
+class A_DecParam{
+    public:
+        A_ListaId* lista_identificadores;
+        A_Tipo* tipo;
+
+        A_DecParam(A_ListaId* _lista_identificadores, A_Tipo* _tipo);
+};
+
 class A_DecParamList{
     public:
-        // precisa de lista
+        //decparam
+        A_DecParam* declaracao_parametros;
 
-        A_DecParamList();
+        // lista de declaracao de parametros
+        list<A_DecParam*> lista_declaracao_parametros;
+        
+        A_DecParamList(A_DecParam* _declaracao_parametros, A_DecParam* _declaracao_parametros_add);
 };
 
 class A_DecProc{
@@ -116,76 +200,20 @@ class A_Programa{
         A_Programa(string _id, A_Bloco* _bloco);
 };
 
-class A_DecParam{
-    public:
-        A_ListaId* lista_identificadores;
-        A_Tipo* tipo;
 
-        A_DecParam(A_ListaId* _lista_identificadores, A_Tipo* _tipo);
-};
 
 //class A_CmdList{
 //    public:
 //        A_CmdList();
 //};
 
-class A_Atrib{
-    public:
-        A_Exp* expressao;
-
-        A_Atrib(A_Exp* _expressao);
-};
-
-class A_ChamProc{
-    public:
-        A_Identificador* identificador;
-        // lista expressões
-
-        A_ChamProc(A_Identificador* _identificador);
-};
-
-class A_Exp{
-    public:
-        // precisa de lista
-
-        A_Exp();
-};
-
-class A_Cond{
-    public:
-        A_Exp* expressao;
-        A_Cmd* comando_1;
-        A_Cmd* comando_2;
-
-        // com else
-        A_Cond(A_Exp* _expressao, A_Cmd* _comando_1, A_Cmd* _comando_2);
-
-        // sem else
-        A_Cond(A_Exp* _expressao, A_Cmd* _comando_1);
-};
-
-class A_Loop{
-    public:
-        A_Exp* expressao;
-        A_Cmd* comando;
-
-        A_Loop(A_Exp* _expressao, A_Cmd* _comando);
-};
-
-class A_IO{
-    public:
-        // lista de identificações
-        // lista de expressoes
-
-        A_IO();
-};
-
 class A_ListExp{
     public:
         A_Exp* expressao;
         //lista_expressoes
+        list<A_Exp*> lista_expressoes;
 
-        A_ListExp(A_Exp* _expressao);
+        A_ListExp(A_Exp* _expressao, A_Exp* _expressao_add);
 };
 
 class A_ChamFunc{
@@ -212,16 +240,18 @@ class A_Fator{
         A_Fator(A_Var* _variavel, A_ChamFunc* _chamadaFuncao, A_Exp* _expressao);
 };
 
-class A_ListTermo{
-    A_Fator* fator;
-    //precisa de lista
+// class A_ListTermo{
+//     A_Fator* fator;
+//     //precisa de lista
 
-    A_ListTermo(A_Fator* _fator);
-};
+//     A_ListTermo(A_Fator* _fator);
+// };
 
 class A_Termo{
     A_Fator* fator;
-    //precisa de lista
 
-    A_Termo(A_Fator* _fator);
+    //lista de termos - ta certo isso?
+    list<A_Termo> lista_termos;
+
+    A_Termo(A_Fator* _fator, A_Termo termo_add);
 };

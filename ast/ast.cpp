@@ -11,8 +11,9 @@ A_Identificador::A_Identificador(string _id){
 
 // A_ListaId
     // lista_identificadores
-A_ListaId::A_ListaId(A_Identificador* _identificador){
+A_ListaId::A_ListaId(A_Identificador* _identificador, A_Identificador* _id_add){
     this->identificador = _identificador;
+    this->lista_identificadores.push_back(_id_add);
 };
 
 
@@ -59,10 +60,11 @@ A_BlocoSub::A_BlocoSub(A_LstDecVar* _secDecVar, A_CmdComp* _cmdComp){
 };
 
 
-// A_DecParamList   //isso ta chegando em declaração de parametros, que ja esta feito
+// A_DecParamList
     // parametros_formais
-A_DecParamList::A_DecParamList(){
-  //por hora vazia  
+A_DecParamList::A_DecParamList(A_DecParam* _declaracao_parametros, A_DecParam* _declaracao_parametros_add){
+    this->declaracao_parametros = _declaracao_parametros;
+    this->lista_declaracao_parametros.push_back(_declaracao_parametros_add);
 };
 
 
@@ -167,6 +169,10 @@ A_Loop::A_Loop(A_Exp* _expressao, A_Cmd* _comando){
 
 // A_IO
     // leitura escrita
+A_IO::A_IO(A_ListaId* _lista_identificadores){
+    this->lista_identificadores = _lista_identificadores;
+};
+
 A_IO::A_IO(){
 
 };
@@ -174,8 +180,8 @@ A_IO::A_IO(){
 
 // A_ListExp
     // lista_expressoes
-A_ListExp::A_ListExp(A_Exp* _expressao){
-    this->expressao = _expressao;
+A_ListExp::A_ListExp(A_Exp* _expressao, A_Exp* _expressao_add){
+    this->lista_expressoes.push_back(_expressao_add);
 };
 
 
@@ -206,15 +212,16 @@ A_Fator::A_Fator(A_Var* _variavel, A_ChamFunc* _chamadaFuncao, A_Exp* _expressao
 
 // A_ListTermo
     // termo_rec
-A_ListTermo::A_ListTermo(A_Fator* _fator){
-    this->fator = _fator;
-};
+//A_ListTermo::A_ListTermo(A_Fator* _fator){
+//    this->fator = _fator;
+//};
 
 
 // A_Termo
     // termo
-A_Termo::A_Termo(A_Fator* _fator){
+A_Termo::A_Termo(A_Fator* _fator, A_Termo _termo_add){
     this->fator = _fator;
+    this->lista_termos.push_back(_termo_add);
 };
 
 /*

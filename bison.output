@@ -74,11 +74,11 @@ Gramática
 
    38 escrita: TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
 
-   39 lista_expressoes: expressao TK_VIRGULA lista_expressoes
+   39 lista_expressoes: lista_expressoes TK_VIRGULA expressao
    40                 | expressao
 
-   41 expressao: expressao_simples relacao expressao_simples
-   42          | expressao_simples
+   41 expressao: expressao_simples
+   42          | expressao_simples relacao expressao_simples
 
    43 relacao: TK_IGUAL
    44        | TK_DIFERENTE
@@ -241,7 +241,7 @@ Não terminais com as regras onde eles aparecem
         à direita: 31 34 35 36 39 40 63
     relacao (65)
         à esquerda: 43 44 45 46 47 48
-        à direita: 41
+        à direita: 42
     expressao_simples <exp> (66)
         à esquerda: 49 50
         à direita: 41 42 49
@@ -665,8 +665,8 @@ Estado 35
 
    34 condicional: TK_IF . expressao TK_THEN comando TK_ELSE comando
    35            | TK_IF . expressao TK_THEN comando
-   41 expressao: . expressao_simples relacao expressao_simples
-   42          | . expressao_simples
+   41 expressao: . expressao_simples
+   42          | . expressao_simples relacao expressao_simples
    49 expressao_simples: . expressao_simples or_op termo
    50                  | . termo
    54 termo: . fator and_op termo
@@ -706,8 +706,8 @@ Estado 35
 Estado 36
 
    36 repeticao: TK_WHILE . expressao TK_DO comando
-   41 expressao: . expressao_simples relacao expressao_simples
-   42          | . expressao_simples
+   41 expressao: . expressao_simples
+   42          | . expressao_simples relacao expressao_simples
    49 expressao_simples: . expressao_simples or_op termo
    50                  | . termo
    54 termo: . fator and_op termo
@@ -996,8 +996,8 @@ Estado 58
 
 Estado 59
 
-   41 expressao: . expressao_simples relacao expressao_simples
-   42          | . expressao_simples
+   41 expressao: . expressao_simples
+   42          | . expressao_simples relacao expressao_simples
    49 expressao_simples: . expressao_simples or_op termo
    50                  | . termo
    54 termo: . fator and_op termo
@@ -1084,8 +1084,8 @@ Estado 62
 
 Estado 63
 
-   41 expressao: expressao_simples . relacao expressao_simples
-   42          | expressao_simples .  [TK_END, TK_THEN, TK_ELSE, TK_DO, TK_RPAREN, TK_VIRGULA, TK_PONTVIRG, TK_PONTO]
+   41 expressao: expressao_simples .  [TK_END, TK_THEN, TK_ELSE, TK_DO, TK_RPAREN, TK_VIRGULA, TK_PONTVIRG, TK_PONTO]
+   42          | expressao_simples . relacao expressao_simples
    43 relacao: . TK_IGUAL
    44        | . TK_DIFERENTE
    45        | . TK_MENOR
@@ -1107,7 +1107,7 @@ Estado 63
     TK_MAIORIGUAL  deslocar, e ir ao estado 94
     TK_MENORIGUAL  deslocar, e ir ao estado 95
 
-    $padrão  reduzir usando a regra 42 (expressao)
+    $padrão  reduzir usando a regra 41 (expressao)
 
     relacao  ir ao estado 96
     or_op    ir ao estado 97
@@ -1232,10 +1232,10 @@ Estado 71
 Estado 72
 
    38 escrita: TK_WRITE TK_LPAREN . lista_expressoes TK_RPAREN
-   39 lista_expressoes: . expressao TK_VIRGULA lista_expressoes
+   39 lista_expressoes: . lista_expressoes TK_VIRGULA expressao
    40                 | . expressao
-   41 expressao: . expressao_simples relacao expressao_simples
-   42          | . expressao_simples
+   41 expressao: . expressao_simples
+   42          | . expressao_simples relacao expressao_simples
    49 expressao_simples: . expressao_simples or_op termo
    50                  | . termo
    54 termo: . fator and_op termo
@@ -1276,8 +1276,8 @@ Estado 72
 Estado 73
 
    31 atribuicao: TK_IDENT TK_ATRIBUICAO . expressao
-   41 expressao: . expressao_simples relacao expressao_simples
-   42          | . expressao_simples
+   41 expressao: . expressao_simples
+   42          | . expressao_simples relacao expressao_simples
    49 expressao_simples: . expressao_simples or_op termo
    50                  | . termo
    54 termo: . fator and_op termo
@@ -1325,10 +1325,10 @@ Estado 75
 
    32 chamada_procedimento: identificador TK_LPAREN . lista_expressoes TK_RPAREN
    33                     | identificador TK_LPAREN . TK_RPAREN
-   39 lista_expressoes: . expressao TK_VIRGULA lista_expressoes
+   39 lista_expressoes: . lista_expressoes TK_VIRGULA expressao
    40                 | . expressao
-   41 expressao: . expressao_simples relacao expressao_simples
-   42          | . expressao_simples
+   41 expressao: . expressao_simples
+   42          | . expressao_simples relacao expressao_simples
    49 expressao_simples: . expressao_simples or_op termo
    50                  | . termo
    54 termo: . fator and_op termo
@@ -1548,7 +1548,7 @@ Estado 95
 
 Estado 96
 
-   41 expressao: expressao_simples relacao . expressao_simples
+   42 expressao: expressao_simples relacao . expressao_simples
    49 expressao_simples: . expressao_simples or_op termo
    50                  | . termo
    54 termo: . fator and_op termo
@@ -1677,10 +1677,10 @@ Estado 101
 
 Estado 102
 
-   39 lista_expressoes: . expressao TK_VIRGULA lista_expressoes
+   39 lista_expressoes: . lista_expressoes TK_VIRGULA expressao
    40                 | . expressao
-   41 expressao: . expressao_simples relacao expressao_simples
-   42          | . expressao_simples
+   41 expressao: . expressao_simples
+   42          | . expressao_simples relacao expressao_simples
    49 expressao_simples: . expressao_simples or_op termo
    50                  | . termo
    54 termo: . fator and_op termo
@@ -1769,16 +1769,15 @@ Estado 104
 Estado 105
 
    38 escrita: TK_WRITE TK_LPAREN lista_expressoes . TK_RPAREN
+   39 lista_expressoes: lista_expressoes . TK_VIRGULA expressao
 
-    TK_RPAREN  deslocar, e ir ao estado 122
+    TK_RPAREN   deslocar, e ir ao estado 122
+    TK_VIRGULA  deslocar, e ir ao estado 123
 
 
 Estado 106
 
-   39 lista_expressoes: expressao . TK_VIRGULA lista_expressoes
-   40                 | expressao .  [TK_RPAREN]
-
-    TK_VIRGULA  deslocar, e ir ao estado 123
+   40 lista_expressoes: expressao .
 
     $padrão  reduzir usando a regra 40 (lista_expressoes)
 
@@ -1800,8 +1799,10 @@ Estado 108
 Estado 109
 
    32 chamada_procedimento: identificador TK_LPAREN lista_expressoes . TK_RPAREN
+   39 lista_expressoes: lista_expressoes . TK_VIRGULA expressao
 
-    TK_RPAREN  deslocar, e ir ao estado 124
+    TK_RPAREN   deslocar, e ir ao estado 124
+    TK_VIRGULA  deslocar, e ir ao estado 123
 
 
 Estado 110
@@ -1869,7 +1870,7 @@ Estado 115
 
 Estado 116
 
-   41 expressao: expressao_simples relacao expressao_simples .  [TK_END, TK_THEN, TK_ELSE, TK_DO, TK_RPAREN, TK_VIRGULA, TK_PONTVIRG, TK_PONTO]
+   42 expressao: expressao_simples relacao expressao_simples .  [TK_END, TK_THEN, TK_ELSE, TK_DO, TK_RPAREN, TK_VIRGULA, TK_PONTVIRG, TK_PONTO]
    49 expressao_simples: expressao_simples . or_op termo
    51 or_op: . TK_MAIS
    52      | . TK_MENOS
@@ -1879,7 +1880,7 @@ Estado 116
     TK_MAIS   deslocar, e ir ao estado 88
     TK_MENOS  deslocar, e ir ao estado 89
 
-    $padrão  reduzir usando a regra 41 (expressao)
+    $padrão  reduzir usando a regra 42 (expressao)
 
     or_op  ir ao estado 97
 
@@ -1900,9 +1901,11 @@ Estado 118
 
 Estado 119
 
+   39 lista_expressoes: lista_expressoes . TK_VIRGULA expressao
    70 chamada_funcao: identificador TK_LPAREN lista_expressoes . TK_RPAREN
 
-    TK_RPAREN  deslocar, e ir ao estado 130
+    TK_RPAREN   deslocar, e ir ao estado 130
+    TK_VIRGULA  deslocar, e ir ao estado 123
 
 
 Estado 120
@@ -1928,11 +1931,9 @@ Estado 122
 
 Estado 123
 
-   39 lista_expressoes: . expressao TK_VIRGULA lista_expressoes
-   39                 | expressao TK_VIRGULA . lista_expressoes
-   40                 | . expressao
-   41 expressao: . expressao_simples relacao expressao_simples
-   42          | . expressao_simples
+   39 lista_expressoes: lista_expressoes TK_VIRGULA . expressao
+   41 expressao: . expressao_simples
+   42          | . expressao_simples relacao expressao_simples
    49 expressao_simples: . expressao_simples or_op termo
    50                  | . termo
    54 termo: . fator and_op termo
@@ -1959,8 +1960,7 @@ Estado 123
     TK_NUM     deslocar, e ir ao estado 61
     TK_IDENT   deslocar, e ir ao estado 9
 
-    lista_expressoes   ir ao estado 131
-    expressao          ir ao estado 106
+    expressao          ir ao estado 131
     expressao_simples  ir ao estado 63
     termo              ir ao estado 64
     fator              ir ao estado 65
@@ -2067,7 +2067,7 @@ Estado 130
 
 Estado 131
 
-   39 lista_expressoes: expressao TK_VIRGULA lista_expressoes .
+   39 lista_expressoes: lista_expressoes TK_VIRGULA expressao .
 
     $padrão  reduzir usando a regra 39 (lista_expressoes)
 
