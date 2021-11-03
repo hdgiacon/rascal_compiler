@@ -5,12 +5,17 @@
 #include <list>
 using namespace std;
 
-// ver se essas classes estao feitas da maneira correta (recursoes -> listas)
 class A_Cmd;
 class A_ListaId;
 class A_Exp;
 class A_ListExp;
 class A_Termo;
+
+// abstrata
+class A_Exp{    
+    public:
+        A_Exp();
+};
 
 class A_Identificador{
     public:
@@ -21,12 +26,9 @@ class A_Identificador{
 
 class A_ListaId{
     public:
-        A_Identificador* identificador;
-
-        // talvez essa lista precise ser A_ListId*
         list<A_Identificador*> lista_identificadores;
 
-        A_ListaId(A_Identificador* _identificador, A_Identificador* _id_add);
+        A_ListaId(A_Identificador* _id_add);
 };
 
 class A_Tipo{
@@ -51,8 +53,15 @@ class A_LstDecVar{
         A_LstDecVar(A_DecVar* _decVar);
 };
 
-class A_Exp{        // como faz esse? expressao e expressao simples
+class A_Exp_Binaria: public A_Exp{
     public:
+        // expressao da esquerda -> exp abstrata
+        A_Exp* exp_esquerda;
+        // relação -> int
+        int relacao;
+        // expressao da direita -> exp abstrata
+        A_Exp* exp_direita;
+
         // - expressao
         //lista de expressao simples
         //list<A_Exp> lista_expressoes
@@ -60,7 +69,9 @@ class A_Exp{        // como faz esse? expressao e expressao simples
         // - expressao simples
         //lista de termo
 
-        A_Exp();
+        A_Exp_Binaria(A_Exp* _exp_esquerda);
+
+        A_Exp_Binaria(A_Exp* _exp_esquerda, int _relacao, A_Exp* _exp_direita);
 };
 
 class A_Atrib{
@@ -73,9 +84,11 @@ class A_Atrib{
 class A_ChamProc{
     public:
         A_Identificador* identificador;
-        // lista expressões
+        A_ListExp* lista_expressoes;
 
         A_ChamProc(A_Identificador* _identificador);
+
+        A_ChamProc(A_Identificador* _identificador, A_ListExp* _lista_expressoes);
 };
 
 class A_Cond{
@@ -101,15 +114,15 @@ class A_Loop{
 
 class A_IO{
     public:
-        // lista de identificações (constr leitura)
+        // constr leitura
         A_ListaId* lista_identificadores;
         
         A_IO(A_ListaId* _lista_identificadores);
 
-        // lista de expressoes (constr escrita)
-        //
+        // constr escrita
+        list<A_Exp_Binaria*> lista_expressoes;
 
-        A_IO();
+        A_IO(A_Exp_Binaria* _expressao_add);
 };
 
 class A_CmdComp{
@@ -151,13 +164,9 @@ class A_DecParam{
 
 class A_DecParamList{
     public:
-        //decparam
-        A_DecParam* declaracao_parametros;
-
-        // lista de declaracao de parametros
         list<A_DecParam*> lista_declaracao_parametros;
         
-        A_DecParamList(A_DecParam* _declaracao_parametros, A_DecParam* _declaracao_parametros_add);
+        A_DecParamList(A_DecParam* _declaracao_parametros_add);
 };
 
 class A_DecProc{
@@ -180,7 +189,9 @@ class A_LstDecSub{
         A_DecProc* decProc;
         A_DecProc* decFunc;
 
-        A_LstDecSub(A_DecProc* _decProc, A_DecProc* _decFunc);
+        A_LstDecSub(A_DecProc* _decProc);
+
+        A_LstDecSub(A_DecProc* _decFunc);
 };
 
 class A_Bloco{
@@ -201,26 +212,20 @@ class A_Programa{
 };
 
 
-
-//class A_CmdList{
-//    public:
-//        A_CmdList();
-//};
-
 class A_ListExp{
     public:
-        A_Exp* expressao;
-        //lista_expressoes
         list<A_Exp*> lista_expressoes;
 
-        A_ListExp(A_Exp* _expressao, A_Exp* _expressao_add);
+        A_ListExp(A_Exp* _expressao_add);
 };
 
 class A_ChamFunc{
     public:
         A_Identificador* identificador;
 
-        A_ChamFunc(A_Identificador* _identificador);
+        A_ListExp* lista_expressoes;
+
+        A_ChamFunc(A_Identificador* _identificador, A_ListExp* _lista_expressoes);
 };
 
 class A_Var{
@@ -231,27 +236,40 @@ class A_Var{
         A_Var(A_Identificador* _identificador, A_ChamFunc* _chamadaFuncao);
 };
 
-class A_Fator{
+class A_Fator: public A_Exp{
     public:
         A_Var* variavel;
         A_ChamFunc* chamadaFuncao;
         A_Exp* expressao;
 
-        A_Fator(A_Var* _variavel, A_ChamFunc* _chamadaFuncao, A_Exp* _expressao);
+        A_Fator(A_Var* _variavel);
+
+        A_Fator(A_ChamFunc* _chamadaFuncao);
+
+        A_Fator(A_Exp* _expressao);
 };
 
-// class A_ListTermo{
-//     A_Fator* fator;
-//     //precisa de lista
+class A_Exp_Simples: public A_Exp{
+    A_Exp* exp_esquerda;
+    // relação -> int
+    int relacao;
+    // expressao da direita -> exp abstrata
+    A_Exp* exp_direita;
 
-//     A_ListTermo(A_Fator* _fator);
-// };
+    A_Exp_Simples(A_Exp* _exp_esquerda, int _relacao, A_Exp* _exp_direita);
+};
 
-class A_Termo{
-    A_Fator* fator;
+class A_Termo: public A_Exp{
+    //A_Fator* fator;
 
     //lista de termos - ta certo isso?
-    list<A_Termo> lista_termos;
+    //list<A_Termo> lista_termos;
 
-    A_Termo(A_Fator* _fator, A_Termo termo_add);
+    A_Exp* exp_esquerda;
+    // relação -> int
+    int relacao;
+    // expressao da direita -> exp abstrata
+    A_Exp* exp_direita;
+
+    A_Termo(A_Exp* _exp_esquerda, int _relacao, A_Exp* _exp_direita);
 };
