@@ -93,9 +93,9 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 16 "parser/bison.y"
+#line 20 "bison.y"
 
-   String str;
+   string str;
    int num;
    A_Programa programa;
    A_Bloco bloco;
@@ -109,7 +109,6 @@ union YYSTYPE
    A_DecParamList decParamList;
    A_CmdComp cmdComp;
    A_Cmd cmd;
-   //A_CmdList cmdList;
    A_Atrib atrib;
    A_ChamProc chamProc;
    A_Cond cond;
@@ -117,13 +116,12 @@ union YYSTYPE
    A_IO IO;
    A_ListExp listExp;
    A_Exp exp;
-   //A_ListTermo listTermo;
    A_Termo termo;
    A_Fator fator;
    A_Var var;
    A_ChamFunc chamFunc;
 
-#line 127 "bison.tab.h"
+#line 125 "bison.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

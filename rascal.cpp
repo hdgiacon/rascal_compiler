@@ -2,7 +2,7 @@
 
 #include <iostream>
 using namespace std;
-#include "ast/ast.h"
+#include "ast.h"
 #include "bison.tab.h"
 
 A_Programa absyn_root;
