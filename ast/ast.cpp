@@ -86,7 +86,7 @@ A_LstDecSub::A_LstDecSub(A_DecProc* _decProc){
     this->decProc = _decProc;
 };
 
-A_LstDecSub::A_LstDecSub(A_DecProc* _decFunc){
+A_LstDecSub1::A_LstDecSub1(A_DecProc* _decFunc){
     this->decFunc = _decFunc;
 };
 
