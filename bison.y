@@ -1,16 +1,20 @@
+%code requires{
+	#include "util.h"
+	#include "ast.h"
+}
+
 %{
 
-#include <string>
-#include <iostream>
-using namespace std;
-
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 //#include "util/util.h"
 #include "ast.h"
 
 int yylex(void)
 
 void yyerror(cont char *s){
-	cout << "Erro sintatico: "
+	fprintf(stderr, "Erro sintatico: %s", s);
 }
 
 extern A_Programa absyn_root;
@@ -18,7 +22,7 @@ extern A_Programa absyn_root;
 %}
 
 %union {
-   string str;
+   String str;
    int num;
    A_Programa programa;
    A_Bloco bloco;
@@ -114,26 +118,26 @@ extern A_Programa absyn_root;
 
 %%
 
-programa:	TK_PROGRAM TK_IDENT TK_PONTVIRG bloco TK_PONTO { absyn_root = A_Programa($2, &$4); }
+programa:	TK_PROGRAM TK_IDENT TK_PONTVIRG bloco TK_PONTO { absyn_root = A_programa($2, $4); }
 ;
 
-bloco:	secao_declaracao_variaveis secao_declaracao_subrotinas comando_composto {} 
+bloco:	secao_declaracao_variaveis secao_declaracao_subrotinas comando_composto {$$ = A_Bloco($1, $2, $3); } 
 ;
 
-secao_declaracao_variaveis:		secao_declaracao_variaveis declaracao_variaveis TK_PONTVIRG		{}
-							|	TK_VAR declaracao_variaveis										{}
+secao_declaracao_variaveis:		secao_declaracao_variaveis declaracao_variaveis TK_PONTVIRG		{ $$ = $2; }
+							|	TK_VAR declaracao_variaveis										{ $$ = NULL; }
 ;
 
-declaracao_variaveis:	lista_identificadores TK_DOISPONTOS tipo	{}
-;
-
-
-lista_identificadores:	identificador 									{}		//$$ = constr
-					|	identificador TK_VIRGULA lista_identificadores	{}	//$$ = $3.push($1)
+declaracao_variaveis:	lista_identificadores TK_DOISPONTOS tipo	{ $$ = concatLstDecVar($1, $2); }
 ;
 
 
-tipo:	identificador	{}
+lista_identificadores:	identificador 									{ $$ = A_listaId($3, $1); }		//$$ = constr
+					|	identificador TK_VIRGULA lista_identificadores	{ $$ = A_listaId($1, NULL; )}	//$$ = $3.push($1)
+;
+
+
+tipo:	identificador	{ $$ = $1; }
 ;
 
 secao_declaracao_subrotinas:	secao_declaracao_subrotinas_op TK_PONTVIRG secao_declaracao_subrotinas	{}
