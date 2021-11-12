@@ -46,3 +46,13 @@ A_LstDecVar concatLstDecVar(A_LstDecVar lst1, A_LstDecVar lst2){
     }
     return lstConcat;
 }
+
+
+A_Exp A_exp_fator_chamada_funcao(A_ChamFunc _chamadaFuncao){
+    //dar um malloc q nem 33
+    A_Exp no = malloc(sizeof(*no));
+    no->tipo = TE_Fator;
+    //no->fator = (struct Exp_Fator){.tipo = TF_ChamFunc, .chamadaFuncao = chamadaFuncao}; // se precisar de mais argumentos
+    no->fator.tipo = TF_ChamFunc;
+    no->fator.chamadaFuncao = _chamadaFuncao;
+}

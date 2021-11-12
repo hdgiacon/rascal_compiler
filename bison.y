@@ -251,7 +251,7 @@ and_op:		TK_MULT					{}
 fator:      variavel						{}
 		|	TK_NUM							{}
 		|   logico							{}
-		|   chamada_funcao					{}
+		|   chamada_funcao					{$$ = A_exp_fator_chamada_funcao($1);}
 		|   TK_LPAREN expressao TK_RPAREN	{}
 		|   TK_NOT fator					{}
 		|   TK_MENOS fator					{}

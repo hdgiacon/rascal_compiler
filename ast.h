@@ -14,6 +14,7 @@ typedef struct A_Tipo_ *A_Tipo;
 typedef struct A_DecVar_ *A_DecVar;
 typedef struct A_LstDecVar_ *A_LstDecVar;
 //exp
+typedef struct A_Exp *A_Exp;
 //exp binaria
 typedef struct A_Atrib_ *A_Atrib;
 typedef struct A_ChamProc_ *A_ChamProc;
@@ -43,6 +44,9 @@ A_ListaId A_listaId(String id, A_ListaId listaId);
 A_Tipo A_tipo(A_Identificador identificador);
 A_DecVar A_decVar(String id, String tipo);
 A_LstDecVar A_lstDecVar(A_DecVar decVar, A_LstDecVar lstDecVar);
+
+
+A_Exp A_exp_fator_chamada_funcao(A_ChamFunc _chamadaFuncao);
 
 
 //expressao binaria
@@ -84,5 +88,53 @@ struct A_LstDecVar{
     A_DecVar decVar;
     A_LstDecVar prox;
 };
+
+
+struct A_Exp{
+
+};
+
+
+// struct A_Fator{
+//     struct A_Exp super;
+//     A_Var variavel;
+//     A_ChamFunc chamadaFuncao;
+//     struct A_Exp expressao;
+// };
+
+
+enum tipo_expressao{
+    TE_Fator,
+    TE_Exp_Simples,
+    TE_Termo,
+    TE_Exp_Binaria
+};
+
+enum tipo_fator{
+    TF_Var,
+    TF_ChamFunc,
+    TF_Exp
+};
+
+
+struct Exp_Fator {
+    enum tipo_fator tipo;
+    union{
+        A_Var variavel;
+        A_ChamFunc chamadaFuncao;
+        A_Exp expressao;
+    };
+    
+};
+
+struct A_Exp{
+    enum tipo_expressao tipo;
+    union {
+        struct Exp_Fator fator;
+    }    
+};
+
+
+
 
 #endif
