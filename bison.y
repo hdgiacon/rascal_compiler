@@ -10,6 +10,7 @@
 #include <stdlib.h>
 //#include "util/util.h"
 #include "ast.h"
+#include "util.h"
 
 int yylex(void)
 
@@ -133,7 +134,7 @@ declaracao_variaveis:	lista_identificadores TK_DOISPONTOS tipo	{ $$ = concatLstD
 
 
 lista_identificadores:	identificador 									{ $$ = A_listaId($3, $1); }		//$$ = constr
-					|	identificador TK_VIRGULA lista_identificadores	{ $$ = A_listaId($1, NULL; )}	//$$ = $3.push($1)
+					|	identificador TK_VIRGULA lista_identificadores	{ $$ = A_listaId($1, NULL); }	//$$ = $3.push($1)
 ;
 
 
@@ -206,7 +207,7 @@ repeticao:	TK_WHILE expressao TK_DO comando	{}
 leitura:	TK_READ TK_LPAREN lista_identificadores TK_RPAREN	{}
 ;
 
-escrita:	TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN	{}
+escrita:	TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN		{}
 ;
 
 
@@ -249,12 +250,12 @@ and_op:		TK_MULT					{}
 ;
 
 fator:      variavel						{}
-		|	TK_NUM							{}
-		|   logico							{}
-		|   chamada_funcao					{$$ = A_exp_fator_chamada_funcao($1);}
+		|	TK_NUM							{}	// o que fazer nesse?
+		|   logico							{}	// o que fazer nesse?
+		|   chamada_funcao					{}	// $$ = A_exp_fator_chamada_funcao($1);
 		|   TK_LPAREN expressao TK_RPAREN	{}
-		|   TK_NOT fator					{}
-		|   TK_MENOS fator					{}
+		|   TK_NOT fator					{}	// $$ = $2;
+		|   TK_MENOS fator					{}	// $$ = $2;
 ;
 
 
