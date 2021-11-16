@@ -9,10 +9,10 @@ A_Programa A_programa(String _id, A_Bloco _bloco){
 }
 
 A_Bloco A_bloco(A_LstDecVar _secDecVar, A_LstDecSub _secDecSub, A_CmdComp _cmdComp){
-    A_Bloco A_bloco = malloc(sizeof(*bloco));
-    bloco->secDecSub = _secDecSub;
+    A_Bloco bloco = malloc(sizeof(*bloco));
     bloco->secDecVar = _secDecVar;
-    bloco->cmdcomp = _cmdComp;
+    bloco->secDecSub = _secDecSub;
+    bloco->cmdComp = _cmdComp;
     return bloco;
 }
 
@@ -61,7 +61,7 @@ A_Exp A_exp_fator_chamada_funcao(A_ChamFunc _chamadaFuncao){
 A_Exp A_exp_fator_variavel(A_Var _variavel){
     A_Exp no = malloc(sizeof(*no));
     no->tipo = TE_Fator;
-    no->fator.tipo = RF_Var;
+    no->fator.tipo = TF_Var;
     no->fator.variavel = _variavel;
     return no;
 }
@@ -77,10 +77,18 @@ A_Exp A_exp_fator_expressao(A_Exp _expressao){
 A_Exp A_exp_binaria(A_Exp _exp_esquerda, int _relacao, A_Exp _exp_direita){
     A_Exp no = malloc(sizeof(*no));
     no->tipo = TE_Exp_Binaria;
-    no->binaria = TE_Exp_Binaria;
     no->binaria.exp_esquerda = _exp_esquerda;
     no->binaria.relacao = _relacao;
     no->binaria.exp_direita = _exp_direita;
+    return no;
+}
+
+
+
+A_ListExp A_listExp(A_Exp _expressao, A_ListExp _lista_expressoes){
+    A_ListExp no = malloc(sizeof(*no));
+    no->expressao = _expressao;
+    no->prox = _lista_expressoes;
     return no;
 }
 
@@ -104,3 +112,79 @@ A_Loop A_loop(A_Exp _expressao, A_Cmd _comando){
     return loop;
 }
 
+
+
+A_Cond A_cond_c(A_Exp _expressao, A_Cmd _comando_1, A_Cmd _comando_2){
+    A_Cond cond = malloc(sizeof(*cond));
+    cond->tipo = TC_Com_else;
+    cond->_cond_c_else.expressao = _expressao;
+    cond->_cond_c_else.comando_1 = _comando_1;
+    cond->_cond_c_else.comando_2 = _comando_2;
+}
+
+A_Cond A_cond_s(A_Exp _expressao, A_Cmd _comando_1){
+    A_Cond cond = malloc(sizeof(*cond));
+    cond->tipo = TC_Sem_Else;
+    cond->_cond_s_else.expressao = _expressao;
+    cond->_cond_s_else.comando_1 = _comando_1;
+}
+
+A_IO A_io_read(A_ListaId _lista_identificadores){
+    A_IO io = malloc(sizeof(*io));
+    io->tipo = TI_READ;
+    io->_io_read._lista_identificadores = _lista_identificadores;
+}
+
+A_IO A_io_write(A_ListExp _lista_expressoes){  //trocar para lista de expressoes
+    A_IO io = malloc(sizeof(*io));
+    io->tipo = TI_WRITE;
+    io->_io_write.lista_expressoes = _lista_expressoes;
+}
+
+
+
+A_CmdComp A_cmdComp(A_Cmd _comando, A_CmdComp _lista_comandos){
+    A_CmdComp no = malloc(sizeof(*no));
+    no->comando = _comando;
+    no->prox = _lista_comandos;
+    return no;
+}
+
+
+A_BlocoSub A_blocoSub(A_LstDecVar _secDecVar, A_CmdComp _cmdComp){
+    A_BlocoSub blocoSub = malloc(sizeof(*blocoSub));
+    blocoSub->secDecVar = _secDecVar;
+    blocoSub->cmdComp = _cmdComp;
+}
+
+A_DecParam A_decParam(A_ListaId _lista_identificadores, A_Tipo _tipo){
+    A_DecParam decParam = malloc(sizeof(*decParam));
+    decParam->lista_identificadores = _lista_identificadores;
+    decParam->tipo = _tipo;
+}
+
+
+A_DecParamList A_decParamList(A_DecParam _declaracao_parametros, A_DecParamList _lista_dec_parametros){
+    A_DecParamList no = malloc(sizeof(*no));
+    no->declaracao_parametros = _declaracao_parametros;
+    no->prox = _lista_dec_parametros;
+    return no;
+}
+
+
+A_DecProc A_decProc_proc(String _id, A_DecParamList _parametros_formais, A_BlocoSub _bloco){
+    A_DecProc decProc = malloc(sizeof(*decProc));
+    decProc->tipo = TD_PROC;
+    decProc->_decProc_proc.id = _id;
+    decProc->_decProc_proc.parametros_formais = _parametros_formais;
+    decProc->_decProc_proc.bloco = _bloco;
+}
+
+A_DecProc A_decProc_func(String _id, A_DecParamList _parametros_formais, A_BlocoSub _bloco, A_Tipo _tipo){
+    A_DecProc decProc = malloc(sizeof(*decProc));
+    decProc->tipo = TD_FUNC;
+    decProc->_decProc_func.id = _id;
+    decProc->_decProc_func.parametros_formais = _parametros_formais;
+    decProc->_decProc_func.bloco = _bloco;
+    decProc->_decProc_func.tipo = _tipo;
+}

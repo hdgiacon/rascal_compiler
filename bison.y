@@ -8,13 +8,12 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include "util/util.h"
 #include "ast.h"
 #include "util.h"
 
-int yylex(void)
+int yylex(void);
 
-void yyerror(cont char *s){
+void yyerror(const char *s){
 	fprintf(stderr, "Erro sintatico: %s", s);
 }
 
@@ -29,7 +28,7 @@ extern A_Programa absyn_root;
    A_Bloco bloco;
    A_BlocoSub bloco_sub;
    A_LstDecSub secDecSub;
-   A_DecVar decVar;
+   //A_DecVar decVar;
    A_LstDecVar secDecVar;
    A_ListaId listaId;
    A_DecProc decProc;
@@ -44,8 +43,8 @@ extern A_Programa absyn_root;
    A_IO IO;
    A_ListExp listExp;
    A_Exp exp;
-   A_Termo termo;
-   A_Fator fator;
+   //A_Termo termo;
+   //A_Fator fator;
    A_Var var;
    A_ChamFunc chamFunc;
 }
@@ -86,8 +85,8 @@ extern A_Programa absyn_root;
 %type <programa> programa
 %type <bloco> bloco 
 %type <bloco_sub> bloco_subrotinas
-%type <secDecVar> secao_declaracao_variaveis 
-%type <decVar> declaracao_variaveis
+%type <secDecVar> secao_declaracao_variaveis lista_declaracao_variaveis declaracao_variaveis
+//%type <decVar> 
 %type <str> tipo identificador
 %type <secDecSub> secao_declaracao_subrotinas  secao_declaracao_subrotinas_op
 %type <listaId> lista_identificadores
@@ -102,9 +101,9 @@ extern A_Programa absyn_root;
 %type <loop> repeticao
 %type <IO> leitura escrita
 %type <listExp> lista_expressoes 
-%type <exp> expressao expressao_simples
-%type <termo> termo
-%type <fator> fator
+%type <exp> expressao expressao_simples termo fator
+//%type <termo> 
+//%type <fator> 
 %type <var> variavel
 %type <chamFunc> chamada_funcao 
 
@@ -122,19 +121,34 @@ extern A_Programa absyn_root;
 programa:	TK_PROGRAM TK_IDENT TK_PONTVIRG bloco TK_PONTO { absyn_root = A_programa($2, $4); }
 ;
 
-bloco:	secao_declaracao_variaveis secao_declaracao_subrotinas comando_composto {$$ = A_Bloco($1, $2, $3); } 
+bloco:	secao_declaracao_variaveis secao_declaracao_subrotinas comando_composto { $$ = A_bloco($1, $2, $3); } 
 ;
 
-secao_declaracao_variaveis:		secao_declaracao_variaveis declaracao_variaveis TK_PONTVIRG		{ $$ = $2; }
-							|	TK_VAR declaracao_variaveis										{ $$ = NULL; }
+secao_declaracao_variaveis:		TK_VAR lista_declaracao_variaveis		{ $$ = $2; }
+							|											{ $$ = NULL; }
 ;
 
-declaracao_variaveis:	lista_identificadores TK_DOISPONTOS tipo	{ $$ = concatLstDecVar($1, $2); }
+lista_declaracao_variaveis:		declaracao_variaveis lista_declaracao_variaveis		{ $$ = concatLstDecVar($1, $2); }
+							|	declaracao_variaveis								{ $$ = $1; }
+;
+
+declaracao_variaveis:	lista_identificadores TK_DOISPONTOS tipo	{
+	String tipo = $3;
+	A_LstDecVar lstDecVar = NULL;
+	A_ListaId listaId = $1;
+	
+	while (listaId != NULL) {
+		lstDecVar = A_lstDecVar(A_decVar(listaId->id, tipo), lstDecVar);
+		listaId = listaId->prox;
+	}
+	
+	$$ = lstDecVar;
+}
 ;
 
 
-lista_identificadores:	identificador 									{ $$ = A_listaId($3, $1); }		//$$ = constr
-					|	identificador TK_VIRGULA lista_identificadores	{ $$ = A_listaId($1, NULL); }	//$$ = $3.push($1)
+lista_identificadores:	identificador 									{ $$ = A_listaId($1, NULL); }		//$$ = constr
+					|	identificador TK_VIRGULA lista_identificadores	{ $$ = A_listaId($1, $3); }			//$$ = $3.push($1)
 ;
 
 
@@ -142,7 +156,7 @@ tipo:	identificador	{ $$ = $1; }
 ;
 
 secao_declaracao_subrotinas:	secao_declaracao_subrotinas_op TK_PONTVIRG secao_declaracao_subrotinas	{}
-							|	secao_declaracao_subrotinas_op TK_PONTVIRG	{}
+							|	secao_declaracao_subrotinas_op TK_PONTVIRG								{}
 ;
 
 secao_declaracao_subrotinas_op:		declaracao_procedimento	{}
@@ -163,15 +177,15 @@ parametros_formais:	parametros_formais declaracao_parametros	{}
 				|	declaracao_parametros TK_PONTVIRG			{}
 ;
 
-declaracao_parametros:	TK_VAR declaracao_parametros_op	{}
-					|	declaracao_parametros_op		{}
+declaracao_parametros:	TK_VAR declaracao_parametros_op			{}
+					|	declaracao_parametros_op				{}
 ;
 
 declaracao_parametros_op: lista_identificadores TK_DOISPONTOS tipo {}
 ;
 
 
-comando_composto:	TK_BEGIN comando_rec TK_END	{}
+comando_composto:	TK_BEGIN comando_rec TK_END	{}	//$$ = $2
 ;
 
 comando_rec:	comando TK_PONTVIRG comando_rec	{}
@@ -201,7 +215,7 @@ condicional:	TK_IF expressao TK_THEN comando TK_ELSE comando	{}
 			|	TK_IF expressao TK_THEN comando					{}
 ;
 
-repeticao:	TK_WHILE expressao TK_DO comando	{}
+repeticao:	TK_WHILE expressao TK_DO comando					{}
 ;
 
 leitura:	TK_READ TK_LPAREN lista_identificadores TK_RPAREN	{}
@@ -211,13 +225,13 @@ escrita:	TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN		{}
 ;
 
 
-lista_expressoes:	lista_expressoes TK_VIRGULA expressao	{}
-				|	expressao								{}
+lista_expressoes:	lista_expressoes TK_VIRGULA expressao		{}
+				|	expressao									{}
 ;
 
 
-expressao:	expressao_simples							{}
-		|	expressao_simples relacao expressao_simples	{}
+expressao:	expressao_simples									{}
+		|	expressao_simples relacao expressao_simples			{}
 ;
 
 
@@ -269,7 +283,7 @@ logico:     TK_FALSE		{}
 chamada_funcao:		identificador TK_LPAREN lista_expressoes TK_RPAREN	{}
 ;
 
-identificador: 		TK_IDENT
+identificador: 		TK_IDENT	{}
 ;
 
 %%

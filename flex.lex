@@ -1,7 +1,8 @@
 %{
-    #include <iostream>
-    using namespace std;
+    #include <stdio.h>
+    #include <string.h>
 
+    #include "util.h"
     #include "bison.tab.h"
 
     int numOfLines = 1;
@@ -19,11 +20,10 @@ SPACE [\t ]+
 
 %%
 
-{COMENTARIO_BLOCO} { cout << "comentario bloco\n";}
-{COMENTARIO_LINHA} { cout << "comentario linha\n";}
+{COMENTARIO_BLOCO} { }
+{COMENTARIO_LINHA} { }
 
 {NEWLINE} {
-    cout << numOfLines + "\n";
     numOfLines++;
 }
 
@@ -67,16 +67,16 @@ SPACE [\t ]+
 ":="        return TK_ATRIBUICAO;
 
 {ID} {
-    yylval.str = std::string(yytext); 
-    return TK_ID;
+    yylval.str = string(yytext); 
+    return TK_IDENT;
 }
 
 {NUM} {
-    yylval.num = std::stoi(yytext);
+    yylval.num = atoi(yytext);
     return TK_NUM;
 }
 
 .     {
-    cout << std::string("Error: Token '") + yytext + std::string("' unkwown.\n");
+    printf("Error: Token ' %s ' unkwown.\n", yytext);
 }
 %%
