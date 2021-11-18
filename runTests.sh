@@ -3,35 +3,67 @@
 FILE=rascal
 
 if test -f "$FILE"; then
-    ./rascal tests/cmdAtrib.ras
+    printf "\n"
 
-    ./rascal tests/cmdif.ras
+    ./rascal tests/cmdAtrib.ras     # foi
 
-    ./rascal tests/cmdWhile.ras
+    printf "\n"
 
-    ./rascal tests/cmdWhileIf.ras
+    ./rascal tests/cmdIf.ras        # foi
 
-    ./rascal tests/funRec0.ras
+    printf "\n"
 
-    ./rascal tests/funRecRef.ras
+    ./rascal tests/cmdWhile.ras     # foi
 
-    ./rascal tests/funSimples0.ras
+    printf "\n"
 
-    ./rascal tests/funSimples1.ras
+    ./rascal tests/cmdWhileIf.ras   # foi
 
-    ./rascal tests/funSimples2.ras
+    printf "\n"
 
-    ./rascal tests/procRec0.ras
+    ./rascal tests/funRec0.ras      # nao foi
 
-    ./rascal tests/procRec1.ras
+    printf "\n"
 
-    ./rascal tests/procRec2.ras
+    ./rascal tests/funRecRef.ras    # foi
 
-    ./rascal tests/procSimples.ras
+    printf "\n"
 
-    ./rascal tests/progDecVars.ras
+    ./rascal tests/funSimples0.ras  # nao foi
 
-    ./rascal tests/progSimples.ras
+    printf "\n"
+
+    ./rascal tests/funSimples1.ras  # foi
+
+    printf "\n"
+
+    ./rascal tests/funSimples2.ras  # nao foi
+
+    printf "\n"
+
+    ./rascal tests/procRec0.ras     # nao foi
+
+    printf "\n"
+
+    ./rascal tests/procRec1.ras     # nao foi
+
+    printf "\n"
+
+    ./rascal tests/procRec2.ras     # foi
+
+    printf "\n"
+
+    ./rascal tests/procSimples.ras  # nao foi
+
+    printf "\n"
+
+    ./rascal tests/progDecVars.ras  # nao foi
+
+    printf "\n"
+
+    ./rascal tests/progSimples.ras  # foi
+
+    printf "\n"
 else
-    echo "$FILE não existe, execute make para gerar o compilador!"
+    echo -e "$FILE não existe, execute make para gerar o compilador!"
 fi

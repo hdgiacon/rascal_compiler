@@ -1,3 +1,11 @@
+Regras inúteis no analisador por causa de conflitos
+
+   75 chamada_funcao_op: %empty
+
+
+Estado 71 conflitos: 18 de redução/redução
+
+
 Gramática
 
     0 $accept: programa $end
@@ -9,8 +17,8 @@ Gramática
     3 secao_declaracao_variaveis: TK_VAR lista_declaracao_variaveis
     4                           | %empty
 
-    5 lista_declaracao_variaveis: declaracao_variaveis lista_declaracao_variaveis
-    6                           | declaracao_variaveis
+    5 lista_declaracao_variaveis: declaracao_variaveis TK_PONTVIRG lista_declaracao_variaveis
+    6                           | declaracao_variaveis TK_PONTVIRG
 
     7 declaracao_variaveis: lista_identificadores TK_DOISPONTOS tipo
 
@@ -19,96 +27,102 @@ Gramática
 
    10 tipo: identificador
 
-   11 secao_declaracao_subrotinas: secao_declaracao_subrotinas_op TK_PONTVIRG secao_declaracao_subrotinas
-   12                            | secao_declaracao_subrotinas_op TK_PONTVIRG
+   11 secao_declaracao_subrotinas: lista_declaracao_subrotinas
+   12                            | %empty
 
-   13 secao_declaracao_subrotinas_op: declaracao_procedimento
-   14                               | declaracao_funcao
+   13 lista_declaracao_subrotinas: secao_declaracao_subrotinas_op TK_PONTVIRG lista_declaracao_subrotinas
+   14                            | secao_declaracao_subrotinas_op TK_PONTVIRG
 
-   15 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
+   15 secao_declaracao_subrotinas_op: declaracao_procedimento
+   16                               | declaracao_funcao
 
-   16 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
+   17 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
 
-   17 bloco_subrotinas: secao_declaracao_variaveis comando_composto
+   18 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
 
-   18 parametros_formais: parametros_formais declaracao_parametros
-   19                   | declaracao_parametros TK_PONTVIRG
+   19 bloco_subrotinas: secao_declaracao_variaveis comando_composto
 
-   20 declaracao_parametros: TK_VAR declaracao_parametros_op
-   21                      | declaracao_parametros_op
+   20 parametros_formais: parametros_formais declaracao_parametros
+   21                   | declaracao_parametros TK_PONTVIRG
 
-   22 declaracao_parametros_op: lista_identificadores TK_DOISPONTOS tipo
+   22 declaracao_parametros: TK_VAR declaracao_parametros_op
+   23                      | declaracao_parametros_op
 
-   23 comando_composto: TK_BEGIN comando_rec TK_END
+   24 declaracao_parametros_op: lista_identificadores TK_DOISPONTOS tipo
 
-   24 comando_rec: comando TK_PONTVIRG comando_rec
-   25            | comando TK_PONTVIRG
+   25 comando_composto: TK_BEGIN comando_rec TK_END
 
-   26 comando: atribuicao
-   27        | chamada_procedimento
-   28        | condicional
-   29        | repeticao
-   30        | leitura
-   31        | escrita
-   32        | comando_composto
+   26 comando_rec: comando TK_PONTVIRG comando_rec
+   27            | comando TK_PONTVIRG
 
-   33 atribuicao: TK_IDENT TK_ATRIBUICAO expressao
+   28 comando: atribuicao
+   29        | chamada_procedimento
+   30        | condicional
+   31        | repeticao
+   32        | leitura
+   33        | escrita
+   34        | comando_composto
 
-   34 chamada_procedimento: identificador TK_LPAREN lista_expressoes TK_RPAREN
-   35                     | identificador TK_LPAREN TK_RPAREN
+   35 atribuicao: TK_IDENT TK_ATRIBUICAO expressao
 
-   36 condicional: TK_IF expressao TK_THEN comando TK_ELSE comando
-   37            | TK_IF expressao TK_THEN comando
+   36 chamada_procedimento: identificador TK_LPAREN lista_expressoes TK_RPAREN
+   37                     | identificador TK_LPAREN TK_RPAREN
 
-   38 repeticao: TK_WHILE expressao TK_DO comando
+   38 condicional: TK_IF expressao TK_THEN comando TK_ELSE comando
+   39            | TK_IF expressao TK_THEN comando
 
-   39 leitura: TK_READ TK_LPAREN lista_identificadores TK_RPAREN
+   40 repeticao: TK_WHILE expressao TK_DO comando
 
-   40 escrita: TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
+   41 leitura: TK_READ TK_LPAREN lista_identificadores TK_RPAREN
 
-   41 lista_expressoes: lista_expressoes TK_VIRGULA expressao
-   42                 | expressao
+   42 escrita: TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
 
-   43 expressao: expressao_simples
-   44          | expressao_simples relacao expressao_simples
+   43 lista_expressoes: lista_expressoes TK_VIRGULA expressao
+   44                 | expressao
 
-   45 relacao: TK_IGUAL
-   46        | TK_DIFERENTE
-   47        | TK_MENOR
-   48        | TK_MENORIGUAL
-   49        | TK_MAIOR
-   50        | TK_MAIORIGUAL
+   45 expressao: expressao_simples
+   46          | expressao_simples relacao expressao_simples
 
-   51 expressao_simples: expressao_simples or_op termo
-   52                  | termo
+   47 relacao: TK_IGUAL
+   48        | TK_DIFERENTE
+   49        | TK_MENOR
+   50        | TK_MENORIGUAL
+   51        | TK_MAIOR
+   52        | TK_MAIORIGUAL
 
-   53 or_op: TK_MAIS
-   54      | TK_MENOS
-   55      | TK_OR
+   53 expressao_simples: expressao_simples or_op termo
+   54                  | termo
 
-   56 termo: fator and_op termo
-   57      | fator
+   55 or_op: TK_MAIS
+   56      | TK_MENOS
+   57      | TK_OR
 
-   58 and_op: TK_MULT
-   59       | TK_DIV
-   60       | TK_AND
+   58 termo: fator and_op termo
+   59      | fator
 
-   61 fator: variavel
-   62      | TK_NUM
-   63      | logico
-   64      | chamada_funcao
-   65      | TK_LPAREN expressao TK_RPAREN
-   66      | TK_NOT fator
-   67      | TK_MENOS fator
+   60 and_op: TK_MULT
+   61       | TK_DIV
+   62       | TK_AND
 
-   68 variavel: identificador
+   63 fator: variavel
+   64      | TK_NUM
+   65      | logico
+   66      | chamada_funcao
+   67      | TK_LPAREN expressao TK_RPAREN
+   68      | TK_NOT fator
+   69      | TK_MENOS fator
 
-   69 logico: TK_FALSE
-   70       | TK_TRUE
+   70 variavel: identificador
 
-   71 chamada_funcao: identificador TK_LPAREN lista_expressoes TK_RPAREN
+   71 logico: TK_FALSE
+   72       | TK_TRUE
 
-   72 identificador: TK_IDENT
+   73 chamada_funcao: identificador chamada_funcao_op
+
+   74 chamada_funcao_op: TK_LPAREN lista_expressoes TK_RPAREN
+   75                  | %empty
+
+   76 identificador: TK_IDENT
 
 
 Terminais, com as regras onde eles aparecem
@@ -116,42 +130,42 @@ Terminais, com as regras onde eles aparecem
     $end (0) 0
     error (256)
     TK_PROGRAM (258) 1
-    TK_VAR (259) 3 20
-    TK_PROCEDURE (260) 15
-    TK_FUNCTION (261) 16
-    TK_BEGIN (262) 23
-    TK_END (263) 23
-    TK_FALSE (264) 69
-    TK_TRUE (265) 70
-    TK_IF (266) 36 37
-    TK_THEN (267) 36 37
-    TK_ELSE (268) 36
-    TK_WHILE (269) 38
-    TK_DO (270) 38
-    TK_READ (271) 39
-    TK_WRITE (272) 40
-    TK_AND (273) 60
-    TK_OR (274) 55
-    TK_NOT (275) 66
-    TK_DIV (276) 59
-    TK_LPAREN (277) 15 16 34 35 39 40 65 71
-    TK_RPAREN (278) 15 16 34 35 39 40 65 71
-    TK_ATRIBUICAO (279) 33
-    TK_MAIS (280) 53
-    TK_MENOS (281) 54 67
-    TK_MULT (282) 58
-    TK_IGUAL (283) 45
-    TK_DIFERENTE (284) 46
-    TK_MAIOR (285) 49
-    TK_MENOR (286) 47
-    TK_MAIORIGUAL (287) 50
-    TK_MENORIGUAL (288) 48
-    TK_VIRGULA (289) 9 41
-    TK_PONTVIRG (290) 1 11 12 15 16 19 24 25
-    TK_DOISPONTOS (291) 7 16 22
+    TK_VAR (259) 3 22
+    TK_PROCEDURE (260) 17
+    TK_FUNCTION (261) 18
+    TK_BEGIN (262) 25
+    TK_END (263) 25
+    TK_FALSE (264) 71
+    TK_TRUE (265) 72
+    TK_IF (266) 38 39
+    TK_THEN (267) 38 39
+    TK_ELSE (268) 38
+    TK_WHILE (269) 40
+    TK_DO (270) 40
+    TK_READ (271) 41
+    TK_WRITE (272) 42
+    TK_AND (273) 62
+    TK_OR (274) 57
+    TK_NOT (275) 68
+    TK_DIV (276) 61
+    TK_LPAREN (277) 17 18 36 37 41 42 67 74
+    TK_RPAREN (278) 17 18 36 37 41 42 67 74
+    TK_ATRIBUICAO (279) 35
+    TK_MAIS (280) 55
+    TK_MENOS (281) 56 69
+    TK_MULT (282) 60
+    TK_IGUAL (283) 47
+    TK_DIFERENTE (284) 48
+    TK_MAIOR (285) 51
+    TK_MENOR (286) 49
+    TK_MAIORIGUAL (287) 52
+    TK_MENORIGUAL (288) 50
+    TK_VIRGULA (289) 9 43
+    TK_PONTVIRG (290) 1 5 6 13 14 17 18 21 26 27
+    TK_DOISPONTOS (291) 7 18 24
     TK_PONTO (292) 1
-    TK_NUM <num> (293) 62
-    TK_IDENT <str> (294) 1 33 72
+    TK_NUM <num> (293) 64
+    TK_IDENT <str> (294) 1 35 76
 
 
 Não terminais com as regras onde eles aparecem
@@ -166,7 +180,7 @@ Não terminais com as regras onde eles aparecem
         à direita: 1
     secao_declaracao_variaveis <secDecVar> (43)
         à esquerda: 3 4
-        à direita: 2 17
+        à direita: 2 19
     lista_declaracao_variaveis <secDecVar> (44)
         à esquerda: 5 6
         à direita: 3 5
@@ -175,97 +189,103 @@ Não terminais com as regras onde eles aparecem
         à direita: 5 6
     lista_identificadores <listaId> (46)
         à esquerda: 8 9
-        à direita: 7 9 22 39
+        à direita: 7 9 24 41
     tipo <str> (47)
         à esquerda: 10
-        à direita: 7 16 22
+        à direita: 7 18 24
     secao_declaracao_subrotinas <secDecSub> (48)
         à esquerda: 11 12
-        à direita: 2 11
-    secao_declaracao_subrotinas_op <secDecSub> (49)
+        à direita: 2
+    lista_declaracao_subrotinas <secDecSub> (49)
         à esquerda: 13 14
-        à direita: 11 12
-    declaracao_procedimento <decProc> (50)
-        à esquerda: 15
-        à direita: 13
-    declaracao_funcao <decProc> (51)
-        à esquerda: 16
-        à direita: 14
-    bloco_subrotinas <bloco_sub> (52)
+        à direita: 11 13
+    secao_declaracao_subrotinas_op <decProc> (50)
+        à esquerda: 15 16
+        à direita: 13 14
+    declaracao_procedimento <decProc> (51)
         à esquerda: 17
-        à direita: 15 16
-    parametros_formais <decParamList> (53)
-        à esquerda: 18 19
-        à direita: 15 16 18
-    declaracao_parametros <decParam> (54)
+        à direita: 15
+    declaracao_funcao <decProc> (52)
+        à esquerda: 18
+        à direita: 16
+    bloco_subrotinas <bloco_sub> (53)
+        à esquerda: 19
+        à direita: 17 18
+    parametros_formais <decParamList> (54)
         à esquerda: 20 21
-        à direita: 18 19
-    declaracao_parametros_op <decParam> (55)
-        à esquerda: 22
+        à direita: 17 18 20
+    declaracao_parametros <decParam> (55)
+        à esquerda: 22 23
         à direita: 20 21
-    comando_composto <cmdComp> (56)
-        à esquerda: 23
-        à direita: 2 17 32
-    comando_rec <cmdComp> (57)
-        à esquerda: 24 25
-        à direita: 23 24
-    comando <cmd> (58)
-        à esquerda: 26 27 28 29 30 31 32
-        à direita: 24 25 36 37 38
-    atribuicao <atrib> (59)
-        à esquerda: 33
-        à direita: 26
-    chamada_procedimento <chamProc> (60)
-        à esquerda: 34 35
-        à direita: 27
-    condicional <cond> (61)
-        à esquerda: 36 37
+    declaracao_parametros_op <decParam> (56)
+        à esquerda: 24
+        à direita: 22 23
+    comando_composto <cmd> (57)
+        à esquerda: 25
+        à direita: 2 19 34
+    comando_rec <cmd> (58)
+        à esquerda: 26 27
+        à direita: 25 26
+    comando <cmd> (59)
+        à esquerda: 28 29 30 31 32 33 34
+        à direita: 26 27 38 39 40
+    atribuicao <cmd> (60)
+        à esquerda: 35
         à direita: 28
-    repeticao <loop> (62)
-        à esquerda: 38
+    chamada_procedimento <cmd> (61)
+        à esquerda: 36 37
         à direita: 29
-    leitura <IO> (63)
-        à esquerda: 39
+    condicional <cmd> (62)
+        à esquerda: 38 39
         à direita: 30
-    escrita <IO> (64)
+    repeticao <cmd> (63)
         à esquerda: 40
         à direita: 31
-    lista_expressoes <listExp> (65)
-        à esquerda: 41 42
-        à direita: 34 40 41 71
-    expressao <exp> (66)
+    leitura <cmd> (64)
+        à esquerda: 41
+        à direita: 32
+    escrita <cmd> (65)
+        à esquerda: 42
+        à direita: 33
+    lista_expressoes <listExp> (66)
         à esquerda: 43 44
-        à direita: 33 36 37 38 41 42 65
-    relacao <num> (67)
-        à esquerda: 45 46 47 48 49 50
-        à direita: 44
-    expressao_simples <exp> (68)
-        à esquerda: 51 52
-        à direita: 43 44 51
-    or_op <num> (69)
-        à esquerda: 53 54 55
-        à direita: 51
-    termo <exp> (70)
-        à esquerda: 56 57
-        à direita: 51 52 56
-    and_op <num> (71)
-        à esquerda: 58 59 60
-        à direita: 56
-    fator <exp> (72)
-        à esquerda: 61 62 63 64 65 66 67
-        à direita: 56 57 66 67
-    variavel <var> (73)
-        à esquerda: 68
-        à direita: 61
-    logico <num> (74)
-        à esquerda: 69 70
+        à direita: 36 42 43 74
+    expressao <exp> (67)
+        à esquerda: 45 46
+        à direita: 35 38 39 40 43 44 67
+    relacao <num> (68)
+        à esquerda: 47 48 49 50 51 52
+        à direita: 46
+    expressao_simples <exp> (69)
+        à esquerda: 53 54
+        à direita: 45 46 53
+    or_op <num> (70)
+        à esquerda: 55 56 57
+        à direita: 53
+    termo <exp> (71)
+        à esquerda: 58 59
+        à direita: 53 54 58
+    and_op <num> (72)
+        à esquerda: 60 61 62
+        à direita: 58
+    fator <exp> (73)
+        à esquerda: 63 64 65 66 67 68 69
+        à direita: 58 59 68 69
+    variavel <var> (74)
+        à esquerda: 70
         à direita: 63
-    chamada_funcao <chamFunc> (75)
-        à esquerda: 71
-        à direita: 64
-    identificador <str> (76)
-        à esquerda: 72
-        à direita: 8 9 10 15 16 34 35 68 71
+    logico <num> (75)
+        à esquerda: 71 72
+        à direita: 65
+    chamada_funcao <chamFunc> (76)
+        à esquerda: 73
+        à direita: 66
+    chamada_funcao_op <chamFunc> (77)
+        à esquerda: 74 75
+        à direita: 73
+    identificador <str> (78)
+        à esquerda: 76
+        à direita: 8 9 10 17 18 36 37 70 73
 
 
 Estado 0
@@ -311,7 +331,7 @@ Estado 5
     1 programa: TK_PROGRAM TK_IDENT TK_PONTVIRG . bloco TK_PONTO
     2 bloco: . secao_declaracao_variaveis secao_declaracao_subrotinas comando_composto
     3 secao_declaracao_variaveis: . TK_VAR lista_declaracao_variaveis
-    4                           | . %empty  [TK_PROCEDURE, TK_FUNCTION]
+    4                           | . %empty  [TK_PROCEDURE, TK_FUNCTION, TK_BEGIN]
 
     TK_VAR  deslocar, e ir ao estado 6
 
@@ -324,12 +344,12 @@ Estado 5
 Estado 6
 
     3 secao_declaracao_variaveis: TK_VAR . lista_declaracao_variaveis
-    5 lista_declaracao_variaveis: . declaracao_variaveis lista_declaracao_variaveis
-    6                           | . declaracao_variaveis
+    5 lista_declaracao_variaveis: . declaracao_variaveis TK_PONTVIRG lista_declaracao_variaveis
+    6                           | . declaracao_variaveis TK_PONTVIRG
     7 declaracao_variaveis: . lista_identificadores TK_DOISPONTOS tipo
     8 lista_identificadores: . identificador
     9                      | . identificador TK_VIRGULA lista_identificadores
-   72 identificador: . TK_IDENT
+   76 identificador: . TK_IDENT
 
     TK_IDENT  deslocar, e ir ao estado 9
 
@@ -349,27 +369,32 @@ Estado 7
 Estado 8
 
     2 bloco: secao_declaracao_variaveis . secao_declaracao_subrotinas comando_composto
-   11 secao_declaracao_subrotinas: . secao_declaracao_subrotinas_op TK_PONTVIRG secao_declaracao_subrotinas
-   12                            | . secao_declaracao_subrotinas_op TK_PONTVIRG
-   13 secao_declaracao_subrotinas_op: . declaracao_procedimento
-   14                               | . declaracao_funcao
-   15 declaracao_procedimento: . TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
-   16 declaracao_funcao: . TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
+   11 secao_declaracao_subrotinas: . lista_declaracao_subrotinas
+   12                            | . %empty  [TK_BEGIN]
+   13 lista_declaracao_subrotinas: . secao_declaracao_subrotinas_op TK_PONTVIRG lista_declaracao_subrotinas
+   14                            | . secao_declaracao_subrotinas_op TK_PONTVIRG
+   15 secao_declaracao_subrotinas_op: . declaracao_procedimento
+   16                               | . declaracao_funcao
+   17 declaracao_procedimento: . TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
+   18 declaracao_funcao: . TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
 
     TK_PROCEDURE  deslocar, e ir ao estado 15
     TK_FUNCTION   deslocar, e ir ao estado 16
 
+    $padrão  reduzir usando a regra 12 (secao_declaracao_subrotinas)
+
     secao_declaracao_subrotinas     ir ao estado 17
-    secao_declaracao_subrotinas_op  ir ao estado 18
-    declaracao_procedimento         ir ao estado 19
-    declaracao_funcao               ir ao estado 20
+    lista_declaracao_subrotinas     ir ao estado 18
+    secao_declaracao_subrotinas_op  ir ao estado 19
+    declaracao_procedimento         ir ao estado 20
+    declaracao_funcao               ir ao estado 21
 
 
 Estado 9
 
-   72 identificador: TK_IDENT .
+   76 identificador: TK_IDENT .
 
-    $padrão  reduzir usando a regra 72 (identificador)
+    $padrão  reduzir usando a regra 76 (identificador)
 
 
 Estado 10
@@ -381,30 +406,17 @@ Estado 10
 
 Estado 11
 
-    5 lista_declaracao_variaveis: . declaracao_variaveis lista_declaracao_variaveis
-    5                           | declaracao_variaveis . lista_declaracao_variaveis
-    6                           | . declaracao_variaveis
-    6                           | declaracao_variaveis .  [TK_PROCEDURE, TK_FUNCTION, TK_BEGIN]
-    7 declaracao_variaveis: . lista_identificadores TK_DOISPONTOS tipo
-    8 lista_identificadores: . identificador
-    9                      | . identificador TK_VIRGULA lista_identificadores
-   72 identificador: . TK_IDENT
+    5 lista_declaracao_variaveis: declaracao_variaveis . TK_PONTVIRG lista_declaracao_variaveis
+    6                           | declaracao_variaveis . TK_PONTVIRG
 
-    TK_IDENT  deslocar, e ir ao estado 9
-
-    $padrão  reduzir usando a regra 6 (lista_declaracao_variaveis)
-
-    lista_declaracao_variaveis  ir ao estado 21
-    declaracao_variaveis        ir ao estado 11
-    lista_identificadores       ir ao estado 12
-    identificador               ir ao estado 13
+    TK_PONTVIRG  deslocar, e ir ao estado 22
 
 
 Estado 12
 
     7 declaracao_variaveis: lista_identificadores . TK_DOISPONTOS tipo
 
-    TK_DOISPONTOS  deslocar, e ir ao estado 22
+    TK_DOISPONTOS  deslocar, e ir ao estado 23
 
 
 Estado 13
@@ -412,7 +424,7 @@ Estado 13
     8 lista_identificadores: identificador .  [TK_RPAREN, TK_DOISPONTOS]
     9                      | identificador . TK_VIRGULA lista_identificadores
 
-    TK_VIRGULA  deslocar, e ir ao estado 23
+    TK_VIRGULA  deslocar, e ir ao estado 24
 
     $padrão  reduzir usando a regra 8 (lista_identificadores)
 
@@ -426,1618 +438,1693 @@ Estado 14
 
 Estado 15
 
-   15 declaracao_procedimento: TK_PROCEDURE . identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
-   72 identificador: . TK_IDENT
-
-    TK_IDENT  deslocar, e ir ao estado 9
-
-    identificador  ir ao estado 24
-
-
-Estado 16
-
-   16 declaracao_funcao: TK_FUNCTION . identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
-   72 identificador: . TK_IDENT
+   17 declaracao_procedimento: TK_PROCEDURE . identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
+   76 identificador: . TK_IDENT
 
     TK_IDENT  deslocar, e ir ao estado 9
 
     identificador  ir ao estado 25
 
 
+Estado 16
+
+   18 declaracao_funcao: TK_FUNCTION . identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
+   76 identificador: . TK_IDENT
+
+    TK_IDENT  deslocar, e ir ao estado 9
+
+    identificador  ir ao estado 26
+
+
 Estado 17
 
     2 bloco: secao_declaracao_variaveis secao_declaracao_subrotinas . comando_composto
-   23 comando_composto: . TK_BEGIN comando_rec TK_END
+   25 comando_composto: . TK_BEGIN comando_rec TK_END
 
-    TK_BEGIN  deslocar, e ir ao estado 26
+    TK_BEGIN  deslocar, e ir ao estado 27
 
-    comando_composto  ir ao estado 27
+    comando_composto  ir ao estado 28
 
 
 Estado 18
 
-   11 secao_declaracao_subrotinas: secao_declaracao_subrotinas_op . TK_PONTVIRG secao_declaracao_subrotinas
-   12                            | secao_declaracao_subrotinas_op . TK_PONTVIRG
+   11 secao_declaracao_subrotinas: lista_declaracao_subrotinas .
 
-    TK_PONTVIRG  deslocar, e ir ao estado 28
+    $padrão  reduzir usando a regra 11 (secao_declaracao_subrotinas)
 
 
 Estado 19
 
-   13 secao_declaracao_subrotinas_op: declaracao_procedimento .
+   13 lista_declaracao_subrotinas: secao_declaracao_subrotinas_op . TK_PONTVIRG lista_declaracao_subrotinas
+   14                            | secao_declaracao_subrotinas_op . TK_PONTVIRG
 
-    $padrão  reduzir usando a regra 13 (secao_declaracao_subrotinas_op)
+    TK_PONTVIRG  deslocar, e ir ao estado 29
 
 
 Estado 20
 
-   14 secao_declaracao_subrotinas_op: declaracao_funcao .
+   15 secao_declaracao_subrotinas_op: declaracao_procedimento .
 
-    $padrão  reduzir usando a regra 14 (secao_declaracao_subrotinas_op)
+    $padrão  reduzir usando a regra 15 (secao_declaracao_subrotinas_op)
 
 
 Estado 21
 
-    5 lista_declaracao_variaveis: declaracao_variaveis lista_declaracao_variaveis .
+   16 secao_declaracao_subrotinas_op: declaracao_funcao .
 
-    $padrão  reduzir usando a regra 5 (lista_declaracao_variaveis)
+    $padrão  reduzir usando a regra 16 (secao_declaracao_subrotinas_op)
 
 
 Estado 22
 
-    7 declaracao_variaveis: lista_identificadores TK_DOISPONTOS . tipo
-   10 tipo: . identificador
-   72 identificador: . TK_IDENT
+    5 lista_declaracao_variaveis: . declaracao_variaveis TK_PONTVIRG lista_declaracao_variaveis
+    5                           | declaracao_variaveis TK_PONTVIRG . lista_declaracao_variaveis
+    6                           | . declaracao_variaveis TK_PONTVIRG
+    6                           | declaracao_variaveis TK_PONTVIRG .  [TK_PROCEDURE, TK_FUNCTION, TK_BEGIN]
+    7 declaracao_variaveis: . lista_identificadores TK_DOISPONTOS tipo
+    8 lista_identificadores: . identificador
+    9                      | . identificador TK_VIRGULA lista_identificadores
+   76 identificador: . TK_IDENT
 
     TK_IDENT  deslocar, e ir ao estado 9
 
-    tipo           ir ao estado 29
-    identificador  ir ao estado 30
+    $padrão  reduzir usando a regra 6 (lista_declaracao_variaveis)
+
+    lista_declaracao_variaveis  ir ao estado 30
+    declaracao_variaveis        ir ao estado 11
+    lista_identificadores       ir ao estado 12
+    identificador               ir ao estado 13
 
 
 Estado 23
 
-    8 lista_identificadores: . identificador
-    9                      | . identificador TK_VIRGULA lista_identificadores
-    9                      | identificador TK_VIRGULA . lista_identificadores
-   72 identificador: . TK_IDENT
+    7 declaracao_variaveis: lista_identificadores TK_DOISPONTOS . tipo
+   10 tipo: . identificador
+   76 identificador: . TK_IDENT
 
     TK_IDENT  deslocar, e ir ao estado 9
 
-    lista_identificadores  ir ao estado 31
-    identificador          ir ao estado 13
+    tipo           ir ao estado 31
+    identificador  ir ao estado 32
 
 
 Estado 24
 
-   15 declaracao_procedimento: TK_PROCEDURE identificador . TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
+    8 lista_identificadores: . identificador
+    9                      | . identificador TK_VIRGULA lista_identificadores
+    9                      | identificador TK_VIRGULA . lista_identificadores
+   76 identificador: . TK_IDENT
 
-    TK_LPAREN  deslocar, e ir ao estado 32
+    TK_IDENT  deslocar, e ir ao estado 9
+
+    lista_identificadores  ir ao estado 33
+    identificador          ir ao estado 13
 
 
 Estado 25
 
-   16 declaracao_funcao: TK_FUNCTION identificador . TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
+   17 declaracao_procedimento: TK_PROCEDURE identificador . TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
 
-    TK_LPAREN  deslocar, e ir ao estado 33
+    TK_LPAREN  deslocar, e ir ao estado 34
 
 
 Estado 26
 
-   23 comando_composto: . TK_BEGIN comando_rec TK_END
-   23                 | TK_BEGIN . comando_rec TK_END
-   24 comando_rec: . comando TK_PONTVIRG comando_rec
-   25            | . comando TK_PONTVIRG
-   26 comando: . atribuicao
-   27        | . chamada_procedimento
-   28        | . condicional
-   29        | . repeticao
-   30        | . leitura
-   31        | . escrita
-   32        | . comando_composto
-   33 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
-   34 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   35                     | . identificador TK_LPAREN TK_RPAREN
-   36 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
-   37            | . TK_IF expressao TK_THEN comando
-   38 repeticao: . TK_WHILE expressao TK_DO comando
-   39 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
-   40 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
+   18 declaracao_funcao: TK_FUNCTION identificador . TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
 
-    TK_BEGIN  deslocar, e ir ao estado 26
-    TK_IF     deslocar, e ir ao estado 34
-    TK_WHILE  deslocar, e ir ao estado 35
-    TK_READ   deslocar, e ir ao estado 36
-    TK_WRITE  deslocar, e ir ao estado 37
-    TK_IDENT  deslocar, e ir ao estado 38
-
-    comando_composto      ir ao estado 39
-    comando_rec           ir ao estado 40
-    comando               ir ao estado 41
-    atribuicao            ir ao estado 42
-    chamada_procedimento  ir ao estado 43
-    condicional           ir ao estado 44
-    repeticao             ir ao estado 45
-    leitura               ir ao estado 46
-    escrita               ir ao estado 47
-    identificador         ir ao estado 48
+    TK_LPAREN  deslocar, e ir ao estado 35
 
 
 Estado 27
+
+   25 comando_composto: . TK_BEGIN comando_rec TK_END
+   25                 | TK_BEGIN . comando_rec TK_END
+   26 comando_rec: . comando TK_PONTVIRG comando_rec
+   27            | . comando TK_PONTVIRG
+   28 comando: . atribuicao
+   29        | . chamada_procedimento
+   30        | . condicional
+   31        | . repeticao
+   32        | . leitura
+   33        | . escrita
+   34        | . comando_composto
+   35 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
+   36 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
+   37                     | . identificador TK_LPAREN TK_RPAREN
+   38 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
+   39            | . TK_IF expressao TK_THEN comando
+   40 repeticao: . TK_WHILE expressao TK_DO comando
+   41 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
+   42 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
+   76 identificador: . TK_IDENT
+
+    TK_BEGIN  deslocar, e ir ao estado 27
+    TK_IF     deslocar, e ir ao estado 36
+    TK_WHILE  deslocar, e ir ao estado 37
+    TK_READ   deslocar, e ir ao estado 38
+    TK_WRITE  deslocar, e ir ao estado 39
+    TK_IDENT  deslocar, e ir ao estado 40
+
+    comando_composto      ir ao estado 41
+    comando_rec           ir ao estado 42
+    comando               ir ao estado 43
+    atribuicao            ir ao estado 44
+    chamada_procedimento  ir ao estado 45
+    condicional           ir ao estado 46
+    repeticao             ir ao estado 47
+    leitura               ir ao estado 48
+    escrita               ir ao estado 49
+    identificador         ir ao estado 50
+
+
+Estado 28
 
     2 bloco: secao_declaracao_variaveis secao_declaracao_subrotinas comando_composto .
 
     $padrão  reduzir usando a regra 2 (bloco)
 
 
-Estado 28
+Estado 29
 
-   11 secao_declaracao_subrotinas: . secao_declaracao_subrotinas_op TK_PONTVIRG secao_declaracao_subrotinas
-   11                            | secao_declaracao_subrotinas_op TK_PONTVIRG . secao_declaracao_subrotinas
-   12                            | . secao_declaracao_subrotinas_op TK_PONTVIRG
-   12                            | secao_declaracao_subrotinas_op TK_PONTVIRG .  [TK_BEGIN]
-   13 secao_declaracao_subrotinas_op: . declaracao_procedimento
-   14                               | . declaracao_funcao
-   15 declaracao_procedimento: . TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
-   16 declaracao_funcao: . TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
+   13 lista_declaracao_subrotinas: . secao_declaracao_subrotinas_op TK_PONTVIRG lista_declaracao_subrotinas
+   13                            | secao_declaracao_subrotinas_op TK_PONTVIRG . lista_declaracao_subrotinas
+   14                            | . secao_declaracao_subrotinas_op TK_PONTVIRG
+   14                            | secao_declaracao_subrotinas_op TK_PONTVIRG .  [TK_BEGIN]
+   15 secao_declaracao_subrotinas_op: . declaracao_procedimento
+   16                               | . declaracao_funcao
+   17 declaracao_procedimento: . TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
+   18 declaracao_funcao: . TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
 
     TK_PROCEDURE  deslocar, e ir ao estado 15
     TK_FUNCTION   deslocar, e ir ao estado 16
 
-    $padrão  reduzir usando a regra 12 (secao_declaracao_subrotinas)
+    $padrão  reduzir usando a regra 14 (lista_declaracao_subrotinas)
 
-    secao_declaracao_subrotinas     ir ao estado 49
-    secao_declaracao_subrotinas_op  ir ao estado 18
-    declaracao_procedimento         ir ao estado 19
-    declaracao_funcao               ir ao estado 20
+    lista_declaracao_subrotinas     ir ao estado 51
+    secao_declaracao_subrotinas_op  ir ao estado 19
+    declaracao_procedimento         ir ao estado 20
+    declaracao_funcao               ir ao estado 21
 
 
-Estado 29
+Estado 30
+
+    5 lista_declaracao_variaveis: declaracao_variaveis TK_PONTVIRG lista_declaracao_variaveis .
+
+    $padrão  reduzir usando a regra 5 (lista_declaracao_variaveis)
+
+
+Estado 31
 
     7 declaracao_variaveis: lista_identificadores TK_DOISPONTOS tipo .
 
     $padrão  reduzir usando a regra 7 (declaracao_variaveis)
 
 
-Estado 30
+Estado 32
 
    10 tipo: identificador .
 
     $padrão  reduzir usando a regra 10 (tipo)
 
 
-Estado 31
+Estado 33
 
     9 lista_identificadores: identificador TK_VIRGULA lista_identificadores .
 
     $padrão  reduzir usando a regra 9 (lista_identificadores)
 
 
-Estado 32
-
-    8 lista_identificadores: . identificador
-    9                      | . identificador TK_VIRGULA lista_identificadores
-   15 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN . parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
-   18 parametros_formais: . parametros_formais declaracao_parametros
-   19                   | . declaracao_parametros TK_PONTVIRG
-   20 declaracao_parametros: . TK_VAR declaracao_parametros_op
-   21                      | . declaracao_parametros_op
-   22 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
-   72 identificador: . TK_IDENT
-
-    TK_VAR    deslocar, e ir ao estado 50
-    TK_IDENT  deslocar, e ir ao estado 9
-
-    lista_identificadores     ir ao estado 51
-    parametros_formais        ir ao estado 52
-    declaracao_parametros     ir ao estado 53
-    declaracao_parametros_op  ir ao estado 54
-    identificador             ir ao estado 13
-
-
-Estado 33
-
-    8 lista_identificadores: . identificador
-    9                      | . identificador TK_VIRGULA lista_identificadores
-   16 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN . parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
-   18 parametros_formais: . parametros_formais declaracao_parametros
-   19                   | . declaracao_parametros TK_PONTVIRG
-   20 declaracao_parametros: . TK_VAR declaracao_parametros_op
-   21                      | . declaracao_parametros_op
-   22 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
-   72 identificador: . TK_IDENT
-
-    TK_VAR    deslocar, e ir ao estado 50
-    TK_IDENT  deslocar, e ir ao estado 9
-
-    lista_identificadores     ir ao estado 51
-    parametros_formais        ir ao estado 55
-    declaracao_parametros     ir ao estado 53
-    declaracao_parametros_op  ir ao estado 54
-    identificador             ir ao estado 13
-
-
 Estado 34
 
-   36 condicional: TK_IF . expressao TK_THEN comando TK_ELSE comando
-   37            | TK_IF . expressao TK_THEN comando
-   43 expressao: . expressao_simples
-   44          | . expressao_simples relacao expressao_simples
-   51 expressao_simples: . expressao_simples or_op termo
-   52                  | . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
+    8 lista_identificadores: . identificador
+    9                      | . identificador TK_VIRGULA lista_identificadores
+   17 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN . parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas
+   20 parametros_formais: . parametros_formais declaracao_parametros
+   21                   | . declaracao_parametros TK_PONTVIRG
+   22 declaracao_parametros: . TK_VAR declaracao_parametros_op
+   23                      | . declaracao_parametros_op
+   24 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
+   76 identificador: . TK_IDENT
 
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
+    TK_VAR    deslocar, e ir ao estado 52
+    TK_IDENT  deslocar, e ir ao estado 9
 
-    expressao          ir ao estado 62
-    expressao_simples  ir ao estado 63
-    termo              ir ao estado 64
-    fator              ir ao estado 65
-    variavel           ir ao estado 66
-    logico             ir ao estado 67
-    chamada_funcao     ir ao estado 68
-    identificador      ir ao estado 69
+    lista_identificadores     ir ao estado 53
+    parametros_formais        ir ao estado 54
+    declaracao_parametros     ir ao estado 55
+    declaracao_parametros_op  ir ao estado 56
+    identificador             ir ao estado 13
 
 
 Estado 35
 
-   38 repeticao: TK_WHILE . expressao TK_DO comando
-   43 expressao: . expressao_simples
-   44          | . expressao_simples relacao expressao_simples
-   51 expressao_simples: . expressao_simples or_op termo
-   52                  | . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
+    8 lista_identificadores: . identificador
+    9                      | . identificador TK_VIRGULA lista_identificadores
+   18 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN . parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
+   20 parametros_formais: . parametros_formais declaracao_parametros
+   21                   | . declaracao_parametros TK_PONTVIRG
+   22 declaracao_parametros: . TK_VAR declaracao_parametros_op
+   23                      | . declaracao_parametros_op
+   24 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
+   76 identificador: . TK_IDENT
 
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
+    TK_VAR    deslocar, e ir ao estado 52
+    TK_IDENT  deslocar, e ir ao estado 9
 
-    expressao          ir ao estado 70
-    expressao_simples  ir ao estado 63
-    termo              ir ao estado 64
-    fator              ir ao estado 65
-    variavel           ir ao estado 66
-    logico             ir ao estado 67
-    chamada_funcao     ir ao estado 68
-    identificador      ir ao estado 69
+    lista_identificadores     ir ao estado 53
+    parametros_formais        ir ao estado 57
+    declaracao_parametros     ir ao estado 55
+    declaracao_parametros_op  ir ao estado 56
+    identificador             ir ao estado 13
 
 
 Estado 36
 
-   39 leitura: TK_READ . TK_LPAREN lista_identificadores TK_RPAREN
+   38 condicional: TK_IF . expressao TK_THEN comando TK_ELSE comando
+   39            | TK_IF . expressao TK_THEN comando
+   45 expressao: . expressao_simples
+   46          | . expressao_simples relacao expressao_simples
+   53 expressao_simples: . expressao_simples or_op termo
+   54                  | . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
 
-    TK_LPAREN  deslocar, e ir ao estado 71
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    expressao          ir ao estado 64
+    expressao_simples  ir ao estado 65
+    termo              ir ao estado 66
+    fator              ir ao estado 67
+    variavel           ir ao estado 68
+    logico             ir ao estado 69
+    chamada_funcao     ir ao estado 70
+    identificador      ir ao estado 71
 
 
 Estado 37
 
-   40 escrita: TK_WRITE . TK_LPAREN lista_expressoes TK_RPAREN
+   40 repeticao: TK_WHILE . expressao TK_DO comando
+   45 expressao: . expressao_simples
+   46          | . expressao_simples relacao expressao_simples
+   53 expressao_simples: . expressao_simples or_op termo
+   54                  | . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
 
-    TK_LPAREN  deslocar, e ir ao estado 72
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    expressao          ir ao estado 72
+    expressao_simples  ir ao estado 65
+    termo              ir ao estado 66
+    fator              ir ao estado 67
+    variavel           ir ao estado 68
+    logico             ir ao estado 69
+    chamada_funcao     ir ao estado 70
+    identificador      ir ao estado 71
 
 
 Estado 38
 
-   33 atribuicao: TK_IDENT . TK_ATRIBUICAO expressao
-   72 identificador: TK_IDENT .  [TK_LPAREN]
+   41 leitura: TK_READ . TK_LPAREN lista_identificadores TK_RPAREN
 
-    TK_ATRIBUICAO  deslocar, e ir ao estado 73
-
-    $padrão  reduzir usando a regra 72 (identificador)
+    TK_LPAREN  deslocar, e ir ao estado 73
 
 
 Estado 39
 
-   32 comando: comando_composto .
+   42 escrita: TK_WRITE . TK_LPAREN lista_expressoes TK_RPAREN
 
-    $padrão  reduzir usando a regra 32 (comando)
+    TK_LPAREN  deslocar, e ir ao estado 74
 
 
 Estado 40
 
-   23 comando_composto: TK_BEGIN comando_rec . TK_END
+   35 atribuicao: TK_IDENT . TK_ATRIBUICAO expressao
+   76 identificador: TK_IDENT .  [TK_LPAREN]
 
-    TK_END  deslocar, e ir ao estado 74
+    TK_ATRIBUICAO  deslocar, e ir ao estado 75
+
+    $padrão  reduzir usando a regra 76 (identificador)
 
 
 Estado 41
 
-   24 comando_rec: comando . TK_PONTVIRG comando_rec
-   25            | comando . TK_PONTVIRG
+   34 comando: comando_composto .
 
-    TK_PONTVIRG  deslocar, e ir ao estado 75
+    $padrão  reduzir usando a regra 34 (comando)
 
 
 Estado 42
 
-   26 comando: atribuicao .
+   25 comando_composto: TK_BEGIN comando_rec . TK_END
 
-    $padrão  reduzir usando a regra 26 (comando)
+    TK_END  deslocar, e ir ao estado 76
 
 
 Estado 43
 
-   27 comando: chamada_procedimento .
+   26 comando_rec: comando . TK_PONTVIRG comando_rec
+   27            | comando . TK_PONTVIRG
 
-    $padrão  reduzir usando a regra 27 (comando)
+    TK_PONTVIRG  deslocar, e ir ao estado 77
 
 
 Estado 44
 
-   28 comando: condicional .
+   28 comando: atribuicao .
 
     $padrão  reduzir usando a regra 28 (comando)
 
 
 Estado 45
 
-   29 comando: repeticao .
+   29 comando: chamada_procedimento .
 
     $padrão  reduzir usando a regra 29 (comando)
 
 
 Estado 46
 
-   30 comando: leitura .
+   30 comando: condicional .
 
     $padrão  reduzir usando a regra 30 (comando)
 
 
 Estado 47
 
-   31 comando: escrita .
+   31 comando: repeticao .
 
     $padrão  reduzir usando a regra 31 (comando)
 
 
 Estado 48
 
-   34 chamada_procedimento: identificador . TK_LPAREN lista_expressoes TK_RPAREN
-   35                     | identificador . TK_LPAREN TK_RPAREN
+   32 comando: leitura .
 
-    TK_LPAREN  deslocar, e ir ao estado 76
+    $padrão  reduzir usando a regra 32 (comando)
 
 
 Estado 49
 
-   11 secao_declaracao_subrotinas: secao_declaracao_subrotinas_op TK_PONTVIRG secao_declaracao_subrotinas .
+   33 comando: escrita .
 
-    $padrão  reduzir usando a regra 11 (secao_declaracao_subrotinas)
+    $padrão  reduzir usando a regra 33 (comando)
 
 
 Estado 50
 
-    8 lista_identificadores: . identificador
-    9                      | . identificador TK_VIRGULA lista_identificadores
-   20 declaracao_parametros: TK_VAR . declaracao_parametros_op
-   22 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
-   72 identificador: . TK_IDENT
+   36 chamada_procedimento: identificador . TK_LPAREN lista_expressoes TK_RPAREN
+   37                     | identificador . TK_LPAREN TK_RPAREN
 
-    TK_IDENT  deslocar, e ir ao estado 9
-
-    lista_identificadores     ir ao estado 51
-    declaracao_parametros_op  ir ao estado 77
-    identificador             ir ao estado 13
+    TK_LPAREN  deslocar, e ir ao estado 78
 
 
 Estado 51
 
-   22 declaracao_parametros_op: lista_identificadores . TK_DOISPONTOS tipo
+   13 lista_declaracao_subrotinas: secao_declaracao_subrotinas_op TK_PONTVIRG lista_declaracao_subrotinas .
 
-    TK_DOISPONTOS  deslocar, e ir ao estado 78
+    $padrão  reduzir usando a regra 13 (lista_declaracao_subrotinas)
 
 
 Estado 52
 
     8 lista_identificadores: . identificador
     9                      | . identificador TK_VIRGULA lista_identificadores
-   15 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais . TK_RPAREN TK_PONTVIRG bloco_subrotinas
-   18 parametros_formais: parametros_formais . declaracao_parametros
-   20 declaracao_parametros: . TK_VAR declaracao_parametros_op
-   21                      | . declaracao_parametros_op
-   22 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
-   72 identificador: . TK_IDENT
+   22 declaracao_parametros: TK_VAR . declaracao_parametros_op
+   24 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
+   76 identificador: . TK_IDENT
 
-    TK_VAR     deslocar, e ir ao estado 50
-    TK_RPAREN  deslocar, e ir ao estado 79
-    TK_IDENT   deslocar, e ir ao estado 9
+    TK_IDENT  deslocar, e ir ao estado 9
 
-    lista_identificadores     ir ao estado 51
-    declaracao_parametros     ir ao estado 80
-    declaracao_parametros_op  ir ao estado 54
+    lista_identificadores     ir ao estado 53
+    declaracao_parametros_op  ir ao estado 79
     identificador             ir ao estado 13
 
 
 Estado 53
 
-   19 parametros_formais: declaracao_parametros . TK_PONTVIRG
+   24 declaracao_parametros_op: lista_identificadores . TK_DOISPONTOS tipo
 
-    TK_PONTVIRG  deslocar, e ir ao estado 81
+    TK_DOISPONTOS  deslocar, e ir ao estado 80
 
 
 Estado 54
 
-   21 declaracao_parametros: declaracao_parametros_op .
+    8 lista_identificadores: . identificador
+    9                      | . identificador TK_VIRGULA lista_identificadores
+   17 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais . TK_RPAREN TK_PONTVIRG bloco_subrotinas
+   20 parametros_formais: parametros_formais . declaracao_parametros
+   22 declaracao_parametros: . TK_VAR declaracao_parametros_op
+   23                      | . declaracao_parametros_op
+   24 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
+   76 identificador: . TK_IDENT
 
-    $padrão  reduzir usando a regra 21 (declaracao_parametros)
+    TK_VAR     deslocar, e ir ao estado 52
+    TK_RPAREN  deslocar, e ir ao estado 81
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    lista_identificadores     ir ao estado 53
+    declaracao_parametros     ir ao estado 82
+    declaracao_parametros_op  ir ao estado 56
+    identificador             ir ao estado 13
 
 
 Estado 55
 
-    8 lista_identificadores: . identificador
-    9                      | . identificador TK_VIRGULA lista_identificadores
-   16 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais . TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
-   18 parametros_formais: parametros_formais . declaracao_parametros
-   20 declaracao_parametros: . TK_VAR declaracao_parametros_op
-   21                      | . declaracao_parametros_op
-   22 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
-   72 identificador: . TK_IDENT
+   21 parametros_formais: declaracao_parametros . TK_PONTVIRG
 
-    TK_VAR     deslocar, e ir ao estado 50
-    TK_RPAREN  deslocar, e ir ao estado 82
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    lista_identificadores     ir ao estado 51
-    declaracao_parametros     ir ao estado 80
-    declaracao_parametros_op  ir ao estado 54
-    identificador             ir ao estado 13
+    TK_PONTVIRG  deslocar, e ir ao estado 83
 
 
 Estado 56
 
-   69 logico: TK_FALSE .
+   23 declaracao_parametros: declaracao_parametros_op .
 
-    $padrão  reduzir usando a regra 69 (logico)
+    $padrão  reduzir usando a regra 23 (declaracao_parametros)
 
 
 Estado 57
 
-   70 logico: TK_TRUE .
+    8 lista_identificadores: . identificador
+    9                      | . identificador TK_VIRGULA lista_identificadores
+   18 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais . TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
+   20 parametros_formais: parametros_formais . declaracao_parametros
+   22 declaracao_parametros: . TK_VAR declaracao_parametros_op
+   23                      | . declaracao_parametros_op
+   24 declaracao_parametros_op: . lista_identificadores TK_DOISPONTOS tipo
+   76 identificador: . TK_IDENT
 
-    $padrão  reduzir usando a regra 70 (logico)
+    TK_VAR     deslocar, e ir ao estado 52
+    TK_RPAREN  deslocar, e ir ao estado 84
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    lista_identificadores     ir ao estado 53
+    declaracao_parametros     ir ao estado 82
+    declaracao_parametros_op  ir ao estado 56
+    identificador             ir ao estado 13
 
 
 Estado 58
 
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   66      | TK_NOT . fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
+   71 logico: TK_FALSE .
 
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    fator           ir ao estado 83
-    variavel        ir ao estado 66
-    logico          ir ao estado 67
-    chamada_funcao  ir ao estado 68
-    identificador   ir ao estado 69
+    $padrão  reduzir usando a regra 71 (logico)
 
 
 Estado 59
 
-   43 expressao: . expressao_simples
-   44          | . expressao_simples relacao expressao_simples
-   51 expressao_simples: . expressao_simples or_op termo
-   52                  | . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   65      | TK_LPAREN . expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
+   72 logico: TK_TRUE .
 
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    expressao          ir ao estado 84
-    expressao_simples  ir ao estado 63
-    termo              ir ao estado 64
-    fator              ir ao estado 65
-    variavel           ir ao estado 66
-    logico             ir ao estado 67
-    chamada_funcao     ir ao estado 68
-    identificador      ir ao estado 69
+    $padrão  reduzir usando a regra 72 (logico)
 
 
 Estado 60
 
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   67      | TK_MENOS . fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   68      | TK_NOT . fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
 
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
     TK_IDENT   deslocar, e ir ao estado 9
 
     fator           ir ao estado 85
-    variavel        ir ao estado 66
-    logico          ir ao estado 67
-    chamada_funcao  ir ao estado 68
-    identificador   ir ao estado 69
+    variavel        ir ao estado 68
+    logico          ir ao estado 69
+    chamada_funcao  ir ao estado 70
+    identificador   ir ao estado 71
 
 
 Estado 61
 
-   62 fator: TK_NUM .
+   45 expressao: . expressao_simples
+   46          | . expressao_simples relacao expressao_simples
+   53 expressao_simples: . expressao_simples or_op termo
+   54                  | . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   67      | TK_LPAREN . expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
 
-    $padrão  reduzir usando a regra 62 (fator)
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    expressao          ir ao estado 86
+    expressao_simples  ir ao estado 65
+    termo              ir ao estado 66
+    fator              ir ao estado 67
+    variavel           ir ao estado 68
+    logico             ir ao estado 69
+    chamada_funcao     ir ao estado 70
+    identificador      ir ao estado 71
 
 
 Estado 62
 
-   36 condicional: TK_IF expressao . TK_THEN comando TK_ELSE comando
-   37            | TK_IF expressao . TK_THEN comando
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   69      | TK_MENOS . fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
 
-    TK_THEN  deslocar, e ir ao estado 86
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    fator           ir ao estado 87
+    variavel        ir ao estado 68
+    logico          ir ao estado 69
+    chamada_funcao  ir ao estado 70
+    identificador   ir ao estado 71
 
 
 Estado 63
 
-   43 expressao: expressao_simples .  [TK_THEN, TK_ELSE, TK_DO, TK_RPAREN, TK_VIRGULA, TK_PONTVIRG]
-   44          | expressao_simples . relacao expressao_simples
-   45 relacao: . TK_IGUAL
-   46        | . TK_DIFERENTE
-   47        | . TK_MENOR
-   48        | . TK_MENORIGUAL
-   49        | . TK_MAIOR
-   50        | . TK_MAIORIGUAL
-   51 expressao_simples: expressao_simples . or_op termo
-   53 or_op: . TK_MAIS
-   54      | . TK_MENOS
-   55      | . TK_OR
-
-    TK_OR          deslocar, e ir ao estado 87
-    TK_MAIS        deslocar, e ir ao estado 88
-    TK_MENOS       deslocar, e ir ao estado 89
-    TK_IGUAL       deslocar, e ir ao estado 90
-    TK_DIFERENTE   deslocar, e ir ao estado 91
-    TK_MAIOR       deslocar, e ir ao estado 92
-    TK_MENOR       deslocar, e ir ao estado 93
-    TK_MAIORIGUAL  deslocar, e ir ao estado 94
-    TK_MENORIGUAL  deslocar, e ir ao estado 95
-
-    $padrão  reduzir usando a regra 43 (expressao)
-
-    relacao  ir ao estado 96
-    or_op    ir ao estado 97
-
-
-Estado 64
-
-   52 expressao_simples: termo .
-
-    $padrão  reduzir usando a regra 52 (expressao_simples)
-
-
-Estado 65
-
-   56 termo: fator . and_op termo
-   57      | fator .  [TK_THEN, TK_ELSE, TK_DO, TK_OR, TK_RPAREN, TK_MAIS, TK_MENOS, TK_IGUAL, TK_DIFERENTE, TK_MAIOR, TK_MENOR, TK_MAIORIGUAL, TK_MENORIGUAL, TK_VIRGULA, TK_PONTVIRG]
-   58 and_op: . TK_MULT
-   59       | . TK_DIV
-   60       | . TK_AND
-
-    TK_AND   deslocar, e ir ao estado 98
-    TK_DIV   deslocar, e ir ao estado 99
-    TK_MULT  deslocar, e ir ao estado 100
-
-    $padrão  reduzir usando a regra 57 (termo)
-
-    and_op  ir ao estado 101
-
-
-Estado 66
-
-   61 fator: variavel .
-
-    $padrão  reduzir usando a regra 61 (fator)
-
-
-Estado 67
-
-   63 fator: logico .
-
-    $padrão  reduzir usando a regra 63 (fator)
-
-
-Estado 68
-
-   64 fator: chamada_funcao .
+   64 fator: TK_NUM .
 
     $padrão  reduzir usando a regra 64 (fator)
 
 
+Estado 64
+
+   38 condicional: TK_IF expressao . TK_THEN comando TK_ELSE comando
+   39            | TK_IF expressao . TK_THEN comando
+
+    TK_THEN  deslocar, e ir ao estado 88
+
+
+Estado 65
+
+   45 expressao: expressao_simples .  [TK_THEN, TK_ELSE, TK_DO, TK_RPAREN, TK_VIRGULA, TK_PONTVIRG]
+   46          | expressao_simples . relacao expressao_simples
+   47 relacao: . TK_IGUAL
+   48        | . TK_DIFERENTE
+   49        | . TK_MENOR
+   50        | . TK_MENORIGUAL
+   51        | . TK_MAIOR
+   52        | . TK_MAIORIGUAL
+   53 expressao_simples: expressao_simples . or_op termo
+   55 or_op: . TK_MAIS
+   56      | . TK_MENOS
+   57      | . TK_OR
+
+    TK_OR          deslocar, e ir ao estado 89
+    TK_MAIS        deslocar, e ir ao estado 90
+    TK_MENOS       deslocar, e ir ao estado 91
+    TK_IGUAL       deslocar, e ir ao estado 92
+    TK_DIFERENTE   deslocar, e ir ao estado 93
+    TK_MAIOR       deslocar, e ir ao estado 94
+    TK_MENOR       deslocar, e ir ao estado 95
+    TK_MAIORIGUAL  deslocar, e ir ao estado 96
+    TK_MENORIGUAL  deslocar, e ir ao estado 97
+
+    $padrão  reduzir usando a regra 45 (expressao)
+
+    relacao  ir ao estado 98
+    or_op    ir ao estado 99
+
+
+Estado 66
+
+   54 expressao_simples: termo .
+
+    $padrão  reduzir usando a regra 54 (expressao_simples)
+
+
+Estado 67
+
+   58 termo: fator . and_op termo
+   59      | fator .  [TK_THEN, TK_ELSE, TK_DO, TK_OR, TK_RPAREN, TK_MAIS, TK_MENOS, TK_IGUAL, TK_DIFERENTE, TK_MAIOR, TK_MENOR, TK_MAIORIGUAL, TK_MENORIGUAL, TK_VIRGULA, TK_PONTVIRG]
+   60 and_op: . TK_MULT
+   61       | . TK_DIV
+   62       | . TK_AND
+
+    TK_AND   deslocar, e ir ao estado 100
+    TK_DIV   deslocar, e ir ao estado 101
+    TK_MULT  deslocar, e ir ao estado 102
+
+    $padrão  reduzir usando a regra 59 (termo)
+
+    and_op  ir ao estado 103
+
+
+Estado 68
+
+   63 fator: variavel .
+
+    $padrão  reduzir usando a regra 63 (fator)
+
+
 Estado 69
 
-   68 variavel: identificador .  [TK_THEN, TK_ELSE, TK_DO, TK_AND, TK_OR, TK_DIV, TK_RPAREN, TK_MAIS, TK_MENOS, TK_MULT, TK_IGUAL, TK_DIFERENTE, TK_MAIOR, TK_MENOR, TK_MAIORIGUAL, TK_MENORIGUAL, TK_VIRGULA, TK_PONTVIRG]
-   71 chamada_funcao: identificador . TK_LPAREN lista_expressoes TK_RPAREN
-
-    TK_LPAREN  deslocar, e ir ao estado 102
-
-    $padrão  reduzir usando a regra 68 (variavel)
-
-
-Estado 70
-
-   38 repeticao: TK_WHILE expressao . TK_DO comando
-
-    TK_DO  deslocar, e ir ao estado 103
-
-
-Estado 71
-
-    8 lista_identificadores: . identificador
-    9                      | . identificador TK_VIRGULA lista_identificadores
-   39 leitura: TK_READ TK_LPAREN . lista_identificadores TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_IDENT  deslocar, e ir ao estado 9
-
-    lista_identificadores  ir ao estado 104
-    identificador          ir ao estado 13
-
-
-Estado 72
-
-   40 escrita: TK_WRITE TK_LPAREN . lista_expressoes TK_RPAREN
-   41 lista_expressoes: . lista_expressoes TK_VIRGULA expressao
-   42                 | . expressao
-   43 expressao: . expressao_simples
-   44          | . expressao_simples relacao expressao_simples
-   51 expressao_simples: . expressao_simples or_op termo
-   52                  | . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    lista_expressoes   ir ao estado 105
-    expressao          ir ao estado 106
-    expressao_simples  ir ao estado 63
-    termo              ir ao estado 64
-    fator              ir ao estado 65
-    variavel           ir ao estado 66
-    logico             ir ao estado 67
-    chamada_funcao     ir ao estado 68
-    identificador      ir ao estado 69
-
-
-Estado 73
-
-   33 atribuicao: TK_IDENT TK_ATRIBUICAO . expressao
-   43 expressao: . expressao_simples
-   44          | . expressao_simples relacao expressao_simples
-   51 expressao_simples: . expressao_simples or_op termo
-   52                  | . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    expressao          ir ao estado 107
-    expressao_simples  ir ao estado 63
-    termo              ir ao estado 64
-    fator              ir ao estado 65
-    variavel           ir ao estado 66
-    logico             ir ao estado 67
-    chamada_funcao     ir ao estado 68
-    identificador      ir ao estado 69
-
-
-Estado 74
-
-   23 comando_composto: TK_BEGIN comando_rec TK_END .
-
-    $padrão  reduzir usando a regra 23 (comando_composto)
-
-
-Estado 75
-
-   23 comando_composto: . TK_BEGIN comando_rec TK_END
-   24 comando_rec: . comando TK_PONTVIRG comando_rec
-   24            | comando TK_PONTVIRG . comando_rec
-   25            | . comando TK_PONTVIRG
-   25            | comando TK_PONTVIRG .  [TK_END]
-   26 comando: . atribuicao
-   27        | . chamada_procedimento
-   28        | . condicional
-   29        | . repeticao
-   30        | . leitura
-   31        | . escrita
-   32        | . comando_composto
-   33 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
-   34 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   35                     | . identificador TK_LPAREN TK_RPAREN
-   36 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
-   37            | . TK_IF expressao TK_THEN comando
-   38 repeticao: . TK_WHILE expressao TK_DO comando
-   39 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
-   40 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_BEGIN  deslocar, e ir ao estado 26
-    TK_IF     deslocar, e ir ao estado 34
-    TK_WHILE  deslocar, e ir ao estado 35
-    TK_READ   deslocar, e ir ao estado 36
-    TK_WRITE  deslocar, e ir ao estado 37
-    TK_IDENT  deslocar, e ir ao estado 38
-
-    $padrão  reduzir usando a regra 25 (comando_rec)
-
-    comando_composto      ir ao estado 39
-    comando_rec           ir ao estado 108
-    comando               ir ao estado 41
-    atribuicao            ir ao estado 42
-    chamada_procedimento  ir ao estado 43
-    condicional           ir ao estado 44
-    repeticao             ir ao estado 45
-    leitura               ir ao estado 46
-    escrita               ir ao estado 47
-    identificador         ir ao estado 48
-
-
-Estado 76
-
-   34 chamada_procedimento: identificador TK_LPAREN . lista_expressoes TK_RPAREN
-   35                     | identificador TK_LPAREN . TK_RPAREN
-   41 lista_expressoes: . lista_expressoes TK_VIRGULA expressao
-   42                 | . expressao
-   43 expressao: . expressao_simples
-   44          | . expressao_simples relacao expressao_simples
-   51 expressao_simples: . expressao_simples or_op termo
-   52                  | . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_RPAREN  deslocar, e ir ao estado 109
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    lista_expressoes   ir ao estado 110
-    expressao          ir ao estado 106
-    expressao_simples  ir ao estado 63
-    termo              ir ao estado 64
-    fator              ir ao estado 65
-    variavel           ir ao estado 66
-    logico             ir ao estado 67
-    chamada_funcao     ir ao estado 68
-    identificador      ir ao estado 69
-
-
-Estado 77
-
-   20 declaracao_parametros: TK_VAR declaracao_parametros_op .
-
-    $padrão  reduzir usando a regra 20 (declaracao_parametros)
-
-
-Estado 78
-
-   10 tipo: . identificador
-   22 declaracao_parametros_op: lista_identificadores TK_DOISPONTOS . tipo
-   72 identificador: . TK_IDENT
-
-    TK_IDENT  deslocar, e ir ao estado 9
-
-    tipo           ir ao estado 111
-    identificador  ir ao estado 30
-
-
-Estado 79
-
-   15 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN . TK_PONTVIRG bloco_subrotinas
-
-    TK_PONTVIRG  deslocar, e ir ao estado 112
-
-
-Estado 80
-
-   18 parametros_formais: parametros_formais declaracao_parametros .
-
-    $padrão  reduzir usando a regra 18 (parametros_formais)
-
-
-Estado 81
-
-   19 parametros_formais: declaracao_parametros TK_PONTVIRG .
-
-    $padrão  reduzir usando a regra 19 (parametros_formais)
-
-
-Estado 82
-
-   16 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN . TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
-
-    TK_DOISPONTOS  deslocar, e ir ao estado 113
-
-
-Estado 83
-
-   66 fator: TK_NOT fator .
-
-    $padrão  reduzir usando a regra 66 (fator)
-
-
-Estado 84
-
-   65 fator: TK_LPAREN expressao . TK_RPAREN
-
-    TK_RPAREN  deslocar, e ir ao estado 114
-
-
-Estado 85
-
-   67 fator: TK_MENOS fator .
-
-    $padrão  reduzir usando a regra 67 (fator)
-
-
-Estado 86
-
-   23 comando_composto: . TK_BEGIN comando_rec TK_END
-   26 comando: . atribuicao
-   27        | . chamada_procedimento
-   28        | . condicional
-   29        | . repeticao
-   30        | . leitura
-   31        | . escrita
-   32        | . comando_composto
-   33 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
-   34 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   35                     | . identificador TK_LPAREN TK_RPAREN
-   36 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
-   36            | TK_IF expressao TK_THEN . comando TK_ELSE comando
-   37            | . TK_IF expressao TK_THEN comando
-   37            | TK_IF expressao TK_THEN . comando
-   38 repeticao: . TK_WHILE expressao TK_DO comando
-   39 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
-   40 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_BEGIN  deslocar, e ir ao estado 26
-    TK_IF     deslocar, e ir ao estado 34
-    TK_WHILE  deslocar, e ir ao estado 35
-    TK_READ   deslocar, e ir ao estado 36
-    TK_WRITE  deslocar, e ir ao estado 37
-    TK_IDENT  deslocar, e ir ao estado 38
-
-    comando_composto      ir ao estado 39
-    comando               ir ao estado 115
-    atribuicao            ir ao estado 42
-    chamada_procedimento  ir ao estado 43
-    condicional           ir ao estado 44
-    repeticao             ir ao estado 45
-    leitura               ir ao estado 46
-    escrita               ir ao estado 47
-    identificador         ir ao estado 48
-
-
-Estado 87
-
-   55 or_op: TK_OR .
-
-    $padrão  reduzir usando a regra 55 (or_op)
-
-
-Estado 88
-
-   53 or_op: TK_MAIS .
-
-    $padrão  reduzir usando a regra 53 (or_op)
-
-
-Estado 89
-
-   54 or_op: TK_MENOS .
-
-    $padrão  reduzir usando a regra 54 (or_op)
-
-
-Estado 90
-
-   45 relacao: TK_IGUAL .
-
-    $padrão  reduzir usando a regra 45 (relacao)
-
-
-Estado 91
-
-   46 relacao: TK_DIFERENTE .
-
-    $padrão  reduzir usando a regra 46 (relacao)
-
-
-Estado 92
-
-   49 relacao: TK_MAIOR .
-
-    $padrão  reduzir usando a regra 49 (relacao)
-
-
-Estado 93
-
-   47 relacao: TK_MENOR .
-
-    $padrão  reduzir usando a regra 47 (relacao)
-
-
-Estado 94
-
-   50 relacao: TK_MAIORIGUAL .
-
-    $padrão  reduzir usando a regra 50 (relacao)
-
-
-Estado 95
-
-   48 relacao: TK_MENORIGUAL .
-
-    $padrão  reduzir usando a regra 48 (relacao)
-
-
-Estado 96
-
-   44 expressao: expressao_simples relacao . expressao_simples
-   51 expressao_simples: . expressao_simples or_op termo
-   52                  | . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    expressao_simples  ir ao estado 116
-    termo              ir ao estado 64
-    fator              ir ao estado 65
-    variavel           ir ao estado 66
-    logico             ir ao estado 67
-    chamada_funcao     ir ao estado 68
-    identificador      ir ao estado 69
-
-
-Estado 97
-
-   51 expressao_simples: expressao_simples or_op . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    termo           ir ao estado 117
-    fator           ir ao estado 65
-    variavel        ir ao estado 66
-    logico          ir ao estado 67
-    chamada_funcao  ir ao estado 68
-    identificador   ir ao estado 69
-
-
-Estado 98
-
-   60 and_op: TK_AND .
-
-    $padrão  reduzir usando a regra 60 (and_op)
-
-
-Estado 99
-
-   59 and_op: TK_DIV .
-
-    $padrão  reduzir usando a regra 59 (and_op)
-
-
-Estado 100
-
-   58 and_op: TK_MULT .
-
-    $padrão  reduzir usando a regra 58 (and_op)
-
-
-Estado 101
-
-   56 termo: . fator and_op termo
-   56      | fator and_op . termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    termo           ir ao estado 118
-    fator           ir ao estado 65
-    variavel        ir ao estado 66
-    logico          ir ao estado 67
-    chamada_funcao  ir ao estado 68
-    identificador   ir ao estado 69
-
-
-Estado 102
-
-   41 lista_expressoes: . lista_expressoes TK_VIRGULA expressao
-   42                 | . expressao
-   43 expressao: . expressao_simples
-   44          | . expressao_simples relacao expressao_simples
-   51 expressao_simples: . expressao_simples or_op termo
-   52                  | . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   71               | identificador TK_LPAREN . lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
-    TK_IDENT   deslocar, e ir ao estado 9
-
-    lista_expressoes   ir ao estado 119
-    expressao          ir ao estado 106
-    expressao_simples  ir ao estado 63
-    termo              ir ao estado 64
-    fator              ir ao estado 65
-    variavel           ir ao estado 66
-    logico             ir ao estado 67
-    chamada_funcao     ir ao estado 68
-    identificador      ir ao estado 69
-
-
-Estado 103
-
-   23 comando_composto: . TK_BEGIN comando_rec TK_END
-   26 comando: . atribuicao
-   27        | . chamada_procedimento
-   28        | . condicional
-   29        | . repeticao
-   30        | . leitura
-   31        | . escrita
-   32        | . comando_composto
-   33 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
-   34 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   35                     | . identificador TK_LPAREN TK_RPAREN
-   36 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
-   37            | . TK_IF expressao TK_THEN comando
-   38 repeticao: . TK_WHILE expressao TK_DO comando
-   38          | TK_WHILE expressao TK_DO . comando
-   39 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
-   40 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_BEGIN  deslocar, e ir ao estado 26
-    TK_IF     deslocar, e ir ao estado 34
-    TK_WHILE  deslocar, e ir ao estado 35
-    TK_READ   deslocar, e ir ao estado 36
-    TK_WRITE  deslocar, e ir ao estado 37
-    TK_IDENT  deslocar, e ir ao estado 38
-
-    comando_composto      ir ao estado 39
-    comando               ir ao estado 120
-    atribuicao            ir ao estado 42
-    chamada_procedimento  ir ao estado 43
-    condicional           ir ao estado 44
-    repeticao             ir ao estado 45
-    leitura               ir ao estado 46
-    escrita               ir ao estado 47
-    identificador         ir ao estado 48
-
-
-Estado 104
-
-   39 leitura: TK_READ TK_LPAREN lista_identificadores . TK_RPAREN
-
-    TK_RPAREN  deslocar, e ir ao estado 121
-
-
-Estado 105
-
-   40 escrita: TK_WRITE TK_LPAREN lista_expressoes . TK_RPAREN
-   41 lista_expressoes: lista_expressoes . TK_VIRGULA expressao
-
-    TK_RPAREN   deslocar, e ir ao estado 122
-    TK_VIRGULA  deslocar, e ir ao estado 123
-
-
-Estado 106
-
-   42 lista_expressoes: expressao .
-
-    $padrão  reduzir usando a regra 42 (lista_expressoes)
-
-
-Estado 107
-
-   33 atribuicao: TK_IDENT TK_ATRIBUICAO expressao .
-
-    $padrão  reduzir usando a regra 33 (atribuicao)
-
-
-Estado 108
-
-   24 comando_rec: comando TK_PONTVIRG comando_rec .
-
-    $padrão  reduzir usando a regra 24 (comando_rec)
-
-
-Estado 109
-
-   35 chamada_procedimento: identificador TK_LPAREN TK_RPAREN .
-
-    $padrão  reduzir usando a regra 35 (chamada_procedimento)
-
-
-Estado 110
-
-   34 chamada_procedimento: identificador TK_LPAREN lista_expressoes . TK_RPAREN
-   41 lista_expressoes: lista_expressoes . TK_VIRGULA expressao
-
-    TK_RPAREN   deslocar, e ir ao estado 124
-    TK_VIRGULA  deslocar, e ir ao estado 123
-
-
-Estado 111
-
-   22 declaracao_parametros_op: lista_identificadores TK_DOISPONTOS tipo .
-
-    $padrão  reduzir usando a regra 22 (declaracao_parametros_op)
-
-
-Estado 112
-
-    3 secao_declaracao_variaveis: . TK_VAR lista_declaracao_variaveis
-    4                           | . %empty  [TK_BEGIN]
-   15 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG . bloco_subrotinas
-   17 bloco_subrotinas: . secao_declaracao_variaveis comando_composto
-
-    TK_VAR  deslocar, e ir ao estado 6
-
-    $padrão  reduzir usando a regra 4 (secao_declaracao_variaveis)
-
-    secao_declaracao_variaveis  ir ao estado 125
-    bloco_subrotinas            ir ao estado 126
-
-
-Estado 113
-
-   10 tipo: . identificador
-   16 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS . tipo TK_PONTVIRG bloco_subrotinas
-   72 identificador: . TK_IDENT
-
-    TK_IDENT  deslocar, e ir ao estado 9
-
-    tipo           ir ao estado 127
-    identificador  ir ao estado 30
-
-
-Estado 114
-
-   65 fator: TK_LPAREN expressao TK_RPAREN .
+   65 fator: logico .
 
     $padrão  reduzir usando a regra 65 (fator)
 
 
-Estado 115
+Estado 70
 
-   36 condicional: TK_IF expressao TK_THEN comando . TK_ELSE comando
-   37            | TK_IF expressao TK_THEN comando .  [TK_PONTVIRG]
+   66 fator: chamada_funcao .
 
-    TK_ELSE  deslocar, e ir ao estado 128
-
-    $padrão  reduzir usando a regra 37 (condicional)
-
-    Conflito entre a regra 37 e o token TK_ELSE resolvido como deslocamento (shift) (TK_THEN < TK_ELSE).
+    $padrão  reduzir usando a regra 66 (fator)
 
 
-Estado 116
+Estado 71
 
-   44 expressao: expressao_simples relacao expressao_simples .  [TK_THEN, TK_ELSE, TK_DO, TK_RPAREN, TK_VIRGULA, TK_PONTVIRG]
-   51 expressao_simples: expressao_simples . or_op termo
-   53 or_op: . TK_MAIS
-   54      | . TK_MENOS
-   55      | . TK_OR
+   70 variavel: identificador .  [TK_THEN, TK_ELSE, TK_DO, TK_AND, TK_OR, TK_DIV, TK_RPAREN, TK_MAIS, TK_MENOS, TK_MULT, TK_IGUAL, TK_DIFERENTE, TK_MAIOR, TK_MENOR, TK_MAIORIGUAL, TK_MENORIGUAL, TK_VIRGULA, TK_PONTVIRG]
+   73 chamada_funcao: identificador . chamada_funcao_op
+   74 chamada_funcao_op: . TK_LPAREN lista_expressoes TK_RPAREN
+   75                  | . %empty  [TK_THEN, TK_ELSE, TK_DO, TK_AND, TK_OR, TK_DIV, TK_RPAREN, TK_MAIS, TK_MENOS, TK_MULT, TK_IGUAL, TK_DIFERENTE, TK_MAIOR, TK_MENOR, TK_MAIORIGUAL, TK_MENORIGUAL, TK_VIRGULA, TK_PONTVIRG]
 
-    TK_OR     deslocar, e ir ao estado 87
-    TK_MAIS   deslocar, e ir ao estado 88
-    TK_MENOS  deslocar, e ir ao estado 89
+    TK_LPAREN  deslocar, e ir ao estado 104
 
-    $padrão  reduzir usando a regra 44 (expressao)
+    TK_THEN        reduzir usando a regra 70 (variavel)
+    TK_THEN        [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_ELSE        reduzir usando a regra 70 (variavel)
+    TK_ELSE        [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_DO          reduzir usando a regra 70 (variavel)
+    TK_DO          [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_AND         reduzir usando a regra 70 (variavel)
+    TK_AND         [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_OR          reduzir usando a regra 70 (variavel)
+    TK_OR          [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_DIV         reduzir usando a regra 70 (variavel)
+    TK_DIV         [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_RPAREN      reduzir usando a regra 70 (variavel)
+    TK_RPAREN      [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_MAIS        reduzir usando a regra 70 (variavel)
+    TK_MAIS        [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_MENOS       reduzir usando a regra 70 (variavel)
+    TK_MENOS       [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_MULT        reduzir usando a regra 70 (variavel)
+    TK_MULT        [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_IGUAL       reduzir usando a regra 70 (variavel)
+    TK_IGUAL       [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_DIFERENTE   reduzir usando a regra 70 (variavel)
+    TK_DIFERENTE   [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_MAIOR       reduzir usando a regra 70 (variavel)
+    TK_MAIOR       [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_MENOR       reduzir usando a regra 70 (variavel)
+    TK_MENOR       [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_MAIORIGUAL  reduzir usando a regra 70 (variavel)
+    TK_MAIORIGUAL  [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_MENORIGUAL  reduzir usando a regra 70 (variavel)
+    TK_MENORIGUAL  [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_VIRGULA     reduzir usando a regra 70 (variavel)
+    TK_VIRGULA     [reduzir usando a regra 75 (chamada_funcao_op)]
+    TK_PONTVIRG    reduzir usando a regra 70 (variavel)
+    TK_PONTVIRG    [reduzir usando a regra 75 (chamada_funcao_op)]
+    $padrão       reduzir usando a regra 70 (variavel)
 
-    or_op  ir ao estado 97
-
-
-Estado 117
-
-   51 expressao_simples: expressao_simples or_op termo .
-
-    $padrão  reduzir usando a regra 51 (expressao_simples)
-
-
-Estado 118
-
-   56 termo: fator and_op termo .
-
-    $padrão  reduzir usando a regra 56 (termo)
-
-
-Estado 119
-
-   41 lista_expressoes: lista_expressoes . TK_VIRGULA expressao
-   71 chamada_funcao: identificador TK_LPAREN lista_expressoes . TK_RPAREN
-
-    TK_RPAREN   deslocar, e ir ao estado 129
-    TK_VIRGULA  deslocar, e ir ao estado 123
-
-
-Estado 120
-
-   38 repeticao: TK_WHILE expressao TK_DO comando .
-
-    $padrão  reduzir usando a regra 38 (repeticao)
-
-
-Estado 121
-
-   39 leitura: TK_READ TK_LPAREN lista_identificadores TK_RPAREN .
-
-    $padrão  reduzir usando a regra 39 (leitura)
+    chamada_funcao_op  ir ao estado 105
 
 
-Estado 122
+Estado 72
 
-   40 escrita: TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN .
+   40 repeticao: TK_WHILE expressao . TK_DO comando
 
-    $padrão  reduzir usando a regra 40 (escrita)
+    TK_DO  deslocar, e ir ao estado 106
 
 
-Estado 123
+Estado 73
 
-   41 lista_expressoes: lista_expressoes TK_VIRGULA . expressao
-   43 expressao: . expressao_simples
-   44          | . expressao_simples relacao expressao_simples
-   51 expressao_simples: . expressao_simples or_op termo
-   52                  | . termo
-   56 termo: . fator and_op termo
-   57      | . fator
-   61 fator: . variavel
-   62      | . TK_NUM
-   63      | . logico
-   64      | . chamada_funcao
-   65      | . TK_LPAREN expressao TK_RPAREN
-   66      | . TK_NOT fator
-   67      | . TK_MENOS fator
-   68 variavel: . identificador
-   69 logico: . TK_FALSE
-   70       | . TK_TRUE
-   71 chamada_funcao: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
+    8 lista_identificadores: . identificador
+    9                      | . identificador TK_VIRGULA lista_identificadores
+   41 leitura: TK_READ TK_LPAREN . lista_identificadores TK_RPAREN
+   76 identificador: . TK_IDENT
 
-    TK_FALSE   deslocar, e ir ao estado 56
-    TK_TRUE    deslocar, e ir ao estado 57
-    TK_NOT     deslocar, e ir ao estado 58
-    TK_LPAREN  deslocar, e ir ao estado 59
-    TK_MENOS   deslocar, e ir ao estado 60
-    TK_NUM     deslocar, e ir ao estado 61
+    TK_IDENT  deslocar, e ir ao estado 9
+
+    lista_identificadores  ir ao estado 107
+    identificador          ir ao estado 13
+
+
+Estado 74
+
+   42 escrita: TK_WRITE TK_LPAREN . lista_expressoes TK_RPAREN
+   43 lista_expressoes: . lista_expressoes TK_VIRGULA expressao
+   44                 | . expressao
+   45 expressao: . expressao_simples
+   46          | . expressao_simples relacao expressao_simples
+   53 expressao_simples: . expressao_simples or_op termo
+   54                  | . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
+
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
     TK_IDENT   deslocar, e ir ao estado 9
 
-    expressao          ir ao estado 130
-    expressao_simples  ir ao estado 63
-    termo              ir ao estado 64
-    fator              ir ao estado 65
-    variavel           ir ao estado 66
-    logico             ir ao estado 67
-    chamada_funcao     ir ao estado 68
-    identificador      ir ao estado 69
+    lista_expressoes   ir ao estado 108
+    expressao          ir ao estado 109
+    expressao_simples  ir ao estado 65
+    termo              ir ao estado 66
+    fator              ir ao estado 67
+    variavel           ir ao estado 68
+    logico             ir ao estado 69
+    chamada_funcao     ir ao estado 70
+    identificador      ir ao estado 71
 
 
-Estado 124
+Estado 75
 
-   34 chamada_procedimento: identificador TK_LPAREN lista_expressoes TK_RPAREN .
+   35 atribuicao: TK_IDENT TK_ATRIBUICAO . expressao
+   45 expressao: . expressao_simples
+   46          | . expressao_simples relacao expressao_simples
+   53 expressao_simples: . expressao_simples or_op termo
+   54                  | . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
 
-    $padrão  reduzir usando a regra 34 (chamada_procedimento)
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
 
-
-Estado 125
-
-   17 bloco_subrotinas: secao_declaracao_variaveis . comando_composto
-   23 comando_composto: . TK_BEGIN comando_rec TK_END
-
-    TK_BEGIN  deslocar, e ir ao estado 26
-
-    comando_composto  ir ao estado 131
-
-
-Estado 126
-
-   15 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas .
-
-    $padrão  reduzir usando a regra 15 (declaracao_procedimento)
-
-
-Estado 127
-
-   16 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo . TK_PONTVIRG bloco_subrotinas
-
-    TK_PONTVIRG  deslocar, e ir ao estado 132
-
-
-Estado 128
-
-   23 comando_composto: . TK_BEGIN comando_rec TK_END
-   26 comando: . atribuicao
-   27        | . chamada_procedimento
-   28        | . condicional
-   29        | . repeticao
-   30        | . leitura
-   31        | . escrita
-   32        | . comando_composto
-   33 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
-   34 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
-   35                     | . identificador TK_LPAREN TK_RPAREN
-   36 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
-   36            | TK_IF expressao TK_THEN comando TK_ELSE . comando
-   37            | . TK_IF expressao TK_THEN comando
-   38 repeticao: . TK_WHILE expressao TK_DO comando
-   39 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
-   40 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
-   72 identificador: . TK_IDENT
-
-    TK_BEGIN  deslocar, e ir ao estado 26
-    TK_IF     deslocar, e ir ao estado 34
-    TK_WHILE  deslocar, e ir ao estado 35
-    TK_READ   deslocar, e ir ao estado 36
-    TK_WRITE  deslocar, e ir ao estado 37
-    TK_IDENT  deslocar, e ir ao estado 38
-
-    comando_composto      ir ao estado 39
-    comando               ir ao estado 133
-    atribuicao            ir ao estado 42
-    chamada_procedimento  ir ao estado 43
-    condicional           ir ao estado 44
-    repeticao             ir ao estado 45
-    leitura               ir ao estado 46
-    escrita               ir ao estado 47
-    identificador         ir ao estado 48
+    expressao          ir ao estado 110
+    expressao_simples  ir ao estado 65
+    termo              ir ao estado 66
+    fator              ir ao estado 67
+    variavel           ir ao estado 68
+    logico             ir ao estado 69
+    chamada_funcao     ir ao estado 70
+    identificador      ir ao estado 71
 
 
-Estado 129
+Estado 76
 
-   71 chamada_funcao: identificador TK_LPAREN lista_expressoes TK_RPAREN .
+   25 comando_composto: TK_BEGIN comando_rec TK_END .
 
-    $padrão  reduzir usando a regra 71 (chamada_funcao)
-
-
-Estado 130
-
-   41 lista_expressoes: lista_expressoes TK_VIRGULA expressao .
-
-    $padrão  reduzir usando a regra 41 (lista_expressoes)
+    $padrão  reduzir usando a regra 25 (comando_composto)
 
 
-Estado 131
+Estado 77
 
-   17 bloco_subrotinas: secao_declaracao_variaveis comando_composto .
+   25 comando_composto: . TK_BEGIN comando_rec TK_END
+   26 comando_rec: . comando TK_PONTVIRG comando_rec
+   26            | comando TK_PONTVIRG . comando_rec
+   27            | . comando TK_PONTVIRG
+   27            | comando TK_PONTVIRG .  [TK_END]
+   28 comando: . atribuicao
+   29        | . chamada_procedimento
+   30        | . condicional
+   31        | . repeticao
+   32        | . leitura
+   33        | . escrita
+   34        | . comando_composto
+   35 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
+   36 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
+   37                     | . identificador TK_LPAREN TK_RPAREN
+   38 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
+   39            | . TK_IF expressao TK_THEN comando
+   40 repeticao: . TK_WHILE expressao TK_DO comando
+   41 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
+   42 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
+   76 identificador: . TK_IDENT
 
-    $padrão  reduzir usando a regra 17 (bloco_subrotinas)
+    TK_BEGIN  deslocar, e ir ao estado 27
+    TK_IF     deslocar, e ir ao estado 36
+    TK_WHILE  deslocar, e ir ao estado 37
+    TK_READ   deslocar, e ir ao estado 38
+    TK_WRITE  deslocar, e ir ao estado 39
+    TK_IDENT  deslocar, e ir ao estado 40
+
+    $padrão  reduzir usando a regra 27 (comando_rec)
+
+    comando_composto      ir ao estado 41
+    comando_rec           ir ao estado 111
+    comando               ir ao estado 43
+    atribuicao            ir ao estado 44
+    chamada_procedimento  ir ao estado 45
+    condicional           ir ao estado 46
+    repeticao             ir ao estado 47
+    leitura               ir ao estado 48
+    escrita               ir ao estado 49
+    identificador         ir ao estado 50
 
 
-Estado 132
+Estado 78
+
+   36 chamada_procedimento: identificador TK_LPAREN . lista_expressoes TK_RPAREN
+   37                     | identificador TK_LPAREN . TK_RPAREN
+   43 lista_expressoes: . lista_expressoes TK_VIRGULA expressao
+   44                 | . expressao
+   45 expressao: . expressao_simples
+   46          | . expressao_simples relacao expressao_simples
+   53 expressao_simples: . expressao_simples or_op termo
+   54                  | . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
+
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_RPAREN  deslocar, e ir ao estado 112
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    lista_expressoes   ir ao estado 113
+    expressao          ir ao estado 109
+    expressao_simples  ir ao estado 65
+    termo              ir ao estado 66
+    fator              ir ao estado 67
+    variavel           ir ao estado 68
+    logico             ir ao estado 69
+    chamada_funcao     ir ao estado 70
+    identificador      ir ao estado 71
+
+
+Estado 79
+
+   22 declaracao_parametros: TK_VAR declaracao_parametros_op .
+
+    $padrão  reduzir usando a regra 22 (declaracao_parametros)
+
+
+Estado 80
+
+   10 tipo: . identificador
+   24 declaracao_parametros_op: lista_identificadores TK_DOISPONTOS . tipo
+   76 identificador: . TK_IDENT
+
+    TK_IDENT  deslocar, e ir ao estado 9
+
+    tipo           ir ao estado 114
+    identificador  ir ao estado 32
+
+
+Estado 81
+
+   17 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN . TK_PONTVIRG bloco_subrotinas
+
+    TK_PONTVIRG  deslocar, e ir ao estado 115
+
+
+Estado 82
+
+   20 parametros_formais: parametros_formais declaracao_parametros .
+
+    $padrão  reduzir usando a regra 20 (parametros_formais)
+
+
+Estado 83
+
+   21 parametros_formais: declaracao_parametros TK_PONTVIRG .
+
+    $padrão  reduzir usando a regra 21 (parametros_formais)
+
+
+Estado 84
+
+   18 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN . TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas
+
+    TK_DOISPONTOS  deslocar, e ir ao estado 116
+
+
+Estado 85
+
+   68 fator: TK_NOT fator .
+
+    $padrão  reduzir usando a regra 68 (fator)
+
+
+Estado 86
+
+   67 fator: TK_LPAREN expressao . TK_RPAREN
+
+    TK_RPAREN  deslocar, e ir ao estado 117
+
+
+Estado 87
+
+   69 fator: TK_MENOS fator .
+
+    $padrão  reduzir usando a regra 69 (fator)
+
+
+Estado 88
+
+   25 comando_composto: . TK_BEGIN comando_rec TK_END
+   28 comando: . atribuicao
+   29        | . chamada_procedimento
+   30        | . condicional
+   31        | . repeticao
+   32        | . leitura
+   33        | . escrita
+   34        | . comando_composto
+   35 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
+   36 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
+   37                     | . identificador TK_LPAREN TK_RPAREN
+   38 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
+   38            | TK_IF expressao TK_THEN . comando TK_ELSE comando
+   39            | . TK_IF expressao TK_THEN comando
+   39            | TK_IF expressao TK_THEN . comando
+   40 repeticao: . TK_WHILE expressao TK_DO comando
+   41 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
+   42 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
+   76 identificador: . TK_IDENT
+
+    TK_BEGIN  deslocar, e ir ao estado 27
+    TK_IF     deslocar, e ir ao estado 36
+    TK_WHILE  deslocar, e ir ao estado 37
+    TK_READ   deslocar, e ir ao estado 38
+    TK_WRITE  deslocar, e ir ao estado 39
+    TK_IDENT  deslocar, e ir ao estado 40
+
+    comando_composto      ir ao estado 41
+    comando               ir ao estado 118
+    atribuicao            ir ao estado 44
+    chamada_procedimento  ir ao estado 45
+    condicional           ir ao estado 46
+    repeticao             ir ao estado 47
+    leitura               ir ao estado 48
+    escrita               ir ao estado 49
+    identificador         ir ao estado 50
+
+
+Estado 89
+
+   57 or_op: TK_OR .
+
+    $padrão  reduzir usando a regra 57 (or_op)
+
+
+Estado 90
+
+   55 or_op: TK_MAIS .
+
+    $padrão  reduzir usando a regra 55 (or_op)
+
+
+Estado 91
+
+   56 or_op: TK_MENOS .
+
+    $padrão  reduzir usando a regra 56 (or_op)
+
+
+Estado 92
+
+   47 relacao: TK_IGUAL .
+
+    $padrão  reduzir usando a regra 47 (relacao)
+
+
+Estado 93
+
+   48 relacao: TK_DIFERENTE .
+
+    $padrão  reduzir usando a regra 48 (relacao)
+
+
+Estado 94
+
+   51 relacao: TK_MAIOR .
+
+    $padrão  reduzir usando a regra 51 (relacao)
+
+
+Estado 95
+
+   49 relacao: TK_MENOR .
+
+    $padrão  reduzir usando a regra 49 (relacao)
+
+
+Estado 96
+
+   52 relacao: TK_MAIORIGUAL .
+
+    $padrão  reduzir usando a regra 52 (relacao)
+
+
+Estado 97
+
+   50 relacao: TK_MENORIGUAL .
+
+    $padrão  reduzir usando a regra 50 (relacao)
+
+
+Estado 98
+
+   46 expressao: expressao_simples relacao . expressao_simples
+   53 expressao_simples: . expressao_simples or_op termo
+   54                  | . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
+
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    expressao_simples  ir ao estado 119
+    termo              ir ao estado 66
+    fator              ir ao estado 67
+    variavel           ir ao estado 68
+    logico             ir ao estado 69
+    chamada_funcao     ir ao estado 70
+    identificador      ir ao estado 71
+
+
+Estado 99
+
+   53 expressao_simples: expressao_simples or_op . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
+
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    termo           ir ao estado 120
+    fator           ir ao estado 67
+    variavel        ir ao estado 68
+    logico          ir ao estado 69
+    chamada_funcao  ir ao estado 70
+    identificador   ir ao estado 71
+
+
+Estado 100
+
+   62 and_op: TK_AND .
+
+    $padrão  reduzir usando a regra 62 (and_op)
+
+
+Estado 101
+
+   61 and_op: TK_DIV .
+
+    $padrão  reduzir usando a regra 61 (and_op)
+
+
+Estado 102
+
+   60 and_op: TK_MULT .
+
+    $padrão  reduzir usando a regra 60 (and_op)
+
+
+Estado 103
+
+   58 termo: . fator and_op termo
+   58      | fator and_op . termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
+
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    termo           ir ao estado 121
+    fator           ir ao estado 67
+    variavel        ir ao estado 68
+    logico          ir ao estado 69
+    chamada_funcao  ir ao estado 70
+    identificador   ir ao estado 71
+
+
+Estado 104
+
+   43 lista_expressoes: . lista_expressoes TK_VIRGULA expressao
+   44                 | . expressao
+   45 expressao: . expressao_simples
+   46          | . expressao_simples relacao expressao_simples
+   53 expressao_simples: . expressao_simples or_op termo
+   54                  | . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   74 chamada_funcao_op: TK_LPAREN . lista_expressoes TK_RPAREN
+   76 identificador: . TK_IDENT
+
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    lista_expressoes   ir ao estado 122
+    expressao          ir ao estado 109
+    expressao_simples  ir ao estado 65
+    termo              ir ao estado 66
+    fator              ir ao estado 67
+    variavel           ir ao estado 68
+    logico             ir ao estado 69
+    chamada_funcao     ir ao estado 70
+    identificador      ir ao estado 71
+
+
+Estado 105
+
+   73 chamada_funcao: identificador chamada_funcao_op .
+
+    $padrão  reduzir usando a regra 73 (chamada_funcao)
+
+
+Estado 106
+
+   25 comando_composto: . TK_BEGIN comando_rec TK_END
+   28 comando: . atribuicao
+   29        | . chamada_procedimento
+   30        | . condicional
+   31        | . repeticao
+   32        | . leitura
+   33        | . escrita
+   34        | . comando_composto
+   35 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
+   36 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
+   37                     | . identificador TK_LPAREN TK_RPAREN
+   38 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
+   39            | . TK_IF expressao TK_THEN comando
+   40 repeticao: . TK_WHILE expressao TK_DO comando
+   40          | TK_WHILE expressao TK_DO . comando
+   41 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
+   42 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
+   76 identificador: . TK_IDENT
+
+    TK_BEGIN  deslocar, e ir ao estado 27
+    TK_IF     deslocar, e ir ao estado 36
+    TK_WHILE  deslocar, e ir ao estado 37
+    TK_READ   deslocar, e ir ao estado 38
+    TK_WRITE  deslocar, e ir ao estado 39
+    TK_IDENT  deslocar, e ir ao estado 40
+
+    comando_composto      ir ao estado 41
+    comando               ir ao estado 123
+    atribuicao            ir ao estado 44
+    chamada_procedimento  ir ao estado 45
+    condicional           ir ao estado 46
+    repeticao             ir ao estado 47
+    leitura               ir ao estado 48
+    escrita               ir ao estado 49
+    identificador         ir ao estado 50
+
+
+Estado 107
+
+   41 leitura: TK_READ TK_LPAREN lista_identificadores . TK_RPAREN
+
+    TK_RPAREN  deslocar, e ir ao estado 124
+
+
+Estado 108
+
+   42 escrita: TK_WRITE TK_LPAREN lista_expressoes . TK_RPAREN
+   43 lista_expressoes: lista_expressoes . TK_VIRGULA expressao
+
+    TK_RPAREN   deslocar, e ir ao estado 125
+    TK_VIRGULA  deslocar, e ir ao estado 126
+
+
+Estado 109
+
+   44 lista_expressoes: expressao .
+
+    $padrão  reduzir usando a regra 44 (lista_expressoes)
+
+
+Estado 110
+
+   35 atribuicao: TK_IDENT TK_ATRIBUICAO expressao .
+
+    $padrão  reduzir usando a regra 35 (atribuicao)
+
+
+Estado 111
+
+   26 comando_rec: comando TK_PONTVIRG comando_rec .
+
+    $padrão  reduzir usando a regra 26 (comando_rec)
+
+
+Estado 112
+
+   37 chamada_procedimento: identificador TK_LPAREN TK_RPAREN .
+
+    $padrão  reduzir usando a regra 37 (chamada_procedimento)
+
+
+Estado 113
+
+   36 chamada_procedimento: identificador TK_LPAREN lista_expressoes . TK_RPAREN
+   43 lista_expressoes: lista_expressoes . TK_VIRGULA expressao
+
+    TK_RPAREN   deslocar, e ir ao estado 127
+    TK_VIRGULA  deslocar, e ir ao estado 126
+
+
+Estado 114
+
+   24 declaracao_parametros_op: lista_identificadores TK_DOISPONTOS tipo .
+
+    $padrão  reduzir usando a regra 24 (declaracao_parametros_op)
+
+
+Estado 115
 
     3 secao_declaracao_variaveis: . TK_VAR lista_declaracao_variaveis
     4                           | . %empty  [TK_BEGIN]
-   16 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG . bloco_subrotinas
-   17 bloco_subrotinas: . secao_declaracao_variaveis comando_composto
+   17 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG . bloco_subrotinas
+   19 bloco_subrotinas: . secao_declaracao_variaveis comando_composto
 
     TK_VAR  deslocar, e ir ao estado 6
 
     $padrão  reduzir usando a regra 4 (secao_declaracao_variaveis)
 
-    secao_declaracao_variaveis  ir ao estado 125
-    bloco_subrotinas            ir ao estado 134
+    secao_declaracao_variaveis  ir ao estado 128
+    bloco_subrotinas            ir ao estado 129
+
+
+Estado 116
+
+   10 tipo: . identificador
+   18 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS . tipo TK_PONTVIRG bloco_subrotinas
+   76 identificador: . TK_IDENT
+
+    TK_IDENT  deslocar, e ir ao estado 9
+
+    tipo           ir ao estado 130
+    identificador  ir ao estado 32
+
+
+Estado 117
+
+   67 fator: TK_LPAREN expressao TK_RPAREN .
+
+    $padrão  reduzir usando a regra 67 (fator)
+
+
+Estado 118
+
+   38 condicional: TK_IF expressao TK_THEN comando . TK_ELSE comando
+   39            | TK_IF expressao TK_THEN comando .  [TK_PONTVIRG]
+
+    TK_ELSE  deslocar, e ir ao estado 131
+
+    $padrão  reduzir usando a regra 39 (condicional)
+
+    Conflito entre a regra 39 e o token TK_ELSE resolvido como deslocamento (shift) (TK_THEN < TK_ELSE).
+
+
+Estado 119
+
+   46 expressao: expressao_simples relacao expressao_simples .  [TK_THEN, TK_ELSE, TK_DO, TK_RPAREN, TK_VIRGULA, TK_PONTVIRG]
+   53 expressao_simples: expressao_simples . or_op termo
+   55 or_op: . TK_MAIS
+   56      | . TK_MENOS
+   57      | . TK_OR
+
+    TK_OR     deslocar, e ir ao estado 89
+    TK_MAIS   deslocar, e ir ao estado 90
+    TK_MENOS  deslocar, e ir ao estado 91
+
+    $padrão  reduzir usando a regra 46 (expressao)
+
+    or_op  ir ao estado 99
+
+
+Estado 120
+
+   53 expressao_simples: expressao_simples or_op termo .
+
+    $padrão  reduzir usando a regra 53 (expressao_simples)
+
+
+Estado 121
+
+   58 termo: fator and_op termo .
+
+    $padrão  reduzir usando a regra 58 (termo)
+
+
+Estado 122
+
+   43 lista_expressoes: lista_expressoes . TK_VIRGULA expressao
+   74 chamada_funcao_op: TK_LPAREN lista_expressoes . TK_RPAREN
+
+    TK_RPAREN   deslocar, e ir ao estado 132
+    TK_VIRGULA  deslocar, e ir ao estado 126
+
+
+Estado 123
+
+   40 repeticao: TK_WHILE expressao TK_DO comando .
+
+    $padrão  reduzir usando a regra 40 (repeticao)
+
+
+Estado 124
+
+   41 leitura: TK_READ TK_LPAREN lista_identificadores TK_RPAREN .
+
+    $padrão  reduzir usando a regra 41 (leitura)
+
+
+Estado 125
+
+   42 escrita: TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN .
+
+    $padrão  reduzir usando a regra 42 (escrita)
+
+
+Estado 126
+
+   43 lista_expressoes: lista_expressoes TK_VIRGULA . expressao
+   45 expressao: . expressao_simples
+   46          | . expressao_simples relacao expressao_simples
+   53 expressao_simples: . expressao_simples or_op termo
+   54                  | . termo
+   58 termo: . fator and_op termo
+   59      | . fator
+   63 fator: . variavel
+   64      | . TK_NUM
+   65      | . logico
+   66      | . chamada_funcao
+   67      | . TK_LPAREN expressao TK_RPAREN
+   68      | . TK_NOT fator
+   69      | . TK_MENOS fator
+   70 variavel: . identificador
+   71 logico: . TK_FALSE
+   72       | . TK_TRUE
+   73 chamada_funcao: . identificador chamada_funcao_op
+   76 identificador: . TK_IDENT
+
+    TK_FALSE   deslocar, e ir ao estado 58
+    TK_TRUE    deslocar, e ir ao estado 59
+    TK_NOT     deslocar, e ir ao estado 60
+    TK_LPAREN  deslocar, e ir ao estado 61
+    TK_MENOS   deslocar, e ir ao estado 62
+    TK_NUM     deslocar, e ir ao estado 63
+    TK_IDENT   deslocar, e ir ao estado 9
+
+    expressao          ir ao estado 133
+    expressao_simples  ir ao estado 65
+    termo              ir ao estado 66
+    fator              ir ao estado 67
+    variavel           ir ao estado 68
+    logico             ir ao estado 69
+    chamada_funcao     ir ao estado 70
+    identificador      ir ao estado 71
+
+
+Estado 127
+
+   36 chamada_procedimento: identificador TK_LPAREN lista_expressoes TK_RPAREN .
+
+    $padrão  reduzir usando a regra 36 (chamada_procedimento)
+
+
+Estado 128
+
+   19 bloco_subrotinas: secao_declaracao_variaveis . comando_composto
+   25 comando_composto: . TK_BEGIN comando_rec TK_END
+
+    TK_BEGIN  deslocar, e ir ao estado 27
+
+    comando_composto  ir ao estado 134
+
+
+Estado 129
+
+   17 declaracao_procedimento: TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas .
+
+    $padrão  reduzir usando a regra 17 (declaracao_procedimento)
+
+
+Estado 130
+
+   18 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo . TK_PONTVIRG bloco_subrotinas
+
+    TK_PONTVIRG  deslocar, e ir ao estado 135
+
+
+Estado 131
+
+   25 comando_composto: . TK_BEGIN comando_rec TK_END
+   28 comando: . atribuicao
+   29        | . chamada_procedimento
+   30        | . condicional
+   31        | . repeticao
+   32        | . leitura
+   33        | . escrita
+   34        | . comando_composto
+   35 atribuicao: . TK_IDENT TK_ATRIBUICAO expressao
+   36 chamada_procedimento: . identificador TK_LPAREN lista_expressoes TK_RPAREN
+   37                     | . identificador TK_LPAREN TK_RPAREN
+   38 condicional: . TK_IF expressao TK_THEN comando TK_ELSE comando
+   38            | TK_IF expressao TK_THEN comando TK_ELSE . comando
+   39            | . TK_IF expressao TK_THEN comando
+   40 repeticao: . TK_WHILE expressao TK_DO comando
+   41 leitura: . TK_READ TK_LPAREN lista_identificadores TK_RPAREN
+   42 escrita: . TK_WRITE TK_LPAREN lista_expressoes TK_RPAREN
+   76 identificador: . TK_IDENT
+
+    TK_BEGIN  deslocar, e ir ao estado 27
+    TK_IF     deslocar, e ir ao estado 36
+    TK_WHILE  deslocar, e ir ao estado 37
+    TK_READ   deslocar, e ir ao estado 38
+    TK_WRITE  deslocar, e ir ao estado 39
+    TK_IDENT  deslocar, e ir ao estado 40
+
+    comando_composto      ir ao estado 41
+    comando               ir ao estado 136
+    atribuicao            ir ao estado 44
+    chamada_procedimento  ir ao estado 45
+    condicional           ir ao estado 46
+    repeticao             ir ao estado 47
+    leitura               ir ao estado 48
+    escrita               ir ao estado 49
+    identificador         ir ao estado 50
+
+
+Estado 132
+
+   74 chamada_funcao_op: TK_LPAREN lista_expressoes TK_RPAREN .
+
+    $padrão  reduzir usando a regra 74 (chamada_funcao_op)
 
 
 Estado 133
 
-   36 condicional: TK_IF expressao TK_THEN comando TK_ELSE comando .
+   43 lista_expressoes: lista_expressoes TK_VIRGULA expressao .
 
-    $padrão  reduzir usando a regra 36 (condicional)
+    $padrão  reduzir usando a regra 43 (lista_expressoes)
 
 
 Estado 134
 
-   16 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas .
+   19 bloco_subrotinas: secao_declaracao_variaveis comando_composto .
 
-    $padrão  reduzir usando a regra 16 (declaracao_funcao)
+    $padrão  reduzir usando a regra 19 (bloco_subrotinas)
+
+
+Estado 135
+
+    3 secao_declaracao_variaveis: . TK_VAR lista_declaracao_variaveis
+    4                           | . %empty  [TK_BEGIN]
+   18 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG . bloco_subrotinas
+   19 bloco_subrotinas: . secao_declaracao_variaveis comando_composto
+
+    TK_VAR  deslocar, e ir ao estado 6
+
+    $padrão  reduzir usando a regra 4 (secao_declaracao_variaveis)
+
+    secao_declaracao_variaveis  ir ao estado 128
+    bloco_subrotinas            ir ao estado 137
+
+
+Estado 136
+
+   38 condicional: TK_IF expressao TK_THEN comando TK_ELSE comando .
+
+    $padrão  reduzir usando a regra 38 (condicional)
+
+
+Estado 137
+
+   18 declaracao_funcao: TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas .
+
+    $padrão  reduzir usando a regra 18 (declaracao_funcao)

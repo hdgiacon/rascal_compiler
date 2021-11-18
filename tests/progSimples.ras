@@ -1,4 +1,6 @@
 // este eh o programa mais simples que pode ser escrito em Rascal
 program programaSimples;
+    var x: integer;
 begin
+    x := x + 1;
 end.
