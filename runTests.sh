@@ -5,63 +5,63 @@ FILE=rascal
 if test -f "$FILE"; then
     printf "\n"
 
-    ./rascal tests/cmdAtrib.ras     # foi
+    ./rascal tests/cmdAtrib.ras     
 
     printf "\n"
 
-    ./rascal tests/cmdIf.ras        # foi
+    ./rascal tests/cmdIf.ras        
 
     printf "\n"
 
-    ./rascal tests/cmdWhile.ras     # foi
+    ./rascal tests/cmdWhile.ras     
 
     printf "\n"
 
-    ./rascal tests/cmdWhileIf.ras   # foi
+    ./rascal tests/cmdWhileIf.ras   
 
     printf "\n"
 
-    ./rascal tests/funRec0.ras      # nao foi
+    ./rascal tests/funRec0.ras      
 
     printf "\n"
 
-    ./rascal tests/funRecRef.ras    # foi
+    ./rascal tests/funRecRef.ras    
 
     printf "\n"
 
-    ./rascal tests/funSimples0.ras  # nao foi
+    ./rascal tests/funSimples0.ras  
 
     printf "\n"
 
-    ./rascal tests/funSimples1.ras  # foi
+    ./rascal tests/funSimples1.ras  
 
     printf "\n"
 
-    ./rascal tests/funSimples2.ras  # nao foi
+    ./rascal tests/funSimples2.ras  
 
     printf "\n"
 
-    ./rascal tests/procRec0.ras     # nao foi
+    ./rascal tests/procRec0.ras     
 
     printf "\n"
 
-    ./rascal tests/procRec1.ras     # nao foi
+    ./rascal tests/procRec1.ras     
 
     printf "\n"
 
-    ./rascal tests/procRec2.ras     # foi
+    ./rascal tests/procRec2.ras     
 
     printf "\n"
 
-    ./rascal tests/procSimples.ras  # nao foi
+    ./rascal tests/procSimples.ras  
 
     printf "\n"
 
-    ./rascal tests/progDecVars.ras  # nao foi
+    ./rascal tests/progDecVars.ras  
 
     printf "\n"
 
-    ./rascal tests/progSimples.ras  # foi
+    ./rascal tests/progSimples.ras  
 
     printf "\n"
 else

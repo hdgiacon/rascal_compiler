@@ -168,17 +168,18 @@ secao_declaracao_subrotinas_op:		declaracao_procedimento	{ $$ = $1; }
 ;
 
 declaracao_procedimento:	TK_PROCEDURE identificador TK_LPAREN parametros_formais TK_RPAREN TK_PONTVIRG bloco_subrotinas	{ $$ = A_decProc_proc($2, $4, $7); }
-;
+;						|	TK_PROCEDURE identificador TK_LPAREN TK_RPAREN TK_PONTVIRG bloco_subrotinas						{ $$ = A_decProc_proc($2, NULL, $6); }
 
 declaracao_funcao:	TK_FUNCTION identificador TK_LPAREN parametros_formais TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas	{ $$ = A_decProc_func($2, $4, $9, $7); }
+				|	TK_FUNCTION identificador TK_LPAREN TK_RPAREN TK_DOISPONTOS tipo TK_PONTVIRG bloco_subrotinas						{ $$ = A_decProc_func($2, NULL, $8, $6); }
 ;
 
 bloco_subrotinas:	secao_declaracao_variaveis comando_composto 	{ $$ = A_blocoSub($1, $2); }
 ;
 
 
-parametros_formais:	parametros_formais declaracao_parametros		{ $$ = A_decParamList($2, $1); }
-				|	declaracao_parametros TK_PONTVIRG				{ $$ = A_decParamList($1, NULL); }
+parametros_formais:	declaracao_parametros TK_PONTVIRG parametros_formais		{ $$ = A_decParamList($1, $3); }
+				|	declaracao_parametros										{ $$ = A_decParamList($1, NULL); }
 ;
 
 declaracao_parametros:	TK_VAR declaracao_parametros_op				{ $$ = $2; }
@@ -206,7 +207,7 @@ comando:	atribuicao				{ $$ = $1; }
 ;
 
 
-atribuicao:	TK_IDENT TK_ATRIBUICAO expressao	{ A_cmd_atrib($3); }
+atribuicao:	TK_IDENT TK_ATRIBUICAO expressao	{ $$ = A_cmd_atrib($3); }
 ;
 
 chamada_procedimento:	identificador TK_LPAREN lista_expressoes TK_RPAREN		{ $$ = A_cmd_chamProc($1, $3); }
@@ -284,6 +285,7 @@ logico:     TK_FALSE		{ $$ = 30; }
 ;
 
 chamada_funcao:		identificador TK_LPAREN lista_expressoes TK_RPAREN	{ $$ = A_chamFunc($1, $3); }
+				|	identificador TK_LPAREN TK_RPAREN					{ $$ = A_chamFunc($1, NULL); }
 ;
 
 identificador: 		TK_IDENT	{ $$ = $1; }
