@@ -1,9 +1,5 @@
 // este eh o programa mais simples que pode ser escrito em Rascal
 program programaSimples;
-    procedure f(n: integer);
-    begin
-      write(0);
-    end;
 begin
     write(0);
 end.
