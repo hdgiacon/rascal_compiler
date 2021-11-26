@@ -7,20 +7,10 @@ typedef struct A_Programa_ *A_Programa;
 typedef struct A_Bloco_ *A_Bloco;
 typedef struct A_LstDecSub_ *A_LstDecSub;
 typedef struct A_LstDecVar_ *A_LstDecVar;
-//typedef struct A_CmdComp_ *A_CmdComp;
-//typedef struct A_Identificador_ *A_Identificador;
 typedef struct A_ListaId_ *A_ListaId;
-//typedef struct A_Tipo_ *A_Tipo;
 typedef struct A_DecVar_ *A_DecVar;
 typedef struct A_LstDecVar_ *A_LstDecVar;
 typedef struct A_Exp_ *A_Exp;
-//exp binaria
-//typedef struct A_Atrib_ *A_Atrib;
-//typedef struct A_ChamProc_ *A_ChamProc;
-//typedef struct A_Cond_ *A_Cond;
-//typedef struct A_Loop_ *A_Loop;
-//typedef struct A_IO_ *A_IO;
-//typedef struct A_CmdComp_ *A_CmdComp;
 typedef struct A_Cmd_ *A_Cmd;
 typedef struct A_BlocoSub_ *A_BlocoSub;
 typedef struct A_DecParam_ *A_DecParam;
@@ -32,15 +22,10 @@ typedef struct A_Programa_ *A_Programa;
 typedef struct A_ListExp_ *A_ListExp;
 typedef struct A_ChamFunc_ *A_ChamFunc;
 typedef struct A_Var_ *A_Var;
-//fator
-//exp simples
-//termo
 
 A_Programa A_programa(String _id, A_Bloco _bloco);
 A_Bloco A_bloco(A_LstDecVar _secDecVar, A_LstDecSub _secDecSub, A_Cmd _cmdComp);
-//A_Identificador A_identificador(String _id);
 A_ListaId A_listaId(String _id, A_ListaId _listaId);
-//A_Tipo A_tipo(A_Identificador _identificador);
 A_DecVar A_decVar(String _id, String _tipo);
 A_LstDecVar A_lstDecVar(A_DecVar _decVar, A_LstDecVar _lstDecVar);
 
@@ -57,29 +42,7 @@ A_Exp A_exp_fator_expressao(A_Exp _expressao);
 
 A_Exp A_exp_binaria(A_Exp _exp_esquerda, int _relacao, A_Exp _exp_direita);
 
-
-// lista de expressoes
 A_ListExp A_listExp(A_Exp _expressao, A_ListExp _lista_expressoes);
-
-////////////////////////////////////////////////////////
-//A_Atrib A_atrib(A_Exp _expressao);
-//A_ChamProc A_chamProc(A_Identificador _identificador, A_ListExp _lista_expressoes);
-
-// ta certo isso?
-//A_Cond A_cond_c(A_Exp _expressao, A_Cmd _comando_1, A_Cmd _comando_2);
-//A_Cond A_cond_s(A_Exp _expressao, A_Cmd _comando_1);
-
-//A_Loop A_loop(A_Exp _expressao, A_Cmd _comando);
-
-// ta certo isso?
-//A_IO A_io_read(A_ListaId _lista_identificadores);
-//A_IO A_io_write(A_ListExp _lista_expressoes);
-
-
-
-//A_Cmd A_cmd();    //vai ser esquema igual do fator? um pra cada ////////////////////////
-////////////////////////////////////////////////////////
-
 
 A_Cmd A_cmd_atrib(A_Exp _expressao);
 A_Cmd A_cmd_chamProc(String _identificador, A_ListExp _lista_expressoes);
@@ -88,17 +51,13 @@ A_Cmd A_cmd_loop(A_Exp _expressao, A_Cmd _comando);
 A_Cmd A_cmd_read(A_ListaId _lista_identificadores);
 A_Cmd A_cmd_write(A_ListExp _lista_expressoes);
 
-// lista de comandos
 A_Cmd A_cmdComp(A_Cmd _comando, A_Cmd _lista_comandos);
-
 
 A_BlocoSub A_blocoSub(A_LstDecVar _secDecVar, A_Cmd _cmdComp);
 A_DecParam A_decParam(A_ListaId _lista_identificadores, String _tipo);
 
-// lista de declaração de parametros
 A_DecParamList A_decParamList(A_DecParam _declaracao_parametros, A_DecParamList _lista_dec_parametros);
 
-// ta certo isso?
 A_DecProc A_decProc_proc(String _id, A_DecParamList _parametros_formais, A_BlocoSub _bloco);
 A_DecProc A_decProc_func(String _id, A_DecParamList _parametros_formais, A_BlocoSub _bloco, String _tipo);
 
@@ -137,24 +96,8 @@ struct A_LstDecSub_ {
     A_LstDecSub prox;
 };
 
-/* abstrata */
-//struct A_Exp{
-
-//};
-
-
-// struct A_Fator{
-//     struct A_Exp super;
-//     A_Var variavel;
-//     A_ChamFunc chamadaFuncao;
-//     struct A_Exp expressao;
-// };
-
-
 enum tipo_expressao {
     TE_Fator,
-    //TE_Exp_Simples,
-    //TE_Termo,
     TE_Exp_Binaria
 };
 
@@ -188,10 +131,7 @@ struct A_Exp_ {
     enum tipo_expressao tipo;
     union {
         struct Exp_Fator fator;
-        struct Exp_Binaria binaria; //serve pra exp simples e termo
-
-        //struct Exp_Binaria simples; // so vai usar um campo (exp unaria)
-        //struct Exp_Binaria termo;
+        struct Exp_Binaria binaria; 
     };
 };
 
@@ -200,10 +140,6 @@ struct A_ListExp_ {
     A_Exp expressao; 
     A_ListExp prox;
 };
-
-
-
-
 
 struct A_atrib {
     A_Exp expressao;
@@ -239,8 +175,6 @@ struct A_cmdComp {
     A_Cmd prox;
 };
 
-
-// ta certo isso?
 enum tipo_cmd{
     TC_ATRIB,
     TC_CHAMPROC,
@@ -265,7 +199,6 @@ struct A_Cmd_ {
 };
 
 
-
 struct A_BlocoSub_ {
     A_LstDecVar secDecVar; 
     A_Cmd cmdComp;
@@ -282,8 +215,6 @@ struct A_DecParamList_ {
     A_DecParamList prox;
 };
 
-
-// ta certo isso?
 enum tipo_decProc{
     TD_PROC,
     TD_FUNC

@@ -1,75 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "tabelaSimbolos.h"
 
-struct posicao_relativa{
-    int variavel_simples;   
-    int parametro_formal;   
-    char procedimento[4];   
-};
 
-struct tipo_proc{
-    char t_procedimento[4];
-    int tipo_chamada;    // 1 = parametro ou 0 = referencia
-    int numero_parametros;
-};
+symbol *top = NULL;
 
-struct tipo{
-    char t_normal[4];  // vs, pf
-    struct tipo_proc t_proc;
-};
-
-struct info{
-    int escopo;
-    struct posicao_relativa pr;
-    struct tipo type;
-};
-
-struct symbol{
-    char simbolo;
-    char categoria[5];  // VS, PF, PROC
-    struct info infos;
-
-    struct symbol *prox;
-};
-
-struct symbol *top = NULL;
-
-void push(int);
-void pop();
-
-/*
-int main(){
-    int n, ch;
-
-    do{
-        printf("\n\nStack Menu\n1. Push \n2. Pop\n3. Display\n0. Exit");
-        printf("\nEnter Choice 0-3? : ");
-        scanf("%d", &ch);
-        switch (ch){
-            case 1:
-                printf("\nEnter number ");
-                scanf("%d", &n);
-                push(n);
-                break;
-            case 2:
-                pop();
-                break;
-        }
-    } while (ch != 0);
-}
-*/
-
-void push(char _simbolo, char _categoria, int _escopo, int _pr_var_simples, int _pr_param_formal, char _pr_procedimento, int _tipo_normal, char _tipo_procedimento){
-    struct symbol *s_ptr = malloc(sizeof(struct symbol));
+void push(char _simbolo, char _categoria[], int _escopo, int _pr_var_simples, int _pr_param_formal, char _pr_procedimento[], char _tipo_normal[], char _tipo_procedimento[]){
+    symbol *s_ptr = malloc(sizeof(symbol));
     s_ptr->simbolo = _simbolo;
-    s_ptr->categoria = _categoria;  // str_cpy
+    strcpy(s_ptr->categoria, _categoria);
+    //s_ptr->categoria = _categoria;  // str_cpy
     s_ptr->infos.escopo = _escopo;
     s_ptr->infos.pr.variavel_simples = _pr_var_simples;
     s_ptr->infos.pr.parametro_formal = _pr_param_formal;
-    s_ptr->infos.pr.procedimento = _pr_procedimento;    // str_cpy
+    strcpy(s_ptr->infos.pr.procedimento, _pr_procedimento);
+    //s_ptr->infos.pr.procedimento = _pr_procedimento;    // str_cpy
     s_ptr->infos.type.t_normal = _tipo_normal;
-    s_ptr->infos.type.t_proc = _tipo_procedimento;  // str_cpy
+    strcpy(s_ptr->infos.type.t_proc, _tipo_procedimento);
+    //s_ptr->infos.type.t_proc = _tipo_procedimento;  // str_cpy
 
     s_ptr->prox = top;
     top = s_ptr;
@@ -80,10 +29,32 @@ void pop(){
         printf("\n\nStack is empty ");
     }
     else{
-        struct node *temp;
+        symbol *temp;
         temp = top;
-        top = top->next;
-        printf("\n\n%d deleted", temp->data);
+        top = top->prox;
+        //printf("\n\n%d deleted", temp->data);
         free(temp);
     }
+}
+
+void display()
+{
+    symbol *temp;
+    temp = top;
+    while (temp != NULL)
+    {
+        printf("\n %c | %s | %d | %d | %d | %s | %s | %s | \n", temp->symbol, temp->categoria, 
+                    temp->infos.escopo, temp->infos.pr.variavel_simples, temp->infos.pr.parametro_formal,
+                            temp->infos.pr.procedimento, temp->infos.type.t_normal,
+                                 temp->infos.type.t_proc);
+        temp = temp->prox;
+    }
+}
+
+
+
+
+int main(){
+    push('z',"VS",0,0,NULL,NULL,"int",NULL);
+    display();
 }

@@ -28,23 +28,14 @@ extern A_Programa absyn_root;
    A_Bloco bloco;
    A_BlocoSub bloco_sub;
    A_LstDecSub secDecSub;
-   //A_DecVar decVar;
    A_LstDecVar secDecVar;
    A_ListaId listaId;
    A_DecProc decProc;
    A_DecParam decParam;
    A_DecParamList decParamList;
-   //A_CmdComp cmdComp;
    A_Cmd cmd;
-   //A_Atrib atrib;
-   //A_ChamProc chamProc;
-   //A_Cond cond;
-   //A_Loop loop;
-   //A_IO IO;
    A_ListExp listExp;
    A_Exp exp;
-   //A_Termo termo;
-   //A_Fator fator;
    A_Var var;
    A_ChamFunc chamFunc;
 }
@@ -86,24 +77,15 @@ extern A_Programa absyn_root;
 %type <bloco> bloco 
 %type <bloco_sub> bloco_subrotinas
 %type <secDecVar> secao_declaracao_variaveis lista_declaracao_variaveis declaracao_variaveis
-//%type <decVar> 
 %type <str> tipo identificador
 %type <secDecSub> secao_declaracao_subrotinas lista_declaracao_subrotinas
 %type <listaId> lista_identificadores
 %type <decProc> declaracao_procedimento declaracao_funcao secao_declaracao_subrotinas_op
 %type <decParam> declaracao_parametros declaracao_parametros_op
 %type <decParamList> parametros_formais 
-//%type <cmdComp>
 %type <cmd> comando atribuicao chamada_procedimento condicional repeticao leitura escrita comando_composto comando_rec
-//%type <atrib> 
-//%type <chamProc>  
-//%type <cond> 
-//%type <loop> 
-//%type <IO>  
 %type <listExp> lista_expressoes 
 %type <exp> expressao expressao_simples termo fator
-//%type <termo> 
-//%type <fator> 
 %type <var> variavel
 %type <chamFunc> chamada_funcao 
 

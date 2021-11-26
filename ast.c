@@ -50,10 +50,8 @@ A_LstDecVar concatLstDecVar(A_LstDecVar _lst1, A_LstDecVar _lst2){
 
 
 A_Exp A_exp_fator_chamada_funcao(A_ChamFunc _chamadaFuncao){
-    //dar um malloc q nem 33
     A_Exp no = malloc(sizeof(*no));
     no->tipo = TE_Fator;
-    //no->fator = (struct Exp_Fator){.tipo = TF_ChamFunc, .chamadaFuncao = chamadaFuncao}; // se precisar de mais argumentos
     no->fator.tipo = TF_ChamFunc;
     no->fator.chamadaFuncao = _chamadaFuncao;
     return no;
@@ -200,7 +198,6 @@ A_Cmd A_cmd_write(A_ListExp _lista_expressoes){
 }
 
 
-// deixar esse por ultimo
 A_Cmd A_cmdComp(A_Cmd _comando, A_Cmd _lista_comandos){
     A_Cmd no = malloc(sizeof(*no));
     no->tipo = TC_CMDCOMP;

@@ -8,7 +8,6 @@ void analisaDecSubs(A_Bloco secDecSub);
 void analisaCmdComp(A_Bloco cmdComp);
 
 
-//no tocante a comando
 void analisaAtribuicao();
 void analisaChamadaProcedimento();
 void analisaChamadaFuncao();
