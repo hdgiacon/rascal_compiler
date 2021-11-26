@@ -44,7 +44,7 @@ A_Exp A_exp_binaria(A_Exp _exp_esquerda, int _relacao, A_Exp _exp_direita);
 
 A_ListExp A_listExp(A_Exp _expressao, A_ListExp _lista_expressoes);
 
-A_Cmd A_cmd_atrib(A_Exp _expressao);
+A_Cmd A_cmd_atrib(A_Exp _expressao, String _id);
 A_Cmd A_cmd_chamProc(String _identificador, A_ListExp _lista_expressoes);
 A_Cmd A_cmd_cond(A_Exp _expressao, A_Cmd _comando_1, A_Cmd _comando_2);
 A_Cmd A_cmd_loop(A_Exp _expressao, A_Cmd _comando);
@@ -143,6 +143,7 @@ struct A_ListExp_ {
 
 struct A_atrib {
     A_Exp expressao;
+    String id; //id do lado esq da atribuicao
 };
 
 struct A_chamProc {

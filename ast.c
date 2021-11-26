@@ -151,10 +151,11 @@ A_DecProc A_decProc_func(String _id, A_DecParamList _parametros_formais, A_Bloco
 
 
 
-A_Cmd A_cmd_atrib(A_Exp _expressao){
+A_Cmd A_cmd_atrib(A_Exp _expressao, String _id){
     A_Cmd atrib = malloc(sizeof(*atrib));
     atrib->tipo = TC_ATRIB;
     atrib->A_atrib.expressao = _expressao;
+    atrib->A_atrib.id = _id;
     return atrib;
 }
 

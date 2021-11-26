@@ -1,49 +1,43 @@
 #ifndef STACK_H
 #define STACK_H
 
-typedef struct posicao_relativa_ *posicao_relativa;
-typedef struct tipo_proc_ *tipo_proc;
-typedef struct tipo_ *tipo;
-typedef struct info_ *info;
-typedef struct symbol_ *symbol;
 
-
-
-struct posicao_relativa_{
+struct posicao_relativa{
     int variavel_simples;   
     int parametro_formal;   
-    char procedimento[4];   
+    char procedimento[10];   
 };
 
-struct tipo_proc_{
-    char t_procedimento[4];
+struct tipo_proc{
+    char t_procedimento[10];
     int tipo_chamada;    // 1 = parametro ou 0 = referencia
     int numero_parametros;
 };
 
-struct tipo_{
-    char t_normal[4];  // vs, pf
-    tipo_proc t_proc;
+struct tipo{
+    char t_normal[10];  // vs, pf
+    struct tipo_proc t_proc;
 };
 
-struct info_{
+struct info{
     int escopo;
-    posicao_relativa pr;
-    tipo type;
+    struct posicao_relativa pr;
+    struct tipo type;
 };
 
-struct symbol_{
-    char simbolo;
-    char categoria[5];  // VS, PF, PROC
-    info infos;
-    symbol *prox;
+struct symbol{
+    char simbolo[10];
+    char categoria[10];  // VS, PF, PROC
+    struct info infos;
+    struct symbol *prox;
 };
 
     
-void push(char _simbolo, char _categoria[], int _escopo, int _pr_var_simples,
+void push(struct symbol *top,char _simbolo[], char _categoria[], int _escopo, int _pr_var_simples,
              int _pr_param_formal, char _pr_procedimento[], 
-                char _tipo_normal[], char _tipo_procedimento[]);
-void pop();
+                char _tipo_normal[], char _tipo_procedimento[], int _numero_parametros, int _tipo_chamada);
+void pop(struct symbol *top);
+void display(struct symbol *top);
 
 
 #endif

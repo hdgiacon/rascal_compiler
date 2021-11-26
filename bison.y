@@ -189,7 +189,7 @@ comando:	atribuicao				{ $$ = $1; }
 ;
 
 
-atribuicao:	TK_IDENT TK_ATRIBUICAO expressao	{ $$ = A_cmd_atrib($3); }
+atribuicao:	TK_IDENT TK_ATRIBUICAO expressao	{ $$ = A_cmd_atrib($3,$1); }
 ;
 
 chamada_procedimento:	identificador TK_LPAREN lista_expressoes TK_RPAREN		{ $$ = A_cmd_chamProc($1, $3); }
