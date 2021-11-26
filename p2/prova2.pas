@@ -1,40 +1,39 @@
-// verifica se um numero digitado é par 10 vezes
+// passar um intervalo fechado e somar os numeros pares
 
 program prog1;
-    var num, k, aux: integer;
+    var sum, init, fim, aux: integer;
 begin
-    k := 0;
-    while(k <> 10) do
-    begin
-        read(num);
+    read(init);
+    read(fim);
 
-        aux := num div 2;
+    sum := 0;
+
+    while(init <= fim) do
+    begin
+        aux := init div 2;
         
-        if(num = aux * 2) then
-            write(true)
-        else
-            write(false);
-        k := k + 1;
+        if(init = aux * 2) then
+            sum := sum + init;
+
+        init := init + 1;
     end;
+
+    write(sum);
 end. 
+
 
 
 // escolha entre a soma e a subtração de 2 numeros
 
-
 program prog2;
     var num1, num2, res, op: integer;
 
-    procedure soma(n1: integer; n2: integer);
+    procedure operacoes(op: integer; n1: integer; n2: integer);
     begin
-        res := num1 + num2;
-        write(res);
-    end;
-
-    procedure subtracao(n1: integer; n2: integer);
-    begin
-        res := num1 - num2;
-        write(res);
+        if (op = 1) then
+            res := num1 + num2
+        else
+            res := num1 - num2;
     end;
 
 begin
@@ -43,43 +42,39 @@ begin
     read(num1);
     read(num2);
 
-    if(op = 1) then
-        soma(num1,num2)
-    else 
-        subtracao(num1,num2);
+    operacoes(op,num1,num2);
+    
+    write(res);
 end. 
 
 
-// prog1 alterado para função
 
+// fatorial iterativo
 
 program prog3;
-    var num, k: integer;
-    var res: boolean;
+    var num, res: integer;
 
-    function verifica_par(num: integer): boolean;
+    function fatorial(n: integer): integer;
         var aux: integer;
     begin
-        aux := num div 2;
+        aux := 1;
+        while(n > 1) do
+        begin
+            aux := aux * n;
+            n := n - 1;
+        end;
 
-        if(num = aux * 2) then
-            verifica_par := true
-        else
-            verifica_par := false;
+        fatorial := aux
     end;
-    
 begin
-    k := 0;
-    while(k <> 10) do
-    begin
-        read(num);
+    read(num);
 
-        res := verifica_par(num);
-        write(res);
-        
-        k := k + 1;
-    end;
-end. 
+    res := fatorial(num);
+
+    write(res);
+
+end.
+
 
 
 // fibonacci recursivo

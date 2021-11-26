@@ -89,6 +89,8 @@ void buscar_tipo_var(String _id, char retorno_tipo[]){
 
 void analisaDecSubs(A_lstDecSub secDecSub){
     // mandar pra pilha todos os elementos A_lstDecSub
+
+    // mudar o valor do escopo para 1
     while(secDecSub != NULL){
         if(secDecSub->decProc.tipo == TD_PROC){
             //para procedimento
@@ -104,6 +106,7 @@ void analisaDecSubs(A_lstDecSub secDecSub){
                 num_pf(secDecSub->decProc._decProc_proc.parametros_formais),
                 0
             );
+            // analise do corpo do sub
         }
         else{
             //para funcao
@@ -123,16 +126,24 @@ void analisaDecSubs(A_lstDecSub secDecSub){
         
         secDecSub = secDecSub->prox;
     }
+
+    // voltar o valor do escopo para 0
 }
+
+// analise que envolve expressão:
+//  -> precisa analisar de forma recursiva 
+//  -> se for uma expressão binaria, então chama a recursão
+//  -> se for um dos casos do fator, então fazer a analise 
+//  -> a recursão acaba quando não há mais expressões binarias
 
 void analisaAtribuicao(String _id, A_Exp expressao){
     //verficiar se a variavel esta na tabela de simbolos e no escopo atual
     
     if(esta_na_tabela(_id) && variavel_mesmo_escopo()){
         //verificar se o tipo dos dois lados da atribuição é o mesmo
-        if(strcmp(buscar_tipo_var(_id, ), buscar_tipo_var(expressao->binaria.exp_direita->fator.variavel->id, )) == 0){
+        //if(strcmp(buscar_tipo_var(_id, ), buscar_tipo_var(expressao->binaria.exp_direita->fator.variavel->id, )) == 0){
 
-        }
+        //}
     }
     
 }
