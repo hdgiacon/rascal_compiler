@@ -108,27 +108,18 @@ union YYSTYPE
    A_Bloco bloco;
    A_BlocoSub bloco_sub;
    A_LstDecSub secDecSub;
-   //A_DecVar decVar;
    A_LstDecVar secDecVar;
    A_ListaId listaId;
    A_DecProc decProc;
    A_DecParam decParam;
    A_DecParamList decParamList;
-   //A_CmdComp cmdComp;
    A_Cmd cmd;
-   //A_Atrib atrib;
-   //A_ChamProc chamProc;
-   //A_Cond cond;
-   //A_Loop loop;
-   //A_IO IO;
    A_ListExp listExp;
    A_Exp exp;
-   //A_Termo termo;
-   //A_Fator fator;
    A_Var var;
    A_ChamFunc chamFunc;
 
-#line 132 "bison.tab.h"
+#line 123 "bison.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

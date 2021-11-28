@@ -6,16 +6,15 @@
 int escopo_atual = 0;
 
 /* tabela (pilha) de simbolos */
-struct symbol *top = NULL;
+struct Symbol *top = NULL;
+
 
 /* verifica se um simbolo esta na tabela */
 bool esta_na_tabela(String simbolo){
-    //procurar na pilha
-    struct symbol *temp;
+    struct Symbol *temp;
     temp = top;
     while(temp != NULL){
         if(simbolo == temp->simbolo){
-            //se estiver presente
             return true;
         }
         temp = temp->prox;
@@ -24,37 +23,20 @@ bool esta_na_tabela(String simbolo){
 }
 
 bool variavel_mesmo_escopo(String simbolo){
-    struct symbol *temp;
+    struct Symbol *temp;
     temp = top;
     while(temp != NULL){
         if(simbolo == temp->simbolo && temp->infos.escopo == escopo_atual){
             return true;
         }
     }
-
     return false;
 }
 
 
-// //Verificar se está na tabela de simbolos e no escopo atual
-// bool verifica_tabela_escopo(variavel){
-//     if(esta_na_tabela(variavel)){
-//         if(mesmo_escopo(variavel)){
-//             //tudo ok
-//             return true;
-//         }
-//     }
-//     else{
-//         printf("Erro: Variavel nao declarada no atual contexto"); //colocar a variavel em um %s aqui
-//     }
-
-//     return false;
-
-// }
-
-void analisaPrograma(A_programa prog){
+void analisaPrograma(A_Programa prog){
     //instalar simbolo na tabela de simbolos
-    analisaBloco();
+    analisaBloco(prog->bloco);
 }
 
 void analisaBloco(A_Bloco bloco){
@@ -63,27 +45,43 @@ void analisaBloco(A_Bloco bloco){
     analisaCmdComp(bloco->cmdComp);
 }
 
-void analisaDecVars(A_lstDecVar secDecVar){
+void analisaDecVars(A_LstDecVar _secDecVar){
     // mandar pra pilha todos os elementos A_lstDecVar
+    A_LstDecVar secDecVar = _secDecVar;
+
     while(secDecVar != NULL){
-        top = push(top,secDecVar->decVar->id,"VS",0,0,0,"aaa",secDecVar->decVar->tipo,"ttt",0,0);
+        top = push(
+            top,
+            secDecVar->decVar->id,
+            "VS",
+            escopo_atual,
+            0,  // para esses 3 0's: como funciona posição relativa?
+            0,
+            0,
+            secDecVar->decVar->tipo,
+            _NUL_S_,
+            _NUL_I_,
+            0   // como funciona o tipo de chamada?
+        );
         secDecVar = secDecVar->prox;
     }
 }
 
 /* numero de parametros formais */
 int num_pf(A_DecParamList lista_parametros){
+    A_DecParamList decParamList = lista_parametros;
     int cont = 0;
-    while(lista_parametros != NULL){
+    
+    while(decParamList != NULL){
         cont++;
-        lista_parametros = lista_parametros->prox;
+        decParamList = decParamList->prox;
     }
     return cont;
 }
 
 /* buscar tipo da variavel pelo nome na tabela de simbolos */
 String buscar_tipo_var(String _id){
-    struct symbol *temp;
+    struct Symbol *temp;
     temp = top;
     while(temp != NULL){
         if(temp->simbolo == _id){
@@ -95,39 +93,40 @@ String buscar_tipo_var(String _id){
 }
 
 
-void analisaDecSubs(A_lstDecSub secDecSub){
+void analisaDecSubs(A_LstDecSub _secDecSub){
     // mandar pra pilha todos os elementos A_lstDecSub
+    A_LstDecSub secDecSub = _secDecSub;
 
-    escopo_atual++;
+    escopo_atual = 1;
     
     while(secDecSub != NULL){
         if(secDecSub->decProc.tipo == TD_PROC){
-            // para procedimento
+            // procedimento
             top = push(
                 secDecSub->decProc._decProc_proc.id,
                 "PROC",
+                0, 
+                0,  // para esses 3 0's abaixo: como funciona posição relativa?
                 0,
                 0,
-                0,
-                "aaa",
-                "ooo",
-                "eee",
+                _NUL_S_,
+                _NUL_S_,
                 num_pf(secDecSub->decProc._decProc_proc.parametros_formais),
-                0
+                0   // como funciona o tipo de chamada?
             );
             // analise do corpo do procedimento
         }
         else{
-            // para funcao
+            // função
             top = push(
                 secDecSub->decProc._decProc_func.id,
                 "FUNC",
                 0,
                 0,
                 0,
-                "aaa".
-                "ooo",
-                secDecSub->decProc._decProc_func.tipo,
+                0,
+                _NUL_S_,
+                secDecSub->decProc.tipo,
                 num_pf(secDecSub->decProc._decProc_func.parametros_formais),
                 0
             );
@@ -137,7 +136,7 @@ void analisaDecSubs(A_lstDecSub secDecSub){
         secDecSub = secDecSub->prox;
     }
 
-    escopo_atual--;
+    escopo_atual = 0;
 }
 
 // analise que envolve expressão:
@@ -152,6 +151,7 @@ String analiseChamFunc(A_ChamFunc _chamFunc){
 
 String analiseFator(A_Exp exp_fator){
     A_Exp fatores = exp_fator;
+
     switch(fatores->fator.tipo){
         case TF_Var:
             return buscar_tipo_var(fatores->fator.variavel->id);
@@ -171,6 +171,7 @@ String analiseFator(A_Exp exp_fator){
 
 String tipo_lado_dir(A_Exp _expressao){
     A_Exp expressoes = _expressao;
+
     switch(expressoes->tipo){
         case TE_Fator:
             analiseFator(expressoes->fator);
@@ -222,6 +223,7 @@ void analisaLoop(A_cmd_loop loop){
 
 void analisaCmdComp(A_Cmd comandos){
     A_Cmd comando = comandos;
+
     while(comando->A_cmdComp.prox != NULL){
         switch(comando->tipo){
             case TC_ATRIB:

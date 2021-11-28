@@ -91,6 +91,32 @@ struct A_LstDecVar_ {
     A_LstDecVar prox;
 };
 
+enum tipo_decProc{
+    TD_PROC,
+    TD_FUNC
+};
+
+struct DecProc_Proc{
+    String id;
+    A_DecParamList parametros_formais; 
+    A_BlocoSub bloco;
+};
+
+struct DecProc_Func{
+    String id; 
+    A_DecParamList parametros_formais; 
+    A_BlocoSub bloco; 
+    String tipo;
+};
+
+struct A_DecProc_ {
+    enum tipo_decProc tipo;
+    union{
+        struct DecProc_Proc _decProc_proc;
+        struct DecProc_Func _decProc_func;
+    };
+};
+
 struct A_LstDecSub_ {
     A_DecProc decProc;
     A_LstDecSub prox;
@@ -143,7 +169,7 @@ struct A_ListExp_ {
 
 struct A_atrib {
     A_Exp expressao;
-    String id; //id do lado esq da atribuicao
+    String id;  //id do lado esq da atribuicao
 };
 
 struct A_chamProc {
@@ -216,31 +242,7 @@ struct A_DecParamList_ {
     A_DecParamList prox;
 };
 
-enum tipo_decProc{
-    TD_PROC,
-    TD_FUNC
-};
 
-struct DecProc_Proc{
-    String id;
-    A_DecParamList parametros_formais; 
-    A_BlocoSub bloco;
-};
-
-struct DecProc_Func{
-    String id; 
-    A_DecParamList parametros_formais; 
-    A_BlocoSub bloco; 
-    String tipo;
-};
-
-struct A_DecProc_ {
-    enum tipo_decProc tipo;
-    union{
-        struct DecProc_Proc _decProc_proc;
-        struct DecProc_Func _decProc_func;
-    };
-};
 
 struct A_ChamFunc_ {
     String id; 

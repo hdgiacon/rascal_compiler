@@ -1,4 +1,4 @@
-rascal: rascal.c bison.tab.c lex.yy.c ast.c util.c
+rascal: rascal.c semantico.c bison.tab.c lex.yy.c tabelaSimbolos.c ast.c util.c
 
 bison.tab.c bison.tab.h: bison.y
 	bison -Werror -tvd -r all bison.y

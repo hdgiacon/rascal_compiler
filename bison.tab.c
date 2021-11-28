@@ -191,27 +191,18 @@ union YYSTYPE
    A_Bloco bloco;
    A_BlocoSub bloco_sub;
    A_LstDecSub secDecSub;
-   //A_DecVar decVar;
    A_LstDecVar secDecVar;
    A_ListaId listaId;
    A_DecProc decProc;
    A_DecParam decParam;
    A_DecParamList decParamList;
-   //A_CmdComp cmdComp;
    A_Cmd cmd;
-   //A_Atrib atrib;
-   //A_ChamProc chamProc;
-   //A_Cond cond;
-   //A_Loop loop;
-   //A_IO IO;
    A_ListExp listExp;
    A_Exp exp;
-   //A_Termo termo;
-   //A_Fator fator;
    A_Var var;
    A_ChamFunc chamFunc;
 
-#line 215 "bison.tab.c"
+#line 206 "bison.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -567,14 +558,14 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   121,   121,   124,   127,   128,   131,   132,   135,   150,
-     151,   155,   158,   159,   162,   163,   166,   167,   170,   171,
-     173,   174,   177,   181,   182,   185,   186,   189,   193,   196,
-     197,   200,   201,   202,   203,   204,   205,   206,   210,   213,
-     214,   218,   219,   222,   225,   228,   232,   233,   237,   238,
-     242,   243,   244,   245,   246,   247,   251,   252,   255,   256,
-     257,   261,   262,   265,   266,   267,   270,   271,   272,   273,
-     274,   275,   276,   280,   283,   284,   287,   288,   291
+       0,   103,   103,   106,   109,   110,   113,   114,   117,   132,
+     133,   137,   140,   141,   144,   145,   148,   149,   152,   153,
+     156,   157,   160,   164,   165,   168,   169,   172,   176,   179,
+     180,   183,   184,   185,   186,   187,   188,   189,   193,   196,
+     197,   201,   202,   205,   208,   211,   215,   216,   220,   221,
+     225,   226,   227,   228,   229,   230,   234,   235,   238,   239,
+     240,   244,   245,   248,   249,   250,   253,   254,   255,   256,
+     257,   258,   259,   263,   266,   267,   270,   271,   274
 };
 #endif
 
@@ -1728,43 +1719,43 @@ yyreduce:
     switch (yyn)
       {
   case 2:
-#line 121 "bison.y"
+#line 103 "bison.y"
                                                                { absyn_root = A_programa((yyvsp[-3].str), (yyvsp[-1].bloco)); }
-#line 1734 "bison.tab.c"
+#line 1725 "bison.tab.c"
     break;
 
   case 3:
-#line 124 "bison.y"
+#line 106 "bison.y"
                                                                                 { (yyval.bloco) = A_bloco((yyvsp[-2].secDecVar), (yyvsp[-1].secDecSub), (yyvsp[0].cmd)); }
-#line 1740 "bison.tab.c"
+#line 1731 "bison.tab.c"
     break;
 
   case 4:
-#line 127 "bison.y"
+#line 109 "bison.y"
                                                                                         { (yyval.secDecVar) = (yyvsp[0].secDecVar); }
-#line 1746 "bison.tab.c"
+#line 1737 "bison.tab.c"
     break;
 
   case 5:
-#line 128 "bison.y"
+#line 110 "bison.y"
                                                                                                                                                 { (yyval.secDecVar) = NULL; }
-#line 1752 "bison.tab.c"
+#line 1743 "bison.tab.c"
     break;
 
   case 6:
-#line 131 "bison.y"
+#line 113 "bison.y"
                                                                                                                 { (yyval.secDecVar) = concatLstDecVar((yyvsp[-2].secDecVar), (yyvsp[0].secDecVar)); }
-#line 1758 "bison.tab.c"
+#line 1749 "bison.tab.c"
     break;
 
   case 7:
-#line 132 "bison.y"
+#line 114 "bison.y"
                                                                                                                                                                 { (yyval.secDecVar) = (yyvsp[-1].secDecVar); }
-#line 1764 "bison.tab.c"
+#line 1755 "bison.tab.c"
     break;
 
   case 8:
-#line 135 "bison.y"
+#line 117 "bison.y"
                                                                         {
 	String tipo = (yyvsp[0].str);
 	A_LstDecVar lstDecVar = NULL;
@@ -1777,431 +1768,431 @@ yyreduce:
 	
 	(yyval.secDecVar) = lstDecVar;
 }
-#line 1781 "bison.tab.c"
+#line 1772 "bison.tab.c"
     break;
 
   case 9:
-#line 150 "bison.y"
+#line 132 "bison.y"
                                                                                                         { (yyval.listaId) = A_listaId((yyvsp[0].str), NULL); }
-#line 1787 "bison.tab.c"
+#line 1778 "bison.tab.c"
     break;
 
   case 10:
-#line 151 "bison.y"
+#line 133 "bison.y"
                                                                                                 { (yyval.listaId) = A_listaId((yyvsp[-2].str), (yyvsp[0].listaId)); }
-#line 1793 "bison.tab.c"
+#line 1784 "bison.tab.c"
     break;
 
   case 11:
-#line 155 "bison.y"
+#line 137 "bison.y"
                         { (yyval.str) = (yyvsp[0].str); }
-#line 1799 "bison.tab.c"
+#line 1790 "bison.tab.c"
     break;
 
   case 12:
-#line 158 "bison.y"
+#line 140 "bison.y"
                                                                         {(yyval.secDecSub) = (yyvsp[0].secDecSub);}
-#line 1805 "bison.tab.c"
+#line 1796 "bison.tab.c"
     break;
 
   case 13:
-#line 159 "bison.y"
+#line 141 "bison.y"
                                                                 { (yyval.secDecSub) = NULL; }
-#line 1811 "bison.tab.c"
+#line 1802 "bison.tab.c"
     break;
 
   case 14:
-#line 162 "bison.y"
+#line 144 "bison.y"
                                                                                                         { (yyval.secDecSub) = A_lstDecSub((yyvsp[-2].decProc), (yyvsp[0].secDecSub)); }
-#line 1817 "bison.tab.c"
+#line 1808 "bison.tab.c"
     break;
 
   case 15:
-#line 163 "bison.y"
+#line 145 "bison.y"
                                                                                                                                                                         { (yyval.secDecSub) = A_lstDecSub((yyvsp[-1].decProc), NULL); }
-#line 1823 "bison.tab.c"
+#line 1814 "bison.tab.c"
     break;
 
   case 16:
-#line 166 "bison.y"
+#line 148 "bison.y"
                                                                 { (yyval.decProc) = (yyvsp[0].decProc); }
-#line 1829 "bison.tab.c"
+#line 1820 "bison.tab.c"
     break;
 
   case 17:
-#line 167 "bison.y"
+#line 149 "bison.y"
                                                                                                         { (yyval.decProc) = (yyvsp[0].decProc); }
-#line 1835 "bison.tab.c"
+#line 1826 "bison.tab.c"
     break;
 
   case 18:
-#line 170 "bison.y"
+#line 152 "bison.y"
                                                                                                                                 { (yyval.decProc) = A_decProc_proc((yyvsp[-5].str), (yyvsp[-3].decParamList), (yyvsp[0].bloco_sub)); }
-#line 1841 "bison.tab.c"
+#line 1832 "bison.tab.c"
     break;
 
   case 19:
-#line 171 "bison.y"
-                                                                                                                                        { (yyval.decProc) = A_decProc_proc((yyvsp[-4].str), NULL, (yyvsp[0].bloco_sub)); }
-#line 1847 "bison.tab.c"
+#line 153 "bison.y"
+                                                                                                                                                                                { (yyval.decProc) = A_decProc_proc((yyvsp[-4].str), NULL, (yyvsp[0].bloco_sub)); }
+#line 1838 "bison.tab.c"
     break;
 
   case 20:
-#line 173 "bison.y"
+#line 156 "bison.y"
                                                                                                                                                 { (yyval.decProc) = A_decProc_func((yyvsp[-7].str), (yyvsp[-5].decParamList), (yyvsp[0].bloco_sub), (yyvsp[-2].str)); }
-#line 1853 "bison.tab.c"
+#line 1844 "bison.tab.c"
     break;
 
   case 21:
-#line 174 "bison.y"
+#line 157 "bison.y"
                                                                                                                                                                                 { (yyval.decProc) = A_decProc_func((yyvsp[-6].str), NULL, (yyvsp[0].bloco_sub), (yyvsp[-2].str)); }
-#line 1859 "bison.tab.c"
+#line 1850 "bison.tab.c"
     break;
 
   case 22:
-#line 177 "bison.y"
+#line 160 "bison.y"
                                                                         { (yyval.bloco_sub) = A_blocoSub((yyvsp[-1].secDecVar), (yyvsp[0].cmd)); }
-#line 1865 "bison.tab.c"
+#line 1856 "bison.tab.c"
     break;
 
   case 23:
-#line 181 "bison.y"
+#line 164 "bison.y"
                                                                                         { (yyval.decParamList) = A_decParamList((yyvsp[-2].decParam), (yyvsp[0].decParamList)); }
-#line 1871 "bison.tab.c"
+#line 1862 "bison.tab.c"
     break;
 
   case 24:
-#line 182 "bison.y"
+#line 165 "bison.y"
                                                                                                                                         { (yyval.decParamList) = A_decParamList((yyvsp[0].decParam), NULL); }
-#line 1877 "bison.tab.c"
+#line 1868 "bison.tab.c"
     break;
 
   case 25:
-#line 185 "bison.y"
+#line 168 "bison.y"
                                                                                 { (yyval.decParam) = (yyvsp[0].decParam); }
-#line 1883 "bison.tab.c"
+#line 1874 "bison.tab.c"
     break;
 
   case 26:
-#line 186 "bison.y"
+#line 169 "bison.y"
                                                                                                                 { (yyval.decParam) = (yyvsp[0].decParam); }
-#line 1889 "bison.tab.c"
+#line 1880 "bison.tab.c"
     break;
 
   case 27:
-#line 189 "bison.y"
+#line 172 "bison.y"
                                                                         { (yyval.decParam) = A_decParam((yyvsp[-2].listaId), (yyvsp[0].str)); }
-#line 1895 "bison.tab.c"
+#line 1886 "bison.tab.c"
     break;
 
   case 28:
-#line 193 "bison.y"
+#line 176 "bison.y"
                                                         { (yyval.cmd) = (yyvsp[-1].cmd); }
-#line 1901 "bison.tab.c"
+#line 1892 "bison.tab.c"
     break;
 
   case 29:
-#line 196 "bison.y"
+#line 179 "bison.y"
                                                 { (yyval.cmd) = A_cmdComp((yyvsp[-2].cmd), (yyvsp[0].cmd)); }
-#line 1907 "bison.tab.c"
+#line 1898 "bison.tab.c"
     break;
 
   case 30:
-#line 197 "bison.y"
+#line 180 "bison.y"
                                                                                 { (yyval.cmd) = A_cmdComp((yyvsp[-1].cmd), NULL); }
-#line 1913 "bison.tab.c"
+#line 1904 "bison.tab.c"
     break;
 
   case 31:
-#line 200 "bison.y"
+#line 183 "bison.y"
                                                         { (yyval.cmd) = (yyvsp[0].cmd); }
-#line 1919 "bison.tab.c"
+#line 1910 "bison.tab.c"
     break;
 
   case 32:
-#line 201 "bison.y"
+#line 184 "bison.y"
                                                 { (yyval.cmd) = (yyvsp[0].cmd); }
-#line 1925 "bison.tab.c"
+#line 1916 "bison.tab.c"
     break;
 
   case 33:
-#line 202 "bison.y"
+#line 185 "bison.y"
                                                         { (yyval.cmd) = (yyvsp[0].cmd); }
-#line 1931 "bison.tab.c"
+#line 1922 "bison.tab.c"
     break;
 
   case 34:
-#line 203 "bison.y"
+#line 186 "bison.y"
                                                         { (yyval.cmd) = (yyvsp[0].cmd); }
-#line 1937 "bison.tab.c"
+#line 1928 "bison.tab.c"
     break;
 
   case 35:
-#line 204 "bison.y"
+#line 187 "bison.y"
                                                                 { (yyval.cmd) = (yyvsp[0].cmd); }
-#line 1943 "bison.tab.c"
+#line 1934 "bison.tab.c"
     break;
 
   case 36:
-#line 205 "bison.y"
+#line 188 "bison.y"
                                                                 { (yyval.cmd) = (yyvsp[0].cmd); }
-#line 1949 "bison.tab.c"
+#line 1940 "bison.tab.c"
     break;
 
   case 37:
-#line 206 "bison.y"
+#line 189 "bison.y"
                                                 { (yyval.cmd) = (yyvsp[0].cmd); }
-#line 1955 "bison.tab.c"
+#line 1946 "bison.tab.c"
     break;
 
   case 38:
-#line 210 "bison.y"
-                                                        { (yyval.cmd) = A_cmd_atrib((yyvsp[0].exp)); }
-#line 1961 "bison.tab.c"
+#line 193 "bison.y"
+                                                        { (yyval.cmd) = A_cmd_atrib((yyvsp[0].exp),(yyvsp[-2].str)); }
+#line 1952 "bison.tab.c"
     break;
 
   case 39:
-#line 213 "bison.y"
+#line 196 "bison.y"
                                                                                         { (yyval.cmd) = A_cmd_chamProc((yyvsp[-3].str), (yyvsp[-1].listExp)); }
-#line 1967 "bison.tab.c"
+#line 1958 "bison.tab.c"
     break;
 
   case 40:
-#line 214 "bison.y"
+#line 197 "bison.y"
                                                                                                                                 { (yyval.cmd) = A_cmd_chamProc((yyvsp[-2].str), NULL); }
-#line 1973 "bison.tab.c"
+#line 1964 "bison.tab.c"
     break;
 
   case 41:
-#line 218 "bison.y"
+#line 201 "bison.y"
                                                                 { (yyval.cmd) = A_cmd_cond((yyvsp[-4].exp), (yyvsp[-2].cmd), (yyvsp[0].cmd)); }
-#line 1979 "bison.tab.c"
+#line 1970 "bison.tab.c"
     break;
 
   case 42:
-#line 219 "bison.y"
+#line 202 "bison.y"
                                                                                                 { (yyval.cmd) = A_cmd_cond((yyvsp[-2].exp), (yyvsp[0].cmd), NULL); }
-#line 1985 "bison.tab.c"
+#line 1976 "bison.tab.c"
     break;
 
   case 43:
-#line 222 "bison.y"
+#line 205 "bison.y"
                                                                                         { (yyval.cmd) = A_cmd_loop((yyvsp[-2].exp), (yyvsp[0].cmd)); }
-#line 1991 "bison.tab.c"
+#line 1982 "bison.tab.c"
     break;
 
   case 44:
-#line 225 "bison.y"
+#line 208 "bison.y"
                                                                         { (yyval.cmd) = A_cmd_read((yyvsp[-1].listaId)); }
-#line 1997 "bison.tab.c"
+#line 1988 "bison.tab.c"
     break;
 
   case 45:
-#line 228 "bison.y"
+#line 211 "bison.y"
                                                                         { (yyval.cmd) = A_cmd_write((yyvsp[-1].listExp)); }
-#line 2003 "bison.tab.c"
+#line 1994 "bison.tab.c"
     break;
 
   case 46:
-#line 232 "bison.y"
+#line 215 "bison.y"
                                                                         { (yyval.listExp) = A_listExp((yyvsp[0].exp), (yyvsp[-2].listExp)); }
-#line 2009 "bison.tab.c"
+#line 2000 "bison.tab.c"
     break;
 
   case 47:
-#line 233 "bison.y"
+#line 216 "bison.y"
                                                                                                                         { (yyval.listExp) = A_listExp((yyvsp[0].exp), NULL); }
-#line 2015 "bison.tab.c"
+#line 2006 "bison.tab.c"
     break;
 
   case 48:
-#line 237 "bison.y"
+#line 220 "bison.y"
                                                                                                         { (yyval.exp) = A_exp_binaria((yyvsp[0].exp), -1, NULL); }
-#line 2021 "bison.tab.c"
+#line 2012 "bison.tab.c"
     break;
 
   case 49:
-#line 238 "bison.y"
+#line 221 "bison.y"
                                                                                         { (yyval.exp) = A_exp_binaria((yyvsp[-2].exp), (yyvsp[-1].num), (yyvsp[0].exp)); }
-#line 2027 "bison.tab.c"
+#line 2018 "bison.tab.c"
     break;
 
   case 50:
-#line 242 "bison.y"
+#line 225 "bison.y"
                                                 { (yyval.num) = 00; }
-#line 2033 "bison.tab.c"
+#line 2024 "bison.tab.c"
     break;
 
   case 51:
-#line 243 "bison.y"
+#line 226 "bison.y"
                                                 { (yyval.num) = 01; }
-#line 2039 "bison.tab.c"
+#line 2030 "bison.tab.c"
     break;
 
   case 52:
-#line 244 "bison.y"
+#line 227 "bison.y"
                                                 { (yyval.num) = 02; }
-#line 2045 "bison.tab.c"
+#line 2036 "bison.tab.c"
     break;
 
   case 53:
-#line 245 "bison.y"
+#line 228 "bison.y"
                                                 { (yyval.num) = 03; }
-#line 2051 "bison.tab.c"
+#line 2042 "bison.tab.c"
     break;
 
   case 54:
-#line 246 "bison.y"
+#line 229 "bison.y"
                                                 { (yyval.num) = 04; }
-#line 2057 "bison.tab.c"
+#line 2048 "bison.tab.c"
     break;
 
   case 55:
-#line 247 "bison.y"
+#line 230 "bison.y"
                                                 { (yyval.num) = 05; }
-#line 2063 "bison.tab.c"
+#line 2054 "bison.tab.c"
     break;
 
   case 56:
-#line 251 "bison.y"
+#line 234 "bison.y"
                                                         { (yyval.exp) = A_exp_binaria((yyvsp[-2].exp), (yyvsp[-1].num), (yyvsp[0].exp)); }
-#line 2069 "bison.tab.c"
+#line 2060 "bison.tab.c"
     break;
 
   case 57:
-#line 252 "bison.y"
+#line 235 "bison.y"
                                                                                                 { (yyval.exp) = A_exp_binaria((yyvsp[0].exp), -1, NULL); }
-#line 2075 "bison.tab.c"
+#line 2066 "bison.tab.c"
     break;
 
   case 58:
-#line 255 "bison.y"
+#line 238 "bison.y"
                                                         { (yyval.num) = 10; }
-#line 2081 "bison.tab.c"
+#line 2072 "bison.tab.c"
     break;
 
   case 59:
-#line 256 "bison.y"
+#line 239 "bison.y"
                                                         { (yyval.num) = 11; }
-#line 2087 "bison.tab.c"
+#line 2078 "bison.tab.c"
     break;
 
   case 60:
-#line 257 "bison.y"
+#line 240 "bison.y"
                                                                 { (yyval.num) = 12; }
-#line 2093 "bison.tab.c"
+#line 2084 "bison.tab.c"
     break;
 
   case 61:
-#line 261 "bison.y"
+#line 244 "bison.y"
                                                 { (yyval.exp) = A_exp_binaria((yyvsp[-2].exp), (yyvsp[-1].num), (yyvsp[0].exp)); }
-#line 2099 "bison.tab.c"
+#line 2090 "bison.tab.c"
     break;
 
   case 62:
-#line 262 "bison.y"
+#line 245 "bison.y"
                                                                 { (yyval.exp) = A_exp_binaria((yyvsp[0].exp), -1, NULL); }
-#line 2105 "bison.tab.c"
+#line 2096 "bison.tab.c"
     break;
 
   case 63:
-#line 265 "bison.y"
+#line 248 "bison.y"
                                                         { (yyval.num) = 20; }
-#line 2111 "bison.tab.c"
+#line 2102 "bison.tab.c"
     break;
 
   case 64:
-#line 266 "bison.y"
+#line 249 "bison.y"
                                                                 { (yyval.num) = 21; }
-#line 2117 "bison.tab.c"
+#line 2108 "bison.tab.c"
     break;
 
   case 65:
-#line 267 "bison.y"
+#line 250 "bison.y"
                                                                 { (yyval.num) = 22; }
-#line 2123 "bison.tab.c"
+#line 2114 "bison.tab.c"
     break;
 
   case 66:
-#line 270 "bison.y"
+#line 253 "bison.y"
                                                                 { (yyval.exp) = A_exp_fator_variavel((yyvsp[0].var)); }
-#line 2129 "bison.tab.c"
+#line 2120 "bison.tab.c"
     break;
 
   case 67:
-#line 271 "bison.y"
+#line 254 "bison.y"
                                                                                 { (yyval.exp) = A_exp_fator_int((yyvsp[0].num)); }
-#line 2135 "bison.tab.c"
+#line 2126 "bison.tab.c"
     break;
 
   case 68:
-#line 272 "bison.y"
+#line 255 "bison.y"
                                                                                 { (yyval.exp) = A_exp_fator_logico((yyvsp[0].num)); }
-#line 2141 "bison.tab.c"
+#line 2132 "bison.tab.c"
     break;
 
   case 69:
-#line 273 "bison.y"
+#line 256 "bison.y"
                                                                         { (yyval.exp) = A_exp_fator_chamada_funcao((yyvsp[0].chamFunc)); }
-#line 2147 "bison.tab.c"
+#line 2138 "bison.tab.c"
     break;
 
   case 70:
-#line 274 "bison.y"
+#line 257 "bison.y"
                                                         { (yyval.exp) = A_exp_fator_expressao((yyvsp[-1].exp)); }
-#line 2153 "bison.tab.c"
+#line 2144 "bison.tab.c"
     break;
 
   case 71:
-#line 275 "bison.y"
+#line 258 "bison.y"
                                                                         { (yyval.exp) = (yyvsp[0].exp); }
-#line 2159 "bison.tab.c"
+#line 2150 "bison.tab.c"
     break;
 
   case 72:
-#line 276 "bison.y"
+#line 259 "bison.y"
                                                                         { (yyval.exp) = (yyvsp[0].exp); }
-#line 2165 "bison.tab.c"
+#line 2156 "bison.tab.c"
     break;
 
   case 73:
-#line 280 "bison.y"
+#line 263 "bison.y"
                                 { (yyval.var) = A_var((yyvsp[0].str)); }
-#line 2171 "bison.tab.c"
+#line 2162 "bison.tab.c"
     break;
 
   case 74:
-#line 283 "bison.y"
+#line 266 "bison.y"
                                 { (yyval.num) = 30; }
-#line 2177 "bison.tab.c"
+#line 2168 "bison.tab.c"
     break;
 
   case 75:
-#line 284 "bison.y"
+#line 267 "bison.y"
                                                 { (yyval.num) = 31; }
-#line 2183 "bison.tab.c"
+#line 2174 "bison.tab.c"
     break;
 
   case 76:
-#line 287 "bison.y"
+#line 270 "bison.y"
                                                                                 { (yyval.chamFunc) = A_chamFunc((yyvsp[-3].str), (yyvsp[-1].listExp)); }
-#line 2189 "bison.tab.c"
+#line 2180 "bison.tab.c"
     break;
 
   case 77:
-#line 288 "bison.y"
+#line 271 "bison.y"
                                                                                                                 { (yyval.chamFunc) = A_chamFunc((yyvsp[-2].str), NULL); }
-#line 2195 "bison.tab.c"
+#line 2186 "bison.tab.c"
     break;
 
   case 78:
-#line 291 "bison.y"
+#line 274 "bison.y"
                                         { (yyval.str) = (yyvsp[0].str); }
-#line 2201 "bison.tab.c"
+#line 2192 "bison.tab.c"
     break;
 
 
-#line 2205 "bison.tab.c"
+#line 2196 "bison.tab.c"
 
         default: break;
       }
@@ -2445,4 +2436,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 294 "bison.y"
+#line 277 "bison.y"
