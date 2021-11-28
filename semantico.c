@@ -1,19 +1,20 @@
 #include "semantico.h"
-#include "ast.h"
-#include <stdbool.h>
+
+#define _NUL_S_ "_NUL_" // null para string
+#define _NUL_I_ -1      // null para inteiro
 
 int escopo_atual = 0;
 
-//chamar a tabela aqui pra ficar global
+/* tabela (pilha) de simbolos */
 struct symbol *top = NULL;
 
-
-bool esta_na_tabela(char simbolo[]){
+/* verifica se um simbolo esta na tabela */
+bool esta_na_tabela(String simbolo){
     //procurar na pilha
     struct symbol *temp;
     temp = top;
     while(temp != NULL){
-        if(strcmp(simbolo, temp->simbolo) == 0){
+        if(simbolo == temp->simbolo){
             //se estiver presente
             return true;
         }
@@ -22,9 +23,15 @@ bool esta_na_tabela(char simbolo[]){
     return false;
 }
 
-bool variavel_mesmo_escopo(){
-    //logica ...
-    return true
+bool variavel_mesmo_escopo(String simbolo){
+    struct symbol *temp;
+    temp = top;
+    while(temp != NULL){
+        if(simbolo == temp->simbolo && temp->infos.escopo == escopo_atual){
+            return true;
+        }
+    }
+
     return false;
 }
 
@@ -64,6 +71,7 @@ void analisaDecVars(A_lstDecVar secDecVar){
     }
 }
 
+/* numero de parametros formais */
 int num_pf(A_DecParamList lista_parametros){
     int cont = 0;
     while(lista_parametros != NULL){
@@ -73,27 +81,28 @@ int num_pf(A_DecParamList lista_parametros){
     return cont;
 }
 
-//buscar tipo da variavel pelo nome na tabela de simbolos //estamos contando com passagem por referencia em retorno_tipo
-void buscar_tipo_var(String _id, char retorno_tipo[]){
+/* buscar tipo da variavel pelo nome na tabela de simbolos */
+String buscar_tipo_var(String _id){
     struct symbol *temp;
     temp = top;
     while(temp != NULL){
-        if(strcmp(temp->simbolo, _id) == 0){
-            strcpy(retorno_tipo, temp->simbolo);
+        if(temp->simbolo == _id){
+            return temp->infos.type.t_normal;
         }
         temp = temp->prox;
     }
-
+    return _NUL_S_;
 }
 
 
 void analisaDecSubs(A_lstDecSub secDecSub){
     // mandar pra pilha todos os elementos A_lstDecSub
 
-    // mudar o valor do escopo para 1
+    escopo_atual++;
+    
     while(secDecSub != NULL){
         if(secDecSub->decProc.tipo == TD_PROC){
-            //para procedimento
+            // para procedimento
             top = push(
                 secDecSub->decProc._decProc_proc.id,
                 "PROC",
@@ -106,10 +115,10 @@ void analisaDecSubs(A_lstDecSub secDecSub){
                 num_pf(secDecSub->decProc._decProc_proc.parametros_formais),
                 0
             );
-            // analise do corpo do sub
+            // analise do corpo do procedimento
         }
         else{
-            //para funcao
+            // para funcao
             top = push(
                 secDecSub->decProc._decProc_func.id,
                 "FUNC",
@@ -122,12 +131,13 @@ void analisaDecSubs(A_lstDecSub secDecSub){
                 num_pf(secDecSub->decProc._decProc_func.parametros_formais),
                 0
             );
+            // analise do corpo da função
         }
         
         secDecSub = secDecSub->prox;
     }
 
-    // voltar o valor do escopo para 0
+    escopo_atual--;
 }
 
 // analise que envolve expressão:
@@ -136,18 +146,56 @@ void analisaDecSubs(A_lstDecSub secDecSub){
 //  -> se for um dos casos do fator, então fazer a analise 
 //  -> a recursão acaba quando não há mais expressões binarias
 
-void analisaAtribuicao(String _id, A_Exp expressao){
-    //verficiar se a variavel esta na tabela de simbolos e no escopo atual
-    
-    if(esta_na_tabela(_id) && variavel_mesmo_escopo()){
-        //verificar se o tipo dos dois lados da atribuição é o mesmo
-        //if(strcmp(buscar_tipo_var(_id, ), buscar_tipo_var(expressao->binaria.exp_direita->fator.variavel->id, )) == 0){
+String analiseChamFunc(A_ChamFunc _chamFunc){
 
-        //}
+}
+
+String analiseFator(A_Exp exp_fator){
+    A_Exp fatores = exp_fator;
+    switch(fatores->fator.tipo){
+        case TF_Var:
+            return buscar_tipo_var(fatores->fator.variavel->id);
+            //break;
+        case TF_Num:
+            return "integer";
+            //break;
+        case TF_Logico: // neste caso faz o que?
+            break;
+        case TF_ChamFunc:
+            return analiseChamFunc(fatores->fator.chamadaFuncao);
+            //break;
+        case TF_Exp:    // neste caso faz o que?
+            break;
+    }
+}
+
+String tipo_lado_dir(A_Exp _expressao){
+    A_Exp expressoes = _expressao;
+    switch(expressoes->tipo){
+        case TE_Fator:
+            analiseFator(expressoes->fator);
+            break;
+        case TE_Exp_Binaria:
+            // chamar a recursão
+            //expressoes = tipo_lado_dir(expressoes); // seria isso?
+            break;
+    }
+    // onde fica o return dessa função?
+}
+
+void analisaAtribuicao(String _id, A_Exp _expressao){
+
+    //verficiar se a variavel esta na tabela de simbolos e no escopo atual
+    if(esta_na_tabela(_id) && variavel_mesmo_escopo(_id)){
+        //verificar se o tipo dos dois lados da atribuição é o mesmo
+        if(buscar_tipo_var(_id) == tipo_lado_dir(_expressao)){
+
+        }
+        
     }
     
 }
-
+// arrumar o parametro
 void analisaChamProc(A_cmd_chamProc chamProc){
     // verficiar se a chamada de procedimento esta na tabela de simbolos e no escopo atual
     if(verifica_tabela_escopo(chamProc)){
