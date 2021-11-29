@@ -1,8 +1,7 @@
-// main da aplicação
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
+#include "semantico.h"
 #include "bison.tab.h"
 
 A_Programa absyn_root;
@@ -18,23 +17,26 @@ int main(int argc, char** argv){
     FILE* fp;
     extern FILE* yyin;
 
-    if (argc < 2 || argc > 2) {
+    if(argc < 2 || argc > 2){
         fprintf(stderr, "Erro: número inválido de parâmetros\n");
         fprintf(stderr, "Uso: compilador <arquivo>\n");
         return EXIT_FAILURE;
     }
 
     fp = fopen(argv[1], "r");
-    if (fp == NULL) {
+    if(fp == NULL){
         printf("Erro: não foi possível ler o arquivo '%s'\n", argv[1]);
         return EXIT_FAILURE;
     }
 
     yyin = fp;
-    if (yyparse() == 0) {
+    if(yyparse() == 0){
         fprintf(stderr, "\nSucesso!");
-    } else {
+        // chamar o semantico aqui
+    } 
+    else{
         fprintf(stderr, "\nAnálise com erros!");
+        return EXIT_FAILURE;
     }
 
     // raiz_ast está apontando para o nó raiz da AST (programa) caso o parsing foi bem sucedido.

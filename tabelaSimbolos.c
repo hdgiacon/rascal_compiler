@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "tabelaSimbolos.h"
 
 //struct Symbol *top = NULL;
@@ -13,11 +12,11 @@ struct Symbol *push(struct Symbol *top, String _simbolo, String _categoria, int 
     s_ptr->infos.escopo = _escopo;
     s_ptr->infos.pr.variavel_simples = _pr_var_simples;
     s_ptr->infos.pr.parametro_formal = _pr_param_formal;
-    s_ptr->infos.pr.procedimento = _pr_subrotina;
+    s_ptr->infos.pr.subrotina = _pr_subrotina;
     s_ptr->infos.type.t_normal = _tipo_normal;
     s_ptr->infos.type.t_sub.t_funcao = _tipo_funcao;
-    s_ptr->infos.type.t_proc.numero_parametros = _numero_parametros;
-    s_ptr->infos.type.t_proc.tipo_chamada = _tipo_chamada;
+    s_ptr->infos.type.t_sub.numero_parametros = _numero_parametros;
+    s_ptr->infos.type.t_sub.tipo_chamada = _tipo_chamada;
     s_ptr->prox = top;
     top = s_ptr;
     return top;
