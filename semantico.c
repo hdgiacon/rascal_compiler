@@ -1,3 +1,4 @@
+#include <string.h>
 #include "semantico.h"
 
 #define _NUL_S_ "_NUL_" // null para string
@@ -154,23 +155,27 @@ String analiseFator(A_Exp exp_fator){
 
     switch(fatores->fator.tipo){
         case TF_Var:
+
             return buscar_tipo_var(fatores->fator.variavel->id);
-            //break;
         case TF_Num:
+            // codigo mepa
             return "integer";
-            //break;
-        case TF_Logico: // neste caso faz o que?
-            break;
+        case TF_Logico: 
+            // codigo mepa
+            return "boolean";
         case TF_ChamFunc:
             return analiseChamFunc(fatores->fator.chamadaFuncao);
-            //break;
-        case TF_Exp:    // neste caso faz o que?
+        case TF_Exp:
+            return analiseExp(farores->fator.exp);  // conferir esse parametro pra ver se ta certo
             break;
     }
 }
 
-String tipo_lado_dir(A_Exp _expressao){
+String analiseExp(A_Exp _expressao){
     A_Exp expressoes = _expressao;
+
+    String tipoEsq;
+    String tipoDir;
 
     switch(expressoes->tipo){
         case TE_Fator:
@@ -178,18 +183,28 @@ String tipo_lado_dir(A_Exp _expressao){
             break;
         case TE_Exp_Binaria:
             // chamar a recursão
-            //expressoes = tipo_lado_dir(expressoes); // seria isso?
-            break;
+            tipoEsq = analiseExp(expressoes->binaria.exp_esquerda);
+            tipoDir = analiseExp(expressoes->binaria.exp_direita);
+
+            if(verificar se é aritmetico ou elacional && tipoEsq == tipoDir){ // strcmp, usar switch pra cada tipo numerico de operador
+                // return do tipo
+            }
+            else if(verificar se é logico ou = ou <> && tipoEsq == tipoDir){    // comparação de String é por strcmp
+                // return do tipo
+            }
+            else{
+                // erro tipo
+            }
     }
-    // onde fica o return dessa função?
 }
 
-void analisaAtribuicao(String _id, A_Exp _expressao){
+void analisaAtribuicao(struct A_atrib atribuicao){
 
     //verficiar se a variavel esta na tabela de simbolos e no escopo atual
-    if(esta_na_tabela(_id) && variavel_mesmo_escopo(_id)){
+    if(esta_na_tabela(_id) && variavel_mesmo_escopo(_id)){      
         //verificar se o tipo dos dois lados da atribuição é o mesmo
-        if(buscar_tipo_var(_id) == tipo_lado_dir(_expressao)){
+
+        if(buscar_tipo_var(_id) == analiseExp(_expressao)){ // trocar aqui pra seguir o parametro
 
         }
         
@@ -221,31 +236,35 @@ void analisaLoop(A_cmd_loop loop){
     //a expressão condicional deve ser valida e resultar em algum valor do tipo logico
 }
 
-void analisaCmdComp(A_Cmd comandos){
-    A_Cmd comando = comandos;
+void analisaCmd(A_Cmd comando){
+    switch(comando->tipo){
+        case TC_ATRIB:
+            analisaAtribuicao(comando->A_atrib);
+            break;
+        case TC_CHAMPROC:
+            analisaChamProc(A_cmd_chamProc chamProc);
+            break;
+        case TC_COND:
+            analisaCondicional(A_cmd_cond condicional);
+            break;
+        case TC_LOOP:
+            analisaLoop(A_cmd_loop loop);
+            break;
+        case TC_LEITURA:
+            break;
+        case TC_ESCRITA:
+            break;
+        case TC_CMDCOMP:
+            analisaCmdComp(comando->A_cmdComp);
+            break;
+    }
+}
 
-    while(comando->A_cmdComp.prox != NULL){
-        switch(comando->tipo){
-            case TC_ATRIB:
-                analisaAtribuicao(comando->A_atrib.id, comando->A_atrib.expressao);
-                break;
-            case TC_CHAMPROC:
-                analisaChamProc(A_cmd_chamProc chamProc);
-                break;
-            case TC_COND:
-                analisaCondicional(A_cmd_cond condicional);
-                break;
-            case TC_LOOP:
-                analisaLoop(A_cmd_loop loop);
-                break;
-            case TC_LEITURA:
-                break;
-            case TC_ESCRITA:
-                break;
-            case TC_CMDCOMP:
-                // incremento da lista de comando compostos
-                // comando = comando->A_cmdComp.prox;
-                break;
-        }
+void analisaCmdComp(A_cmdComp comandos){
+    A_cmdComp cmd = comandos;
+
+    while(cmd != NULL){
+        analisaCmd(cmd->comando);
+        cmd = cmd->prox;
     }
 }
