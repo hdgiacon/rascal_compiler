@@ -32,14 +32,10 @@
 *.app
 
 
-a.out
+# Bison/Flex outputs
+
 lex.yy.c
+
 bison.output
 bison.tab.c
 bison.tab.h
-tabelaSimbolos
-tabela
-rascal
-
-prova2
-prova2.o

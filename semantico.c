@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include "semantico.h"
 
 #define _NUL_S_ "_NUL_" // null para string
@@ -157,32 +158,34 @@ int num_parametros(A_ListExp lista_parametros){
     return cont;
 }
 
-bool analisaOrdemFunc(A_ChamFunc chamFunc, ){
+bool analisaOrdemFunc(A_ChamFunc chamFunc){
 
 }
 
 String analisaChamFunc(A_ChamFunc _chamFunc){
     struct Symbol *funcao = esta_na_tabela(_chamFunc->id);
 
-    // verficiar se a chamada de procedimento esta na tabela de simbolos e no escopo atual
+    // verficar se a chamada de procedimento esta na tabela de simbolos e no escopo atual
     if((funcao != NULL) && simbolo_mesmo_escopo(_chamFunc->id)){
         // verificar se o numero de parametros na chamada equivale ao numero da declaração na pilha
         if(num_parametros(_chamFunc->lista_expressoes) == funcao->infos.type.t_sub.numero_parametros){
             // verificar se os argumentos estão na mesma ordem da declaração do procedimento (pilha)
             if(analisaOrdemFunc()){
-                // buguei aqui
+                // buguei aqui ---------------
             }
             else{
-                // mensagem de erro
+                fprintf(stderr, "");
             }
         }
         else{
-            // mensagem de erro
+            fprintf(stderr, "Número incorreto de parâmetros na função %s \n\n", _chamFunc->id);
         }
     }
     else{
-        // mensagem de erro
+        fprintf(stderr, "Função %s não está declarada \n\n", _chamFunc->id);
     }
+
+    return _NUL_S_; // talvez isso de problema
 }
 
 String analisaFator(A_Exp exp_fator){
@@ -213,8 +216,7 @@ String analisaExp(A_Exp _expressao){
 
     switch(expressoes->tipo){
         case TE_Fator:
-            analisaFator(expressoes->fator);
-            break;
+            return analisaFator(expressoes->fator);
         case TE_Exp_Binaria:
             tipoEsq = analisaExp(expressoes->binaria.exp_esquerda);
             tipoDir = analisaExp(expressoes->binaria.exp_direita);
@@ -229,7 +231,8 @@ String analisaExp(A_Exp _expressao){
                         return "integer";
                     }
                     else{
-                        // mensagem de erro
+                        fprintf(stderr, "Tipo incorreto, esperado tipo integer (inteiro) \n\n");
+                        return "integer";   // só pro programa continuar e mostrar mais erros se houver
                     }
                 /* operadores relacionais */
                 case 00:
@@ -245,59 +248,79 @@ String analisaExp(A_Exp _expressao){
                         return "boolean";
                     }
                     else{
-                        // mensagem de erro
+                        fprintf(stderr, "Tipo incorreto, esperado tipo boolean (booleano) \n\n");
+                        return "boolean";
                     }
             }
     }
 }
 
 void analisaAtribuicao(struct A_atrib atribuicao){
-    struct Symbol *variavel = esta_na_tabela(atribuicao.id);
+    struct Symbol *simbolo = esta_na_tabela(atribuicao.id);
+    String tipo_lado_esq;
+    String tipo_lado_dir;
 
-    //verficiar se a variavel esta na tabela de simbolos e no escopo atual
-    if((variavel != NULL) && simbolo_mesmo_escopo(atribuicao.id)){      
+    //verficiar se o simbolo esta na tabela de simbolos e no escopo atual
+    if((simbolo != NULL) && simbolo_mesmo_escopo(atribuicao.id)){      
         
         //verificar se o tipo dos dois lados da atribuição é o mesmo
-        if(strcmp(buscar_tipo_var(atribuicao.id),analisaExp(atribuicao.expressao)) == 0){
+        tipo_lado_esq = buscar_tipo_var(atribuicao.id);
+        tipo_lado_dir = analisaExp(atribuicao.expressao);
+        if(strcmp(tipo_lado_esq,tipo_lado_dir) == 0){
 
         }
         else{
-            // mensagem de erro
+            fprintf(stderr, "Tipo %s incorreto, esperado tipo %s para %s \n\n", tipo_lado_dir, tipo_lado_esq, atribuicao.id);
         }
     }
     else{
-        // mensagem de erro
+        fprintf(stderr, "Simbolo %s não declarado \n\n", atribuicao.id);
     }
 }
 
-void analisaChamProc(struct A_chamProc champroc){
-    // verficiar se a chamada de procedimento esta na tabela de simbolos e no escopo atual
-    if(simbolo_mesmo_escopo(champroc.identificador)){
+bool analisaOrdemProc(struct A_chamProc chamProc){
+
+}
+
+void analisaChamProc(struct A_chamProc chamProc){
+    struct Symbol *procedimento = esta_na_tabela(chamProc.identificador);
+
+    // verficar se a chamada de procedimento esta na tabela de simbolos e no escopo atual
+    if((procedimento != NULL) && simbolo_mesmo_escopo(chamProc.identificador)){
         // verificar se o numero de parametros na chamada equivale ao numero da declaração na pilha
+        if(num_parametros(chamProc.lista_expressoes) == procedimento->infos.type.t_sub.numero_parametros){
             // verificar se os argumentos estão na mesma ordem da declaração do procedimento (pilha)
+
+            //buguei igual com função ---------------
+        }
+        else{
+            fprintf(stderr, "Número incorreto de parâmetros no procedimento %s \n\n", chamProc.identificador);
+        }
     }
     else{
-        // mensagem de erro
+        fprintf(stderr, "Procedimento %s não está declarado \n\n", chamProc.identificador);
     }
 }
 
 void analisaCondicional(struct A_cond cond){
     //a expressão condicional deve ser valida e resultar em algum valor do tipo logico
-    if(strcmp(analisaExp(cond.expressao),"boolean") == 0){
+    String tipo_exp = analisaExp(cond.expressao);
+    if(strcmp(tipo_exp,"boolean") == 0){
 
     }
     else{
-        // mensagem de erro
+        fprintf(stderr, "Valor booleano esperado, expressão condicional resultou em %s \n\n", tipo_exp);
     }
 }
 
 void analisaLoop(struct A_loop loop){
     //a expressão condicional deve ser valida e resultar em algum valor do tipo logico
-    if(strcmp(analisaExp(loop.expressao),"boolean") == 0){
+    String tipo_loop = analisaExp(loop.expressao);
+    if(strcmp(tipo_loop,"boolean") == 0){
 
     }
     else{
-        // mensagem de erro
+        fprintf(stderr, "Valor booleano esperado, expressão condicional resultou em %s \n\n", tipo_loop);
     }
 }
 
@@ -309,7 +332,7 @@ void analisaLeitura(struct A_read read){
 
         }
         else{
-            // mensagem de erro
+            fprintf(stderr, "Simbolo %s não declarado \n\n", aux_read._lista_identificadores->id);
         }
 
         aux_read._lista_identificadores = aux_read._lista_identificadores->prox;
