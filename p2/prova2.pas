@@ -76,23 +76,19 @@ begin
 end.
 
 
-
-// fibonacci recursivo
+// Somatorio recursivo
 
 program prog4;
-    var n, res: integer;
-
-    function fibonacci(num: integer): integer;
-
-    begin
-        if((num = 1) or (num = 2)) then
-            fibonacci := 1
-        else
-            fibonacci := fibonacci(num-1) + fibonacci(num-2);
-    end;
+    var n,res: integer;
+    function soma(num: integer): integer;
+        begin
+            if (num = 1) then
+                soma := 1
+            else
+                soma := num + soma(num - 1);
+        end;
 begin
     read(n);
-
-    res := fibonacci(n);
+    res := soma(n);
     write(res);
 end.
