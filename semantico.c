@@ -7,6 +7,10 @@
 
 int escopo_atual = 0;
 
+int posicao_relativa_0 = 0;
+int posicao_relativa_1 = 0;
+int posicao_relativa_pf = -4;
+
 /* tabela (pilha) de simbolos */
 struct Symbol *top = NULL;
 
@@ -56,14 +60,16 @@ void analisaDecVars(A_LstDecVar _secDecVar){
             secDecVar->decVar->id,
             "VS",
             escopo_atual,
-            0,  // para esses 3 0's: como funciona posição relativa?
-            0,
-            0,
+            (escopo_atual == 0) ? posicao_relativa_0 : posicao_relativa_1,
+            _NUL_I_,
+            _NUL_I_,
             secDecVar->decVar->tipo,
             _NUL_S_,
             _NUL_I_,
-            0   // como funciona o tipo de chamada?
+            _NUL_I_
         );
+
+        (escopo_atual == 0) ? posicao_relativa_0++ : posicao_relativa_1++;
         secDecVar = secDecVar->prox;
     }
 }
@@ -102,35 +108,93 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
     
     while(secDecSub != NULL){
         if(secDecSub->decProc.tipo == TD_PROC){
+            /* parametro formal */
+            A_DecParamList param_formais = secDecSub->decProc->_decProc_proc.parametros_formais;
+            while(param_formais != NULL){
+                /* lista de identificadores dentro de parametros formais */
+                A_ListaId var_param = param_formais->declaracao_parametros->lista_identificadores;
+                while(var_param != NULL){
+                    top = push(
+                        top,
+                        var_param->id,
+                        "PF",
+                        1,
+                        _NUL_I_,
+                        posicao_relativa_pf,
+                        _NUL_I_,
+                        param_formais->declaracao_parametros->tipo,
+                        _NUL_S_,
+                        _NUL_I_,
+                        _NUL_I_
+                    );
+
+                    posicao_relativa_pf--;
+                    var_param = var_param->prox;
+                }
+
+                param_formais = param_formais->prox;
+            }
             /* procedimento */
             top = push(
+                top,
                 secDecSub->decProc._decProc_proc.id,
                 "PROC",
-                0, 
-                0,  // para esses 3 0's abaixo: como funciona posição relativa?
-                0,
-                0,
+                escopo_atual, 
+                _NUL_I_,
+                _NUL_I_,
+                posicao_relativa_1,
                 _NUL_S_,
                 _NUL_S_,
                 num_pf(secDecSub->decProc._decProc_proc.parametros_formais),
-                0   // como funciona o tipo de chamada?
+                0
             );
+
+            posicao_relativa_1++;
+
             // analise do corpo do procedimento
         }
         else{
+            /* parametro formal */
+            A_DecParamList parametros_formais = secDecSub->decProc->_decProc_func.parametros_formais;
+            while(parametros_formais != NULL){
+                /* lista de identificadores dentro de parametros formais */
+                A_ListaId var_parametros = parametros_formais->declaracao_parametros->lista_identificadores;
+                while(var_parametros != NULL){
+                    top = push(
+                        top,
+                        var_parametros->id,
+                        "PF",
+                        1,
+                        _NUL_I_,
+                        posicao_relativa_pf,
+                        _NUL_I_,
+                        parametros_formais->declaracao_parametros->tipo,
+                        _NUL_S_,
+                        _NUL_I_,
+                        _NUL_I_                       
+                    );
+
+                    var_parametros = var_parametros->prox;
+                }
+
+                parametros_formais = parametros_formais->prox;
+            }
             /* função */
             top = push(
                 secDecSub->decProc._decProc_func.id,
                 "FUNC",
-                0,
-                0,
-                0,
-                0,
+                escopo_atual,
+                _NUL_I_,
+                _NUL_I_,
+                posicao_relativa_1,
                 _NUL_S_,
                 secDecSub->decProc.tipo,
                 num_pf(secDecSub->decProc._decProc_func.parametros_formais),
                 0
             );
+
+            posicao_relativa_1++;
+
             // analise do corpo da função
         }
         
