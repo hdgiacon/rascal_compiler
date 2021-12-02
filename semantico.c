@@ -10,20 +10,20 @@ int escopo_atual = 0;
 struct Symbol *top = NULL;
 
 
-/* verifica se um simbolo esta na tabela */
-bool esta_na_tabela(String simbolo){
+/* verifica se um simbolo esta na tabela e o retorna*/
+struct Symbol *esta_na_tabela(String simbolo){
     struct Symbol *temp;
     temp = top;
     while(temp != NULL){
         if(simbolo == temp->simbolo){
-            return true;
+            return temp;
         }
         temp = temp->prox;
     }
-    return false;
+    return NULL;
 }
 
-bool variavel_mesmo_escopo(String simbolo){
+bool simbolo_mesmo_escopo(String simbolo){
     struct Symbol *temp;
     temp = top;
     while(temp != NULL){
@@ -36,7 +36,6 @@ bool variavel_mesmo_escopo(String simbolo){
 
 
 void analisaPrograma(A_Programa prog){
-    //instalar simbolo na tabela de simbolos
     analisaBloco(prog->bloco);
 }
 
@@ -90,7 +89,7 @@ String buscar_tipo_var(String _id){
         }
         temp = temp->prox;
     }
-    return _NUL_S_;
+    return _NUL_S_; // variavel não foi encontrada
 }
 
 
@@ -102,7 +101,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
     
     while(secDecSub != NULL){
         if(secDecSub->decProc.tipo == TD_PROC){
-            // procedimento
+            /* procedimento */
             top = push(
                 secDecSub->decProc._decProc_proc.id,
                 "PROC",
@@ -118,7 +117,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
             // analise do corpo do procedimento
         }
         else{
-            // função
+            /* função */
             top = push(
                 secDecSub->decProc._decProc_func.id,
                 "FUNC",
@@ -146,16 +145,52 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
 //  -> se for um dos casos do fator, então fazer a analise 
 //  -> a recursão acaba quando não há mais expressões binarias
 
-String analiseChamFunc(A_ChamFunc _chamFunc){
+int num_parametros(A_ListExp lista_parametros){
+    A_ListExp lista = lista_parametros;
+    int cont = 0;
+
+    while(lista != NULL){
+        cont++;
+        lista = lista->prox;
+    }
+
+    return cont;
+}
+
+bool analisaOrdemFunc(A_ChamFunc chamFunc, ){
 
 }
 
-String analiseFator(A_Exp exp_fator){
+String analisaChamFunc(A_ChamFunc _chamFunc){
+    struct Symbol *funcao = esta_na_tabela(_chamFunc->id);
+
+    // verficiar se a chamada de procedimento esta na tabela de simbolos e no escopo atual
+    if((funcao != NULL) && simbolo_mesmo_escopo(_chamFunc->id)){
+        // verificar se o numero de parametros na chamada equivale ao numero da declaração na pilha
+        if(num_parametros(_chamFunc->lista_expressoes) == funcao->infos.type.t_sub.numero_parametros){
+            // verificar se os argumentos estão na mesma ordem da declaração do procedimento (pilha)
+            if(analisaOrdemFunc()){
+                // buguei aqui
+            }
+            else{
+                // mensagem de erro
+            }
+        }
+        else{
+            // mensagem de erro
+        }
+    }
+    else{
+        // mensagem de erro
+    }
+}
+
+String analisaFator(A_Exp exp_fator){
     A_Exp fatores = exp_fator;
 
     switch(fatores->fator.tipo){
         case TF_Var:
-
+            // codigo mepa
             return buscar_tipo_var(fatores->fator.variavel->id);
         case TF_Num:
             // codigo mepa
@@ -164,14 +199,13 @@ String analiseFator(A_Exp exp_fator){
             // codigo mepa
             return "boolean";
         case TF_ChamFunc:
-            return analiseChamFunc(fatores->fator.chamadaFuncao);
+            return analisaChamFunc(fatores->fator.chamadaFuncao);
         case TF_Exp:
-            return analiseExp(farores->fator.exp);  // conferir esse parametro pra ver se ta certo
-            break;
+            return analisaExp(fatores->fator.expressao);
     }
 }
 
-String analiseExp(A_Exp _expressao){
+String analisaExp(A_Exp _expressao){
     A_Exp expressoes = _expressao;
 
     String tipoEsq;
@@ -179,61 +213,118 @@ String analiseExp(A_Exp _expressao){
 
     switch(expressoes->tipo){
         case TE_Fator:
-            analiseFator(expressoes->fator);
+            analisaFator(expressoes->fator);
             break;
         case TE_Exp_Binaria:
-            // chamar a recursão
-            tipoEsq = analiseExp(expressoes->binaria.exp_esquerda);
-            tipoDir = analiseExp(expressoes->binaria.exp_direita);
+            tipoEsq = analisaExp(expressoes->binaria.exp_esquerda);
+            tipoDir = analisaExp(expressoes->binaria.exp_direita);
 
-            if(verificar se é aritmetico ou elacional && tipoEsq == tipoDir){ // strcmp, usar switch pra cada tipo numerico de operador
-                // return do tipo
-            }
-            else if(verificar se é logico ou = ou <> && tipoEsq == tipoDir){    // comparação de String é por strcmp
-                // return do tipo
-            }
-            else{
-                // erro tipo
+            switch(expressoes->binaria.relacao){
+                /* operadores aritmeticos */
+                case 10:
+                case 11:
+                case 20:
+                case 21:
+                    if(strcmp(tipoEsq,tipoDir) == 0){
+                        return "integer";
+                    }
+                    else{
+                        // mensagem de erro
+                    }
+                /* operadores relacionais */
+                case 00:
+                case 01:
+                case 02:
+                case 03:
+                case 04:
+                case 05:
+                /* operadores logicos */
+                case 12:
+                case 22:
+                    if(strcmp(tipoEsq,tipoDir) == 0){
+                        return "boolean";
+                    }
+                    else{
+                        // mensagem de erro
+                    }
             }
     }
 }
 
 void analisaAtribuicao(struct A_atrib atribuicao){
+    struct Symbol *variavel = esta_na_tabela(atribuicao.id);
 
     //verficiar se a variavel esta na tabela de simbolos e no escopo atual
-    if(esta_na_tabela(_id) && variavel_mesmo_escopo(_id)){      
+    if((variavel != NULL) && simbolo_mesmo_escopo(atribuicao.id)){      
+        
         //verificar se o tipo dos dois lados da atribuição é o mesmo
-
-        if(buscar_tipo_var(_id) == analiseExp(_expressao)){ // trocar aqui pra seguir o parametro
+        if(strcmp(buscar_tipo_var(atribuicao.id),analisaExp(atribuicao.expressao)) == 0){
 
         }
-        
+        else{
+            // mensagem de erro
+        }
     }
-    
+    else{
+        // mensagem de erro
+    }
 }
-// arrumar o parametro
-void analisaChamProc(A_cmd_chamProc chamProc){
+
+void analisaChamProc(struct A_chamProc champroc){
     // verficiar se a chamada de procedimento esta na tabela de simbolos e no escopo atual
-    if(verifica_tabela_escopo(chamProc)){
+    if(simbolo_mesmo_escopo(champroc.identificador)){
+        // verificar se o numero de parametros na chamada equivale ao numero da declaração na pilha
+            // verificar se os argumentos estão na mesma ordem da declaração do procedimento (pilha)
+    }
+    else{
+        // mensagem de erro
+    }
+}
+
+void analisaCondicional(struct A_cond cond){
+    //a expressão condicional deve ser valida e resultar em algum valor do tipo logico
+    if(strcmp(analisaExp(cond.expressao),"boolean") == 0){
 
     }
-    
-    // verificar se o numero de parametros na chamada equivale ao numero da declaração na pilha
-    // verificar se os argumentos estão na mesma ordem da declaração do procedimento (pilha)
+    else{
+        // mensagem de erro
+    }
 }
 
-void analisaCondicional(A_cmd_cond condicional){
+void analisaLoop(struct A_loop loop){
     //a expressão condicional deve ser valida e resultar em algum valor do tipo logico
+    if(strcmp(analisaExp(loop.expressao),"boolean") == 0){
 
-
-
-    //Verificar se é valida -> verificar se retorna boolean
-    //Verificar se a condicional resulta em boolean
-    // checar se a expressão possui operadores relacionais ou logicos -> unico jeito de resultar boolean
+    }
+    else{
+        // mensagem de erro
+    }
 }
 
-void analisaLoop(A_cmd_loop loop){
-    //a expressão condicional deve ser valida e resultar em algum valor do tipo logico
+void analisaLeitura(struct A_read read){
+    struct A_read aux_read = read;
+
+    while(aux_read._lista_identificadores != NULL){
+        if(esta_na_tabela(aux_read._lista_identificadores->id) != NULL){
+
+        }
+        else{
+            // mensagem de erro
+        }
+
+        aux_read._lista_identificadores = aux_read._lista_identificadores->prox;
+    }
+}
+
+void analisaEscrita(struct A_write write){
+    struct A_write aux_write = write;
+    String ret_exp;
+
+    while(aux_write.lista_expressoes != NULL){
+        ret_exp = analisaExp(aux_write.lista_expressoes->expressao);
+
+        aux_write.lista_expressoes = aux_write.lista_expressoes->prox;
+    }
 }
 
 void analisaCmd(A_Cmd comando){
@@ -242,17 +333,19 @@ void analisaCmd(A_Cmd comando){
             analisaAtribuicao(comando->A_atrib);
             break;
         case TC_CHAMPROC:
-            analisaChamProc(A_cmd_chamProc chamProc);
+            analisaChamProc(comando->A_chamProc);
             break;
         case TC_COND:
-            analisaCondicional(A_cmd_cond condicional);
+            analisaCondicional(comando->A_cond);
             break;
         case TC_LOOP:
-            analisaLoop(A_cmd_loop loop);
+            analisaLoop(comando->A_loop);
             break;
         case TC_LEITURA:
+            analisaLeitura(comando->A_io_read);
             break;
         case TC_ESCRITA:
+            analisaEscrita(comando->A_io_write);
             break;
         case TC_CMDCOMP:
             analisaCmdComp(comando->A_cmdComp);
