@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "semantico.h"
 
@@ -62,7 +63,7 @@ void analisaDecVars(A_LstDecVar _secDecVar){
             escopo_atual,
             (escopo_atual == 0) ? posicao_relativa_0 : posicao_relativa_1,
             _NUL_I_,
-            _NUL_I_,
+            _NUL_S_,        // aqui é string: R01, o que seria isso?
             secDecVar->decVar->tipo,
             _NUL_S_,
             _NUL_I_,
@@ -107,7 +108,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
     escopo_atual = 1;
     
     while(secDecSub != NULL){
-        if(secDecSub->decProc.tipo == TD_PROC){
+        if(secDecSub->decProc->tipo == TD_PROC){
             /* parametro formal */
             A_DecParamList param_formais = secDecSub->decProc->_decProc_proc.parametros_formais;
             while(param_formais != NULL){
@@ -121,7 +122,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                         1,
                         _NUL_I_,
                         posicao_relativa_pf,
-                        _NUL_I_,
+                        _NUL_S_,    //mesma coisa aqui: R01?
                         param_formais->declaracao_parametros->tipo,
                         _NUL_S_,
                         _NUL_I_,
@@ -137,15 +138,15 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
             /* procedimento */
             top = push(
                 top,
-                secDecSub->decProc._decProc_proc.id,
+                secDecSub->decProc->_decProc_proc.id,
                 "PROC",
                 escopo_atual, 
                 _NUL_I_,
                 _NUL_I_,
-                posicao_relativa_1,
+                _NUL_S_,   //posicao_relativa_1, mesma coisa R01?
                 _NUL_S_,
                 _NUL_S_,
-                num_pf(secDecSub->decProc._decProc_proc.parametros_formais),
+                num_pf(secDecSub->decProc->_decProc_proc.parametros_formais),
                 0
             );
 
@@ -167,7 +168,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                         1,
                         _NUL_I_,
                         posicao_relativa_pf,
-                        _NUL_I_,
+                        _NUL_S_,    // mesma coisa aqui R01???
                         parametros_formais->declaracao_parametros->tipo,
                         _NUL_S_,
                         _NUL_I_,
@@ -181,15 +182,16 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
             }
             /* função */
             top = push(
-                secDecSub->decProc._decProc_func.id,
+                top,
+                secDecSub->decProc->_decProc_func.id,
                 "FUNC",
-                escopo_atual,
+                escopo_atual,   
                 _NUL_I_,
                 _NUL_I_,
-                posicao_relativa_1,
+                _NUL_S_,     //posicao_relativa_1          mesma coisa aqui R01?
                 _NUL_S_,
-                secDecSub->decProc.tipo,
-                num_pf(secDecSub->decProc._decProc_func.parametros_formais),
+                secDecSub->decProc->_decProc_func.tipo,
+                num_pf(secDecSub->decProc->_decProc_func.parametros_formais),
                 0
             );
 
@@ -234,12 +236,12 @@ String analisaChamFunc(A_ChamFunc _chamFunc){
         // verificar se o numero de parametros na chamada equivale ao numero da declaração na pilha
         if(num_parametros(_chamFunc->lista_expressoes) == funcao->infos.type.t_sub.numero_parametros){
             // verificar se os argumentos estão na mesma ordem da declaração do procedimento (pilha)
-            if(analisaOrdemFunc()){
+            //if(analisaOrdemFunc()){
                 // buguei aqui ---------------
-            }
-            else{
-                fprintf(stderr, "");
-            }
+            //}
+            //else{
+            //    fprintf(stderr, "");
+            //}
         }
         else{
             fprintf(stderr, "Número incorreto de parâmetros na função %s \n\n", _chamFunc->id);
@@ -252,13 +254,13 @@ String analisaChamFunc(A_ChamFunc _chamFunc){
     return _NUL_S_; // talvez isso de problema
 }
 
-String analisaFator(A_Exp exp_fator){
-    A_Exp fatores = exp_fator;
+String analisaFator(struct Exp_Fator exp_fator){
+    struct Exp_Fator fatores = exp_fator;
 
-    switch(fatores->fator.tipo){
+    switch(fatores.tipo){
         case TF_Var:
             // codigo mepa
-            return buscar_tipo_var(fatores->fator.variavel->id);
+            return buscar_tipo_var(fatores.variavel->id);
         case TF_Num:
             // codigo mepa
             return "integer";
@@ -266,9 +268,9 @@ String analisaFator(A_Exp exp_fator){
             // codigo mepa
             return "boolean";
         case TF_ChamFunc:
-            return analisaChamFunc(fatores->fator.chamadaFuncao);
+            return analisaChamFunc(fatores.chamadaFuncao);
         case TF_Exp:
-            return analisaExp(fatores->fator.expressao);
+            return analisaExp(fatores.expressao);
     }
 }
 
@@ -435,16 +437,16 @@ void analisaCmd(A_Cmd comando){
             analisaEscrita(comando->A_io_write);
             break;
         case TC_CMDCOMP:
-            analisaCmdComp(comando->A_cmdComp);
+            analisaCmdComp(comando->A_cmdComp.comando);
             break;
     }
 }
 
-void analisaCmdComp(A_cmdComp comandos){
-    A_cmdComp cmd = comandos;
+void analisaCmdComp(A_Cmd comandos){
+    A_Cmd cmd = comandos;
 
     while(cmd != NULL){
-        analisaCmd(cmd->comando);
-        cmd = cmd->prox;
+        analisaCmd(cmd->A_cmdComp.comando);
+        cmd = cmd->A_cmdComp.prox;
     }
 }

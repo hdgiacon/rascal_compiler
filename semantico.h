@@ -6,12 +6,12 @@
 #include "ast.h"
 #include "tabelaSimbolos.h"
 
-void analisaPrograma(A_programa prog);
+void analisaPrograma(A_Programa prog);
 void analisaBloco(A_Bloco bloco);
-void analisaDecVars(A_lstDecVar secDecVar);
-void analisaDecSubs(A_lstDecSub secDecSub);
+void analisaDecVars(A_LstDecVar secDecVar);
+void analisaDecSubs(A_LstDecSub secDecSub);
 String analisaChamFunc(A_ChamFunc chamFunc);
-String analisaFator(A_Exp exp_fator);
+String analisaFator(struct Exp_Fator exp_fator);
 String analisaExp(A_Exp expressao);
 void analisaAtribuicao(struct A_atrib atribuicao);
 void analisaChamProc(struct A_chamProc chamProc);
@@ -20,7 +20,7 @@ void analisaLoop(struct A_loop loop);
 void analisaLeitura(struct A_read read);
 void analisaEscrita(struct A_write write);
 void analisaCmd(A_Cmd comando);
-void analisaCmdComp(A_cmdComp comandos);
+void analisaCmdComp(A_Cmd comandos);
 
 struct Symbol *esta_na_tabela(String simbolo);
 bool simbolo_mesmo_escopo(String simbolo);
