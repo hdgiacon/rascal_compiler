@@ -6,6 +6,8 @@
 #define _NUL_S_ "_NUL_" // null para string
 #define _NUL_I_ -1      // null para inteiro
 
+//extern char *nome_prog;   // nome do arquivo pra passar no fopen
+
 int escopo_atual = 0;
 
 int posicao_relativa_0 = 0;

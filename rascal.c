@@ -17,6 +17,8 @@ int main(int argc, char** argv){
     FILE* fp;
     extern FILE* yyin;
 
+    //char *nome_prog = argv[0]; // nome do arquivo pra passar no fopen
+
     if(argc < 2 || argc > 2){
         fprintf(stderr, "Erro: número inválido de parâmetros\n");
         fprintf(stderr, "Uso: compilador <arquivo>\n");
