@@ -6,9 +6,9 @@ program prog2;
     procedure operacoes(op: integer; n1: integer; n2: integer);
     begin
         if (op = 1) then
-            res := num1 + num2
+            res := n1 + n2
         else
-            res := num1 - num2;
+            res := n1 - n2;
     end;
 
 begin
