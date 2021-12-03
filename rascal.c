@@ -17,6 +17,8 @@ int main(int argc, char** argv){
     FILE* fp;
     extern FILE* yyin;
 
+    //char *nome_prog = argv[0]; // nome do arquivo pra passar no fopen
+
     if(argc < 2 || argc > 2){
         fprintf(stderr, "Erro: número inválido de parâmetros\n");
         fprintf(stderr, "Uso: compilador <arquivo>\n");
@@ -31,15 +33,14 @@ int main(int argc, char** argv){
 
     yyin = fp;
     if(yyparse() == 0){
-        fprintf(stderr, "\nSucesso!");
-        // chamar o semantico aqui
+        fprintf(stderr, "\nSucesso sintatico!");
+        
+        analisaPrograma(absyn_root);    
     } 
     else{
-        fprintf(stderr, "\nAnálise com erros!");
+        fprintf(stderr, "\nAnálise com erros sintaticos!");
         return EXIT_FAILURE;
     }
-
-    // raiz_ast está apontando para o nó raiz da AST (programa) caso o parsing foi bem sucedido.
 
     return EXIT_SUCCESS;
 }
