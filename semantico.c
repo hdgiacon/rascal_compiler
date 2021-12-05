@@ -23,8 +23,8 @@ int posicao_relativa_pf = -4;
 int posicao_relativa_sub = 0;
 char aux_char[3];
 
-/* vetor que irá conter a sequencia de tipos dos parametros formais */
-int aux_vet_tipos[20];
+/* vetor que irá conter a sequencia de tipos dos parametros formais, 1 - "integer", 0 - "boolean" */
+int vet_tipos[20];
 int index_vet_tipos = 0;
 
 /* tabela (pilha) de simbolos */
@@ -60,7 +60,7 @@ bool simbolo_mesmo_escopo(String simbolo){
 void analisaPrograma(A_Programa prog, String nome_programa){
     analisaBloco(prog->bloco);
 
-    /* caso a flag possui_erros seja 'false', gera o arquivo com o codigo MEPA */
+    /* geração do código MEPA */
     gerarArquivoMepa(possui_erros,nome_programa);
 }
 
@@ -157,7 +157,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                         0
                     );
 
-                    aux_vet_tipos[index_vet_tipos] = (strcmp(param_formais->declaracao_parametros->tipo,"integer") == 0) ? 1 : 0;
+                    vet_tipos[index_vet_tipos] = (strcmp(param_formais->declaracao_parametros->tipo,"integer") == 0) ? 1 : 0;
                     index_vet_tipos++;
 
                     posicao_relativa_pf--;
@@ -167,7 +167,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                 param_formais = param_formais->prox;
             }
             /* procedimento */
-            sprintf(aux_char, "%d", posicao_relativa_sub);
+            sprintf(aux_char, "%d", posicao_relativa_sub);  // gera esse padrão: R01 por exemplo
             top = push(
                 top,
                 secDecSub->decProc->_decProc_proc.id,
@@ -180,7 +180,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                 _NUL_S_,
                 num_pf(secDecSub->decProc->_decProc_proc.parametros_formais),
                 0,
-                aux_vet_tipos,
+                vet_tipos,
                 index_vet_tipos
             );
 
@@ -212,7 +212,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                         0              
                     );
 
-                    aux_vet_tipos[index_vet_tipos] = (strcmp(parametros_formais->declaracao_parametros->tipo,"integer") == 0) ? 1 : 0;
+                    vet_tipos[index_vet_tipos] = (strcmp(parametros_formais->declaracao_parametros->tipo,"integer") == 0) ? 1 : 0;
                     index_vet_tipos++;
 
                     posicao_relativa_pf--;
@@ -222,7 +222,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                 parametros_formais = parametros_formais->prox;
             }
             /* função */
-            sprintf(aux_char, "%d", posicao_relativa_sub);
+            sprintf(aux_char, "%d", posicao_relativa_sub);  // gera esse padrão: R01 por exemplo
             top = push(
                 top,
                 secDecSub->decProc->_decProc_func.id,
@@ -235,7 +235,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                 secDecSub->decProc->_decProc_func.tipo,
                 num_pf(secDecSub->decProc->_decProc_func.parametros_formais),
                 0,
-                aux_vet_tipos,
+                vet_tipos,
                 index_vet_tipos
             );
 
@@ -400,7 +400,7 @@ void analisaAtribuicao(struct A_atrib atribuicao){
         }
     }
     else{
-        fprintf(stderr, "Simbolo %s não declarado \n\n", atribuicao.id);
+        fprintf(stderr, "Variável %s não declarada \n\n", atribuicao.id);
         possui_erros = true;
     }
 }
@@ -540,6 +540,7 @@ void analisaCmdComp(A_Cmd comandos){
 }
 
 void gerarArquivoMepa(bool _possui_erros, String nome_programa){
+    /* caso a flag possui_erros seja 'false', gera o arquivo com o codigo MEPA */
     if(_possui_erros){
         fprintf(stderr, "O programa %s possui erros de compilação \n\n", nome_programa);
     }

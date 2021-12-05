@@ -37,6 +37,7 @@ int main(int argc, char** argv){
     if(yyparse() == 0){
         fprintf(stderr, "\nSucesso sintatico!\n\n");
         
+        /* etapa semântica e geração de código MEPA */
         analisaPrograma(absyn_root, nome_prog);
     } 
     else{
