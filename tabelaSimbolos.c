@@ -49,12 +49,14 @@ void display(struct Symbol *top){
     struct Symbol *temp;
     temp = top;
     while (temp != NULL){
-        printf("\n %s | %s | %d | %d | %d | %s | %s | %s | %d | %d \n", temp->simbolo, temp->categoria, 
+        printf("\n %s | %s | %d | %d | %d | %s | %s | %s | %d | %d | $ | %d | \n", temp->simbolo, temp->categoria, 
                     temp->infos.escopo, temp->infos.pr.variavel_simples, temp->infos.pr.parametro_formal,
-                            temp->infos.pr.procedimento, temp->infos.type.t_normal,
-                                 temp->infos.type.t_proc.t_procedimento, temp->infos.type.t_proc.numero_parametros, temp->infos.type.t_proc.tipo_chamada);
+                            temp->infos.pr.subrotina, temp->infos.type.t_normal,
+                                temp->infos.type.t_sub.t_funcao, temp->infos.type.t_sub.numero_parametros, 
+                                    temp->infos.type.t_sub.tipo_chamada, temp->tam_list_param);
         temp = temp->prox;
     }
+    printf("\n\n");
 }
 
 

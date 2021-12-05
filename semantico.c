@@ -3,11 +3,9 @@
 #include <stdlib.h>
 #include "semantico.h"
 
-#define _NUL_S_ "_NUL_" // null para string
+#define _NUL_S_ "_NUL_S_" // null para string
 #define _NUL_I_ -1      // null para inteiro
 int null_vet[1] = {0};  // null para vetor
-
-//extern char *nome_prog;   // nome do arquivo pra passar no fopen
 
 // fazer uma string gigante ou matriz de strings pra cada codigo mepa
 // caso haja erro nao usar essa string
@@ -36,7 +34,7 @@ struct Symbol *esta_na_tabela(String simbolo){
     struct Symbol *temp;
     temp = top;
     while(temp != NULL){
-        if(simbolo == temp->simbolo){
+        if(strcmp(simbolo,temp->simbolo) == 0){
             return temp;
         }
         temp = temp->prox;
@@ -48,15 +46,16 @@ bool simbolo_mesmo_escopo(String simbolo){
     struct Symbol *temp;
     temp = top;
     while(temp != NULL){
-        if(simbolo == temp->simbolo && temp->infos.escopo == escopo_atual){
+        if((strcmp(simbolo,temp->simbolo) == 0) && temp->infos.escopo == escopo_atual){
             return true;
         }
+        temp = temp->prox;
     }
     return false;
 }
 
 
-void analisaPrograma(A_Programa prog){
+void analisaPrograma(A_Programa prog, String nome_programa){
     analisaBloco(prog->bloco);
 
     // chamar a função de gerar o codigo MEPA aqui
@@ -71,6 +70,8 @@ void analisaBloco(A_Bloco bloco){
 void analisaDecVars(A_LstDecVar _secDecVar){
     // mandar pra pilha todos os elementos A_lstDecVar
     A_LstDecVar secDecVar = _secDecVar;
+
+    // secDecVar ta certo, tem só x e Y la, ja conferi
 
     while(secDecVar != NULL){
         top = push(
@@ -92,6 +93,7 @@ void analisaDecVars(A_LstDecVar _secDecVar){
         (escopo_atual == 0) ? posicao_relativa_0++ : posicao_relativa_1++;
         secDecVar = secDecVar->prox;
     }
+    //display(top); //as variaveis estao na tabela de simbolos
 }
 
 /* numero de parametros formais */
@@ -109,9 +111,10 @@ int num_pf(A_DecParamList lista_parametros){
 /* buscar tipo da variavel pelo nome na tabela de simbolos */
 String buscar_tipo_var(String _id){
     struct Symbol *temp;
+    
     temp = top;
     while(temp != NULL){
-        if(temp->simbolo == _id){
+        if(strcmp(temp->simbolo,_id) == 0){
             return temp->infos.type.t_normal;
         }
         temp = temp->prox;
@@ -318,12 +321,14 @@ String analisaChamFunc(A_ChamFunc _chamFunc){
 
 String analisaFator(struct Exp_Fator exp_fator){
     struct Exp_Fator fatores = exp_fator;
-
+    printf("\n3\n");
+    printf("\ntipo exp: %d\n", (int)fatores.tipo);
     switch(fatores.tipo){
         case TF_Var:
             // codigo mepa
             return buscar_tipo_var(fatores.variavel->id);
         case TF_Num:
+            printf("\nnumero: %i\n", exp_fator.num);
             // codigo mepa
             return "integer";
         case TF_Logico: 
@@ -331,23 +336,37 @@ String analisaFator(struct Exp_Fator exp_fator){
             return "boolean";
         case TF_ChamFunc:
             return analisaChamFunc(fatores.chamadaFuncao);
+        //default:
         case TF_Exp:
             return analisaExp(fatores.expressao);
     }
 }
-
+int contiii = 1;
 String analisaExp(A_Exp _expressao){
     A_Exp expressoes = _expressao;
 
     String tipoEsq;
     String tipoDir;
 
+    //printf("\ntipo exp: %d\n", (int)expressoes->tipo);
+
     switch(expressoes->tipo){
         case TE_Fator:
+            printf("\n-->%i\n", contiii);
             return analisaFator(expressoes->fator);
         case TE_Exp_Binaria:
+            printf("\n->%i\n", contiii);
+            printf("\nrelacao: %i\n", expressoes->binaria.relacao);     // -1 é quando é uma expressão unaria
+            contiii++;
+            
             tipoEsq = analisaExp(expressoes->binaria.exp_esquerda);
-            tipoDir = analisaExp(expressoes->binaria.exp_direita);
+            printf("\ntipoEsq: %s\n\n", tipoEsq);
+            tipoDir = analisaExp(expressoes->binaria.exp_direita);  // ta dando problema aqui
+            // qualquer coisa feita com expressoes->binaria.exp_direita ta dando problema
+
+            // nao chegou aqui ainda, so vai passar aqui depois da ultima recursão
+            printf("\ntipoEsq: %s\n", tipoEsq);
+            printf("tipoDir: %s\n", tipoDir);
 
             switch(expressoes->binaria.relacao){
                 /* operadores aritmeticos */
@@ -387,14 +406,16 @@ String analisaExp(A_Exp _expressao){
 
 void analisaAtribuicao(struct A_atrib atribuicao){
     struct Symbol *simbolo = esta_na_tabela(atribuicao.id);
+
+    //printf("Simbolo %s esta na tabela\n", simbolo->simbolo);
+
     String tipo_lado_esq;
     String tipo_lado_dir;
 
     //verficiar se o simbolo esta na tabela de simbolos e no escopo atual
     if((simbolo != NULL) && simbolo_mesmo_escopo(atribuicao.id)){      
-        
         //verificar se o tipo dos dois lados da atribuição é o mesmo
-        tipo_lado_esq = buscar_tipo_var(atribuicao.id);
+        tipo_lado_esq = buscar_tipo_var(atribuicao.id); // ate aqui de boa
         tipo_lado_dir = analisaExp(atribuicao.expressao);
         if(strcmp(tipo_lado_esq,tipo_lado_dir) == 0){
 
@@ -538,9 +559,9 @@ void analisaCmdComp(A_Cmd comandos){
     }
 }
 
-void gerarArquivoMepa(bool _possui_erros){
+void gerarArquivoMepa(bool _possui_erros, String nome_programa){
     if(_possui_erros){
-        // avisar que tem erros
+        fprintf(stderr, "O programa %s possui erros de compilação \n\n", nome_programa);
     }
     else{
         //mandar os codigos mepa pra arquivos

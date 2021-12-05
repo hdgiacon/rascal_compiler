@@ -222,12 +222,12 @@ expressao:	expressao_simples									{ $$ = A_exp_binaria($1, -1, NULL); }
 ;
 
 
-relacao:	TK_IGUAL			{ $$ = 00; }
-		|   TK_DIFERENTE		{ $$ = 01; }
-		|   TK_MENOR			{ $$ = 02; }
-		|   TK_MENORIGUAL		{ $$ = 03; }
-		|   TK_MAIOR			{ $$ = 04; }
-		|   TK_MAIORIGUAL		{ $$ = 05; }
+relacao:	TK_IGUAL			{ $$ = 0; }
+		|   TK_DIFERENTE		{ $$ = 1; }
+		|   TK_MENOR			{ $$ = 2; }
+		|   TK_MENORIGUAL		{ $$ = 3; }
+		|   TK_MAIOR			{ $$ = 4; }
+		|   TK_MAIORIGUAL		{ $$ = 5; }
 ;      
 
 

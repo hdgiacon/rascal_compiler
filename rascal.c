@@ -17,7 +17,7 @@ int main(int argc, char** argv){
     FILE* fp;
     extern FILE* yyin;
 
-    //char *nome_prog = argv[0]; // nome do arquivo pra passar no fopen
+    String nome_prog = argv[0]; // nome do arquivo pra passar no fopen
 
     // antes de dar make verificar os imports, ver se tem repetido
 
@@ -35,9 +35,9 @@ int main(int argc, char** argv){
 
     yyin = fp;
     if(yyparse() == 0){
-        fprintf(stderr, "\nSucesso sintatico!");
+        fprintf(stderr, "\nSucesso sintatico!\n\n");
         
-        analisaPrograma(absyn_root);    
+        analisaPrograma(absyn_root, nome_prog);
     } 
     else{
         fprintf(stderr, "\nAnálise com erros sintaticos!");

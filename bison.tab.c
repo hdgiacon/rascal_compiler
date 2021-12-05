@@ -2019,37 +2019,37 @@ yyreduce:
 
   case 50:
 #line 225 "bison.y"
-                                                { (yyval.num) = 00; }
+                                                { (yyval.num) = 0; }
 #line 2024 "bison.tab.c"
     break;
 
   case 51:
 #line 226 "bison.y"
-                                                { (yyval.num) = 01; }
+                                                { (yyval.num) = 1; }
 #line 2030 "bison.tab.c"
     break;
 
   case 52:
 #line 227 "bison.y"
-                                                { (yyval.num) = 02; }
+                                                { (yyval.num) = 2; }
 #line 2036 "bison.tab.c"
     break;
 
   case 53:
 #line 228 "bison.y"
-                                                { (yyval.num) = 03; }
+                                                { (yyval.num) = 3; }
 #line 2042 "bison.tab.c"
     break;
 
   case 54:
 #line 229 "bison.y"
-                                                { (yyval.num) = 04; }
+                                                { (yyval.num) = 4; }
 #line 2048 "bison.tab.c"
     break;
 
   case 55:
 #line 230 "bison.y"
-                                                { (yyval.num) = 05; }
+                                                { (yyval.num) = 5; }
 #line 2054 "bison.tab.c"
     break;
 

@@ -68,6 +68,7 @@ A_Exp A_exp_fator_variavel(A_Var _variavel){
 A_Exp A_exp_fator_int(int _num){
     A_Exp no = malloc(sizeof(*no));
     no->tipo = TE_Fator;
+    no->fator.tipo = TF_Num;
     no->fator.num = _num;
     return no;
 }
@@ -75,6 +76,7 @@ A_Exp A_exp_fator_int(int _num){
 A_Exp A_exp_fator_logico(int _logico){
     A_Exp no = malloc(sizeof(*no));
     no->tipo = TE_Fator;
+    no->fator.tipo = TF_Logico;
     no->fator.logico = _logico;
     return no;
 }

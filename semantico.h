@@ -6,7 +6,7 @@
 #include "ast.h"
 #include "tabelaSimbolos.h"
 
-void analisaPrograma(A_Programa prog);
+void analisaPrograma(A_Programa prog, String nome_programa);
 void analisaBloco(A_Bloco bloco);
 void analisaDecVars(A_LstDecVar secDecVar);
 void analisaDecSubs(A_LstDecSub secDecSub);
