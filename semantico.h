@@ -1,8 +1,6 @@
 #ifndef SEM_H
 #define SEM_H
 
-#include <stdbool.h>
-#include "util.h"
 #include "ast.h"
 #include "tabelaSimbolos.h"
 
@@ -26,8 +24,10 @@ struct Symbol *esta_na_tabela(String simbolo);
 bool simbolo_mesmo_escopo(String simbolo);
 int num_pf(A_DecParamList lista_parametros);
 int num_parametros(A_ListExp lista_parametros);
-//bool analisaOrdemFunc(A_ChamFunc chamFunc);
-//bool analisaOrdemProc(struct A_chamProc chamProc)
+bool analisaOrdemFunc(A_ChamFunc chamFunc, struct Symbol *funcao_tabela);
+bool analisaOrdemProc(struct A_chamProc chamProc, struct Symbol *proc_tabela);
 String buscar_tipo_var(String id);
+
+void gerarArquivoMepa(bool _possui_erros, String nome_programa);
 
 #endif

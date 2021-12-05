@@ -3,7 +3,7 @@
 #include "tabelaSimbolos.h"
 
 //struct Symbol *top = NULL;
-// adicionar um parametro pra lista de tipos dos parametros
+
 /* adiciona na tabela de simbolos */
 struct Symbol *push(struct Symbol *top, String _simbolo, String _categoria, int _escopo, int _pr_var_simples, int _pr_param_formal, String _pr_subrotina, String _tipo_normal, String _tipo_funcao, int _numero_parametros, int _tipo_chamada, int _tipos_parametros[], int tam_list){
     struct Symbol *s_ptr = malloc(sizeof(struct Symbol));

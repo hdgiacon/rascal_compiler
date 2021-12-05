@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "ast.h"
 #include "semantico.h"
 #include "bison.tab.h"
 
@@ -17,7 +16,8 @@ int main(int argc, char** argv){
     FILE* fp;
     extern FILE* yyin;
 
-    String nome_prog = argv[0]; // nome do arquivo pra passar no fopen
+    /* nome do arquivo pra passar no fopen */
+    String nome_prog = argv[0]; 
 
     // antes de dar make verificar os imports, ver se tem repetido
 

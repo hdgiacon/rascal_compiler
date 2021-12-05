@@ -10,13 +10,13 @@ struct posicao_relativa{
 };
 
 struct tipo_sub{
-    String t_funcao;        // procedimento nao tem tipo
-    int tipo_chamada;       // 1 = parametro ou 0 = referencia
+    String t_funcao;            // procedimento nao tem tipo
+    int tipo_chamada;           // 1 = parametro ou 0 = referencia
     int numero_parametros;
 };
 
 struct tipo{
-    String t_normal;  // vs, pf
+    String t_normal;            // vs, pf
     struct tipo_sub t_sub;
 };
 
@@ -28,7 +28,7 @@ struct info{
 
 struct Symbol{
     String simbolo;
-    String categoria;  // VS, PF, PROC, FUNC
+    String categoria;           // VS, PF, PROC, FUNC
     struct info infos;
     int tipos_parametros[20];   // 1 = integer, 0 = boolean
     int tam_list_param;

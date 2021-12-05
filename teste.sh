@@ -4,4 +4,4 @@ make clean
 
 make
 
-./rascal tests/cmdAtrib.ras
+./rascal tests/procSimples.ras
