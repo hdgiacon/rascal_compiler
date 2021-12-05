@@ -7,5 +7,6 @@
         "string": "cpp",
         "vector": "cpp",
         "tabelasimbolos.h": "c"
-    }
+    },
+    "cmake.configureOnOpen": false
 }

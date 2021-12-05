@@ -3,10 +3,12 @@
 #include "tabelaSimbolos.h"
 
 //struct Symbol *top = NULL;
-
+// adicionar um parametro pra lista de tipos dos parametros
 /* adiciona na tabela de simbolos */
-struct Symbol *push(struct Symbol *top, String _simbolo, String _categoria, int _escopo, int _pr_var_simples, int _pr_param_formal, String _pr_subrotina, String _tipo_normal, String _tipo_funcao, int _numero_parametros, int _tipo_chamada){
+struct Symbol *push(struct Symbol *top, String _simbolo, String _categoria, int _escopo, int _pr_var_simples, int _pr_param_formal, String _pr_subrotina, String _tipo_normal, String _tipo_funcao, int _numero_parametros, int _tipo_chamada, int _tipos_parametros[], int tam_list){
     struct Symbol *s_ptr = malloc(sizeof(struct Symbol));
+    int k;
+
     s_ptr->simbolo = _simbolo;
     s_ptr->categoria = _categoria;
     s_ptr->infos.escopo = _escopo;
@@ -17,6 +19,12 @@ struct Symbol *push(struct Symbol *top, String _simbolo, String _categoria, int 
     s_ptr->infos.type.t_sub.t_funcao = _tipo_funcao;
     s_ptr->infos.type.t_sub.numero_parametros = _numero_parametros;
     s_ptr->infos.type.t_sub.tipo_chamada = _tipo_chamada;
+    
+    for(k=0;k<tam_list;k++){
+        s_ptr->tipos_parametros[k] = _tipos_parametros[k];      // 1 = integer, 0 = boolean
+    }
+
+    s_ptr->tam_list_param = tam_list;
     s_ptr->prox = top;
     top = s_ptr;
     return top;

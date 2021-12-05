@@ -5,14 +5,27 @@
 
 #define _NUL_S_ "_NUL_" // null para string
 #define _NUL_I_ -1      // null para inteiro
+int null_vet[1] = {0};  // null para vetor
 
 //extern char *nome_prog;   // nome do arquivo pra passar no fopen
+
+// fazer uma string gigante ou matriz de strings pra cada codigo mepa
+// caso haja erro nao usar essa string
+// se for tudo bem, andar nessa string e gerar o arquivo da MEPA
+
+bool possui_erros = false;
 
 int escopo_atual = 0;
 
 int posicao_relativa_0 = 0;
 int posicao_relativa_1 = 0;
 int posicao_relativa_pf = -4;
+
+int posicao_relativa_sub = 0;
+char aux_char[3];
+
+int aux_vet_tipos[20];
+int index_vet_tipos = 0;
 
 /* tabela (pilha) de simbolos */
 struct Symbol *top = NULL;
@@ -45,6 +58,8 @@ bool simbolo_mesmo_escopo(String simbolo){
 
 void analisaPrograma(A_Programa prog){
     analisaBloco(prog->bloco);
+
+    // chamar a função de gerar o codigo MEPA aqui
 }
 
 void analisaBloco(A_Bloco bloco){
@@ -65,11 +80,13 @@ void analisaDecVars(A_LstDecVar _secDecVar){
             escopo_atual,
             (escopo_atual == 0) ? posicao_relativa_0 : posicao_relativa_1,
             _NUL_I_,
-            _NUL_S_,        // aqui é string: R01, o que seria isso?
+            _NUL_S_,
             secDecVar->decVar->tipo,
             _NUL_S_,
             _NUL_I_,
-            _NUL_I_
+            _NUL_I_,
+            null_vet,
+            0
         );
 
         (escopo_atual == 0) ? posicao_relativa_0++ : posicao_relativa_1++;
@@ -107,6 +124,8 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
     // mandar pra pilha todos os elementos A_lstDecSub
     A_LstDecSub secDecSub = _secDecSub;
 
+    int k;
+
     escopo_atual = 1;
     
     while(secDecSub != NULL){
@@ -124,12 +143,17 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                         1,
                         _NUL_I_,
                         posicao_relativa_pf,
-                        _NUL_S_,    //mesma coisa aqui: R01?
+                        _NUL_S_,
                         param_formais->declaracao_parametros->tipo,
                         _NUL_S_,
                         _NUL_I_,
-                        _NUL_I_
+                        _NUL_I_,
+                        null_vet,
+                        0
                     );
+
+                    aux_vet_tipos[index_vet_tipos] = (strcmp(param_formais->declaracao_parametros->tipo,"integer") == 0) ? 1 : 0;
+                    index_vet_tipos++;
 
                     posicao_relativa_pf--;
                     var_param = var_param->prox;
@@ -138,6 +162,7 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                 param_formais = param_formais->prox;
             }
             /* procedimento */
+            sprintf(aux_char, "%d", posicao_relativa_sub);
             top = push(
                 top,
                 secDecSub->decProc->_decProc_proc.id,
@@ -145,14 +170,21 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                 escopo_atual, 
                 _NUL_I_,
                 _NUL_I_,
-                _NUL_S_,   //posicao_relativa_1, mesma coisa R01?
+                strcat(aux_char,"R"),
                 _NUL_S_,
                 _NUL_S_,
                 num_pf(secDecSub->decProc->_decProc_proc.parametros_formais),
-                0
+                0,
+                aux_vet_tipos,
+                index_vet_tipos
             );
 
+            // talvez seja preciso zerar o vetor de tipos
+
+            index_vet_tipos = 0;
+
             posicao_relativa_1++;
+            posicao_relativa_sub++;
 
             // analise do corpo do procedimento
         }
@@ -170,19 +202,26 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                         1,
                         _NUL_I_,
                         posicao_relativa_pf,
-                        _NUL_S_,    // mesma coisa aqui R01???
+                        _NUL_S_,
                         parametros_formais->declaracao_parametros->tipo,
                         _NUL_S_,
                         _NUL_I_,
-                        _NUL_I_                       
+                        _NUL_I_,
+                        null_vet,
+                        0              
                     );
 
+                    aux_vet_tipos[index_vet_tipos] = (strcmp(parametros_formais->declaracao_parametros->tipo,"integer") == 0) ? 1 : 0;
+                    index_vet_tipos++;
+
+                    posicao_relativa_pf--;
                     var_parametros = var_parametros->prox;
                 }
 
                 parametros_formais = parametros_formais->prox;
             }
             /* função */
+            sprintf(aux_char, "%d", posicao_relativa_sub);
             top = push(
                 top,
                 secDecSub->decProc->_decProc_func.id,
@@ -190,14 +229,21 @@ void analisaDecSubs(A_LstDecSub _secDecSub){
                 escopo_atual,   
                 _NUL_I_,
                 _NUL_I_,
-                _NUL_S_,     //posicao_relativa_1          mesma coisa aqui R01?
+                strcat(aux_char,"R"),
                 _NUL_S_,
                 secDecSub->decProc->_decProc_func.tipo,
                 num_pf(secDecSub->decProc->_decProc_func.parametros_formais),
-                0
+                0,
+                aux_vet_tipos,
+                index_vet_tipos
             );
 
+            // talvez seja preciso zerar o vetor de tipos
+
+            index_vet_tipos = 0;
+
             posicao_relativa_1++;
+            posicao_relativa_sub++;
 
             // analise do corpo da função
         }
@@ -226,8 +272,19 @@ int num_parametros(A_ListExp lista_parametros){
     return cont;
 }
 
-bool analisaOrdemFunc(A_ChamFunc chamFunc){
+bool analisaOrdemFunc(A_ChamFunc chamFunc, struct Symbol *funcao_tabela){
+    A_ListExp lista_param = chamFunc->lista_expressoes;
+    int tam_vet_param = 0;
 
+    while(lista_param != NULL){
+        if(strcmp(analisaExp(lista_param->expressao),(funcao_tabela->tipos_parametros[tam_vet_param] == 1) ? "integer" : "boolean") != 0){
+            return false;
+        }
+
+        tam_vet_param++;
+        lista_param = lista_param->prox;
+    }
+    return true;
 }
 
 String analisaChamFunc(A_ChamFunc _chamFunc){
@@ -238,19 +295,22 @@ String analisaChamFunc(A_ChamFunc _chamFunc){
         // verificar se o numero de parametros na chamada equivale ao numero da declaração na pilha
         if(num_parametros(_chamFunc->lista_expressoes) == funcao->infos.type.t_sub.numero_parametros){
             // verificar se os argumentos estão na mesma ordem da declaração do procedimento (pilha)
-            //if(analisaOrdemFunc()){
-                // buguei aqui ---------------
-            //}
-            //else{
-            //    fprintf(stderr, "");
-            //}
+            if(analisaOrdemFunc(_chamFunc, funcao)){
+                return funcao->infos.type.t_sub.t_funcao;
+            }
+            else{
+                fprintf(stderr, "Os argumentos passados não estão na ordem da declaração da função %s \n\n", _chamFunc->id);
+                possui_erros = true;
+            }
         }
         else{
             fprintf(stderr, "Número incorreto de parâmetros na função %s \n\n", _chamFunc->id);
+            possui_erros = true;
         }
     }
     else{
         fprintf(stderr, "Função %s não está declarada \n\n", _chamFunc->id);
+        possui_erros = true;
     }
 
     return _NUL_S_; // talvez isso de problema
@@ -300,6 +360,7 @@ String analisaExp(A_Exp _expressao){
                     }
                     else{
                         fprintf(stderr, "Tipo incorreto, esperado tipo integer (inteiro) \n\n");
+                        possui_erros = true;
                         return "integer";   // só pro programa continuar e mostrar mais erros se houver
                     }
                 /* operadores relacionais */
@@ -317,6 +378,7 @@ String analisaExp(A_Exp _expressao){
                     }
                     else{
                         fprintf(stderr, "Tipo incorreto, esperado tipo boolean (booleano) \n\n");
+                        possui_erros = true;
                         return "boolean";
                     }
             }
@@ -339,15 +401,28 @@ void analisaAtribuicao(struct A_atrib atribuicao){
         }
         else{
             fprintf(stderr, "Tipo %s incorreto, esperado tipo %s para %s \n\n", tipo_lado_dir, tipo_lado_esq, atribuicao.id);
+            possui_erros = true;
         }
     }
     else{
         fprintf(stderr, "Simbolo %s não declarado \n\n", atribuicao.id);
+        possui_erros = true;
     }
 }
 
-bool analisaOrdemProc(struct A_chamProc chamProc){
+bool analisaOrdemProc(struct A_chamProc chamProc, struct Symbol *proc_tabela){
+    A_ListExp lista_param = chamProc.lista_expressoes;
+    int tam_vet_param = 0;
 
+    while(lista_param != NULL){
+        if(strcmp(analisaExp(lista_param->expressao),(proc_tabela->tipos_parametros[tam_vet_param] == 1) ? "integer" : "boolean") != 0){
+            return false;
+        }
+
+        tam_vet_param++;
+        lista_param = lista_param->prox;
+    }
+    return true;
 }
 
 void analisaChamProc(struct A_chamProc chamProc){
@@ -358,15 +433,22 @@ void analisaChamProc(struct A_chamProc chamProc){
         // verificar se o numero de parametros na chamada equivale ao numero da declaração na pilha
         if(num_parametros(chamProc.lista_expressoes) == procedimento->infos.type.t_sub.numero_parametros){
             // verificar se os argumentos estão na mesma ordem da declaração do procedimento (pilha)
-
-            //buguei igual com função ---------------
+            if(analisaOrdemProc(chamProc,procedimento)){
+                // codigo mepa
+            }
+            else{
+                fprintf(stderr, "Os argumentos passados não estão na ordem da declaração do procedimento %s \n\n", chamProc.identificador);
+                possui_erros = true;
+            }
         }
         else{
             fprintf(stderr, "Número incorreto de parâmetros no procedimento %s \n\n", chamProc.identificador);
+            possui_erros = true;
         }
     }
     else{
         fprintf(stderr, "Procedimento %s não está declarado \n\n", chamProc.identificador);
+        possui_erros = true;
     }
 }
 
@@ -378,6 +460,7 @@ void analisaCondicional(struct A_cond cond){
     }
     else{
         fprintf(stderr, "Valor booleano esperado, expressão condicional resultou em %s \n\n", tipo_exp);
+        possui_erros = true;
     }
 }
 
@@ -389,6 +472,7 @@ void analisaLoop(struct A_loop loop){
     }
     else{
         fprintf(stderr, "Valor booleano esperado, expressão condicional resultou em %s \n\n", tipo_loop);
+        possui_erros = true;
     }
 }
 
@@ -401,6 +485,7 @@ void analisaLeitura(struct A_read read){
         }
         else{
             fprintf(stderr, "Simbolo %s não declarado \n\n", aux_read._lista_identificadores->id);
+            possui_erros = true;
         }
 
         aux_read._lista_identificadores = aux_read._lista_identificadores->prox;
@@ -450,5 +535,14 @@ void analisaCmdComp(A_Cmd comandos){
     while(cmd != NULL){
         analisaCmd(cmd->A_cmdComp.comando);
         cmd = cmd->A_cmdComp.prox;
+    }
+}
+
+void gerarArquivoMepa(bool _possui_erros){
+    if(_possui_erros){
+        // avisar que tem erros
+    }
+    else{
+        //mandar os codigos mepa pra arquivos
     }
 }

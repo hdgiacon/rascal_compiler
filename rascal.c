@@ -19,6 +19,8 @@ int main(int argc, char** argv){
 
     //char *nome_prog = argv[0]; // nome do arquivo pra passar no fopen
 
+    // antes de dar make verificar os imports, ver se tem repetido
+
     if(argc < 2 || argc > 2){
         fprintf(stderr, "Erro: número inválido de parâmetros\n");
         fprintf(stderr, "Uso: compilador <arquivo>\n");

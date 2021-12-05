@@ -30,13 +30,15 @@ struct Symbol{
     String simbolo;
     String categoria;  // VS, PF, PROC, FUNC
     struct info infos;
+    int tipos_parametros[20];   // 1 = integer, 0 = boolean
+    int tam_list_param;
     struct Symbol *prox;
 };
 
     
 struct Symbol *push(struct Symbol *top, String _simbolo, String _categoria, int _escopo, int _pr_var_simples,
-            int _pr_param_formal, String _pr_subrotina, 
-                String _tipo_normal, String _tipo_procedimento, int _numero_parametros, int _tipo_chamada);
+            int _pr_param_formal, String _pr_subrotina, String _tipo_normal, 
+                String _tipo_procedimento, int _numero_parametros, int _tipo_chamada, int tipos_parametros[], int tam_list);
 
 struct Symbol *pop(struct Symbol *top);
 
